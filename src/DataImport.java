@@ -28,7 +28,9 @@ public class DataImport {
 			Iterator<JSONObject> i = comments.iterator();
 			
 			while(i.hasNext()) {
-				System.out.println(i.next());
+				JSONObject current = i.next();
+				
+				System.out.println(current);
 			}
 			
 		} catch (IOException | ParseException e) {
