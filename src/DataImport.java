@@ -30,7 +30,7 @@ public class DataImport {
 			while(i.hasNext()) {
 				JSONObject current = i.next();
 				
-				System.out.println(current);
+				System.out.println(current.get("commentText"));
 			}
 			
 		} catch (IOException | ParseException e) {
