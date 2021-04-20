@@ -31,7 +31,7 @@ public class Main {
 				runStatus = false; // break out of the while loop
 				break;
 			default:
-				System.out.println("The command " + input + " is not recognized. Type h for help, or e for exit.");
+				System.out.println("The command \"" + input + "\" is not recognized. Type h for help, or e for exit.");
 			
 			}
 		}
