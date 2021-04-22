@@ -6,12 +6,12 @@ import java.sql.SQLException;
 
 public class DatabaseConnectionHandler {
 
-	private final String SampleURL = "jdbc:sqlserver://${dbServer};databaseName=${dbName};user=${user};password={${pass}}";
+	private static final String SampleURL = "jdbc:sqlserver://${dbServer};databaseName=${dbName};user=${user};password={${pass}}";
 
 	private Connection connection = null;
 
-	private String databaseName;
-	private String serverName;
+	private final String databaseName;
+	private final String serverName;
 
 	public DatabaseConnectionHandler(String serverName, String databaseName) {
 		this.serverName = serverName;
@@ -19,17 +19,13 @@ public class DatabaseConnectionHandler {
 	}
 
 	public boolean connect(String user, String pass) {
-		String url = "jdbc:sqlserver://${dbServer};databaseName=${dbName};user=${user};password={${pass}}";
-		
-		String fullUrl = url
+		String fullUrl = SampleURL
 				.replace("${dbServer}", serverName)
 				.replace("${dbName}", databaseName)
 				.replace("${user}", user)
 				.replace("${pass}", pass);
-		
 		try {
-			Connection connection = DriverManager.getConnection(fullUrl);
-			this.connection = connection;
+			this.connection = DriverManager.getConnection(fullUrl);
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -45,7 +41,6 @@ public class DatabaseConnectionHandler {
 		try {
 			this.connection.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

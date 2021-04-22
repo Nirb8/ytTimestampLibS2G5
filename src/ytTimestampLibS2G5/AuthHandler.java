@@ -21,9 +21,11 @@ public class AuthHandler {
 	private static final Random RANDOM = new SecureRandom();
 	private static final Base64.Encoder enc = Base64.getEncoder();
 	private static final Base64.Decoder dec = Base64.getDecoder();
+
+	private String currentUsername;
 	
 	
-	private DatabaseConnectionHandler dbHandler;
+	private final DatabaseConnectionHandler dbHandler;
 	
 	public AuthHandler(DatabaseConnectionHandler dbHandler) {
 		this.dbHandler = dbHandler;
@@ -31,60 +33,63 @@ public class AuthHandler {
 	
 	public boolean login(String username, String password) {
 		//TODO: Complete this method.
-		
-//		PreparedStatement pstmt = null;
-//		String paramString = "SELECT PasswordSalt, PasswordHash From [User] Where Username = ?;";
-//		
-//		try {
-//			pstmt = this.dbService.getConnection().prepareStatement(paramString);
-//			
-//			if(username == null || username.isEmpty()) {
-//				JOptionPane.showMessageDialog(null, "Login Failed");
-//				return false;
-//			} else {
-//				pstmt.setString(1, username);
-//			}
-//			
-//			ResultSet rs = pstmt.executeQuery();
-//			
-//			int saltIndex = rs.findColumn("PasswordSalt");
-//			int hashIndex = rs.findColumn("PasswordHash");
-//			
-//			if(rs.next()) {
-//				//continue normally
-//			} else {
-//				//fails because no user exists with that username
-//				JOptionPane.showMessageDialog(null, "Login Failed");
-//				return false;
-//			}
-//			
-//			byte[] salt = rs.getBytes(saltIndex);
-//			String hashedPassword = rs.getString(hashIndex);
-//			
-//			
-//			
-//			String enteredHashedPassword = hashPassword(salt, password);
-//			
-//			//System.out.println("current hash: " + hashedPassword);
-//			//System.out.println("entered hash: " + enteredHashedPassword);
-//			
-//			if(hashedPassword.equals(enteredHashedPassword)) {
-//				return true;
-//			} else {
-//				JOptionPane.showMessageDialog(null, "Login Failed");
-//				return false;
-//			}
-//			
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-		return false;
+
+		if (this.currentUsername != null) {
+			//TODO deal with logging in when user is already logged in, restart program?
+			this.currentUsername = null;
+		}
+
+		PreparedStatement pstmt;
+		String paramString = "SELECT PasswordSalt, PasswordHash From [User] Where Username = ?;";
+
+		try {
+			pstmt = this.dbHandler.getConnection().prepareStatement(paramString);
+
+			if (username == null || username.isEmpty()) {
+				JOptionPane.showMessageDialog(null, "Login Failed: Please enter a username");
+				return false;
+			} else if(password == null || password.isEmpty()) {
+				JOptionPane.showMessageDialog(null, "Login Failed: Please enter a password");
+				return false;
+			} else {
+				pstmt.setString(1, username);
+			}
+
+			ResultSet rs = pstmt.executeQuery();
+
+			int saltIndex = rs.findColumn("PasswordSalt");
+			int hashIndex = rs.findColumn("PasswordHash");
+
+			if(!rs.next()) {
+				//fails because no user exists with that username
+				JOptionPane.showMessageDialog(null, "Login Failed: No such user exists");
+				return false;
+			}
+
+			byte[] salt = rs.getBytes(saltIndex);
+			String hashedPassword = rs.getString(hashIndex);
+
+			String enteredHashedPassword = hashPassword(salt, password);
+
+			// System.out.println("current hash: " + hashedPassword);
+			// System.out.println("entered hash: " + enteredHashedPassword);
+
+			if(hashedPassword.equals(enteredHashedPassword)) {
+				this.currentUsername = username;
+				return true;
+			} else {
+				JOptionPane.showMessageDialog(null, "Login Failed: Incorrect password");
+				return false;
+			}
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Login Failed: See stack trace.");
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	public boolean register(String username, String password) {
-//		//TODO: Task 6
+//		//TODO: Finish this method
 //		//obtain new password salt
 //		byte[] salt = getNewSalt();
 //		//use salt and password to obtain hashed password
@@ -152,21 +157,16 @@ public class AuthHandler {
 	}
 
 	public String hashPassword(byte[] salt, String password) {
-
 		KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, 128);
 		SecretKeyFactory f;
 		byte[] hash = null;
 		try {
-			f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+			f = SecretKeyFactory.getInstance("BobTheSecretKeyBuilder");
 			hash = f.generateSecret(spec).getEncoded();
-		} catch (NoSuchAlgorithmException e) {
-			JOptionPane.showMessageDialog(null, "An error occurred during password hashing. See stack trace.");
-			e.printStackTrace();
-		} catch (InvalidKeySpecException e) {
+		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
 			JOptionPane.showMessageDialog(null, "An error occurred during password hashing. See stack trace.");
 			e.printStackTrace();
 		}
 		return getStringFromBytes(hash);
 	}
-
 }
