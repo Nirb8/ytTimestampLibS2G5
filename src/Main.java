@@ -26,10 +26,23 @@ public class Main {
 			* cases: h/help, e/x/exit/q/quit, l/login, logout, view/view tags, create/create tag, history
 			*/
             switch (input) {
+            	case "r":
+            	case "register":
+            		//prompt for registeration
+            		System.out.println("Adding New User");
+            		System.out.println("ENTER Username");
+            		String username =s.nextLine();
+            		System.out.println("ENTER Password");
+            		String password = s.nextLine();
+            		authHandler.register(username,password);
 				case "l":
 				case "login":
 					// prompt for username and password
-					authHandler.login("", "");
+					System.out.println("ENTER Username");
+            		String loginusername =s.nextLine();
+            		System.out.println("ENTER Password");
+            		String loginpassword = s.nextLine();
+					authHandler.login(loginusername, loginpassword);
                 case "h":
                 case "help":
                     System.out.println("\n\nDisplaying help commands:");
