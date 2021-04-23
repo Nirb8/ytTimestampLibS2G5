@@ -33,7 +33,7 @@ public class AuthHandler {
 		if (!connectionStatus) {
 			connectionStatus =this.dbHandler.connect("burnhar1", "Redthorn50!");
 		}
-		System.out.println("Connection Status"+connectionStatus);
+		System.out.println("Connection Status: "+connectionStatus);
 		
 	}
 	
