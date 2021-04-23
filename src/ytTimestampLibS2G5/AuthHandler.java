@@ -50,6 +50,7 @@ public class AuthHandler {
 			String checkHash = rs.getString("PasswordHash");
 			String hashInput = this.hashPassword(salt, password);
 			if (hashInput.equals(checkHash)) {
+				System.out.println("Login Successful. Welcome back, " + username + "!");
 				return true;
 			}
 		}catch(Exception e) {
