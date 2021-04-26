@@ -1,5 +1,6 @@
 import ytTimestampLibS2G5.AuthHandler;
 import ytTimestampLibS2G5.DatabaseConnectionHandler;
+import ytTimestampLibS2G5.VideoService;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,6 +17,7 @@ public class Main {
 		DatabaseConnectionHandler dbHandler = new DatabaseConnectionHandler(
 				"titan.csse.rose-hulman.edu", "ytTimestampLib_S2G5");
 		AuthHandler authHandler = new AuthHandler(dbHandler);
+		VideoService videoService = new VideoService(dbHandler);
 
         // "simple" loop to continually read from console and call a switch statement
 
@@ -48,8 +50,34 @@ public class Main {
             		System.out.println("ENTER Password");
             		String loginpassword = s.nextLine();
 					authHandler.login(loginusername, loginpassword);
+					break;				
+				case "ct":
+				case "new content":
+					System.out.println("Enter ContentID (number)");
+					int contentID = Integer.valueOf(s.nextLine());
+					System.out.println("Enter name of content type");
+					String contentTitle = s.nextLine();
+					videoService.createContentType(contentID, contentTitle);
 					break;
-                case "h":
+				case "cv":
+				case "add video":
+					System.out.println("Enter YouTube VideoID");
+					String videoID = s.nextLine();
+					System.out.println("Enter video title");
+					String videoTitle = s.nextLine();
+					System.out.println("Enter duration time (hh:mm:ss)");
+					String durationTime = s.nextLine();
+					System.out.println("Enter contentTypeID");
+					int videoContentID = Integer.valueOf(s.nextLine());
+					System.out.println("Enter Upload date (yyyy-MM-dd)");
+					String uploadDate = s.nextLine();
+//					System.out.println("Enter Upload month");
+//					int uploadMonth = Integer.valueOf(s.nextLine());
+//					System.out.println("Enter Upload day");
+//					int uploadDay = Integer.valueOf(s.nextLine());
+					videoService.addVideo(videoID, videoTitle, uploadDate, durationTime, videoContentID);
+					break;
+				case "h":
                 case "help":
                     System.out.println("\n\nDisplaying help commands:");
                     File helpFile = new File("help.txt");

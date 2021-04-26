@@ -12,20 +12,23 @@ public class DatabaseConnectionHandler {
 
 	private final String databaseName;
 	private final String serverName;
-
+	private boolean connected=false;
+	private static final String username ="burnhar1";
+	private static final String password= "Redthorn50!";
 	public DatabaseConnectionHandler(String serverName, String databaseName) {
 		this.serverName = serverName;
 		this.databaseName = databaseName;
 	}
 
-	public boolean connect(String user, String pass) {
+	public boolean connect() {
 		String fullUrl = SampleURL
 				.replace("${dbServer}", serverName)
 				.replace("${dbName}", databaseName)
-				.replace("${user}", user)
-				.replace("${pass}", pass);
+				.replace("${user}", username)
+				.replace("${pass}", password);
 		try {
 			this.connection = DriverManager.getConnection(fullUrl);
+			System.out.println("Connected");
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();

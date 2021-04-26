@@ -30,15 +30,13 @@ public class AuthHandler {
 	
 	public AuthHandler(DatabaseConnectionHandler dbHandler) {
 		this.dbHandler = dbHandler;
-		if (!connectionStatus) {
-			connectionStatus =this.dbHandler.connect("burnhar1", "Redthorn50!");
+		if (!this.connectionStatus) {
+			this.connectionStatus=this.dbHandler.connect();
 		}
-		System.out.println("Connection Status: "+connectionStatus);
-		
 	}
 	
 	public boolean login(String username, String password) {
-		//TODO: Complete this method.
+		//DONE: Complete this method.
 		Connection con=this.dbHandler.getConnection();
 		String query ="SELECT PasswordSalt, PasswordHash from \"Users\" WHERE Username=?";
 		try {
@@ -57,59 +55,11 @@ public class AuthHandler {
 			e.printStackTrace();
 		}
 		System.out.println("Login Failed");
-//		PreparedStatement pstmt = null;
-//		String paramString = "SELECT PasswordSalt, PasswordHash From [User] Where Username = ?;";
-//		
-//		try {
-//			pstmt = this.dbService.getConnection().prepareStatement(paramString);
-//			
-//			if(username == null || username.isEmpty()) {
-//				JOptionPane.showMessageDialog(null, "Login Failed");
-//				return false;
-//			} else {
-//				pstmt.setString(1, username);
-//			}
-//			
-//			ResultSet rs = pstmt.executeQuery();
-//			
-//			int saltIndex = rs.findColumn("PasswordSalt");
-//			int hashIndex = rs.findColumn("PasswordHash");
-//			
-//			if(rs.next()) {
-//				//continue normally
-//			} else {
-//				//fails because no user exists with that username
-//				JOptionPane.showMessageDialog(null, "Login Failed");
-//				return false;
-//			}
-//			
-//			byte[] salt = rs.getBytes(saltIndex);
-//			String hashedPassword = rs.getString(hashIndex);
-//			
-//			
-//			
-//			String enteredHashedPassword = hashPassword(salt, password);
-//			
-//			//System.out.println("current hash: " + hashedPassword);
-//			//System.out.println("entered hash: " + enteredHashedPassword);
-//			
-//			if(hashedPassword.equals(enteredHashedPassword)) {
-//				return true;
-//			} else {
-//				JOptionPane.showMessageDialog(null, "Login Failed");
-//				return false;
-//			}
-//			
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
 		return false;
 	}
 
 	public boolean register(String username, String password) {
-//		//TODO: Task 6 WORKS!!!!
+//		//DONE: Task 6 WORKS!!!!
 		Connection con = this.dbHandler.getConnection();
 		byte[] rand =this.getNewSalt();
 		String hash =this.hashPassword(rand,password);
@@ -124,6 +74,7 @@ public class AuthHandler {
 		proc.registerOutParameter(1, Types.INTEGER);
 		proc.execute();
 		int returnValue = proc.getInt(1);
+		System.out.println(proc.getString(1));
 		proc.close();
 		
 		if (returnValue==2) {
