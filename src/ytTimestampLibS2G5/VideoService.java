@@ -56,6 +56,23 @@ public class VideoService {
 			int returnValue = proc.getInt(1);
 			System.out.println(proc.getString(1));
 			proc.close();
+			if (returnValue==1) {
+				throw new Error("ERROR: VideoID cannot be null");
+			}
+			if (returnValue==2) {
+				throw new Error("ERROR: Video Title cannot be null");
+			}
+			if (returnValue==3) {
+				throw new Error("ERROR: Duration time cannot be null");
+			}if (returnValue==4) {
+				throw new Error("ERROR: Upload Date cannot be null");
+			}
+			if (returnValue==5) {
+				throw new Error("ERROR: Invalid Upload Date");
+			}
+			if (returnValue==6) {
+				throw new Error("ERROR: Video already added");
+			}
 		}catch(Exception e) {
 			e.printStackTrace();
 			return false;
@@ -86,8 +103,19 @@ public class VideoService {
 			proc.setInt(3, ContentType);
 			proc.registerOutParameter(1,Types.INTEGER);
 			proc.execute();
+			int returnValue = proc.getInt(1);
 			System.out.println(proc.getString(1));
 			proc.close();
+			if (returnValue==1) {
+				throw new Error("ERROR: Content ID cannot be null");
+			}
+			if (returnValue==2) {
+				throw new Error("ERROR: ContentType value does not exist");
+			}
+			if (returnValue==3) {
+				throw new Error("ERROR: VideoID cannot be null");
+			}
+			
 		}catch(Exception e) {
 			e.printStackTrace();
 			return false;
@@ -106,8 +134,16 @@ public class VideoService {
 			proc.setString(4,null);
 			proc.registerOutParameter(1,Types.INTEGER);
 			proc.execute();
+			int returnValue = proc.getInt(1);
 			System.out.println(proc.getString(1));
 			proc.close();
+			
+			if (returnValue==1) {
+				throw new Error("ERROR: ContentTypeID cannot be null");
+			}
+			if (returnValue==2) {
+				throw new Error("ERROR: ContentTypeTitle cannot be null");
+			}
 		}catch(Exception e) {
 			e.printStackTrace();
 			return false;
