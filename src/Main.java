@@ -4,16 +4,34 @@ import ytTimestampLibS2G5.VideoService;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Scanner;
+
+import YouTubeAPI.DBConnect;
 
 public class Main {
 
     public static void main(String[] args) {
         // initialize new class instances here:
         // such that we can call AuthHandler.login(username, password)
-
+    	
+    	//testing something
+    	DBConnect youtube_binfo = new DBConnect();
+    	try {
+			youtube_binfo.getYouTubeVideoDetails("sv3TXMSv6Lw");
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+    	
+    	
+    	
 		DatabaseConnectionHandler dbHandler = new DatabaseConnectionHandler(
 				"titan.csse.rose-hulman.edu", "ytTimestampLib_S2G5");
 		AuthHandler authHandler = new AuthHandler(dbHandler);

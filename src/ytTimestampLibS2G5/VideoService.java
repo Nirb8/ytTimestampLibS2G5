@@ -1,5 +1,6 @@
 package ytTimestampLibS2G5;
 
+import java.io.InputStreamReader;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
@@ -18,6 +19,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.UUID;
@@ -25,6 +27,13 @@ import java.util.UUID;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.swing.JOptionPane;
+
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.extensions.appengine.http.UrlFetchTransport;
+import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
+import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+import com.google.api.client.googleapis.extensions.appengine.auth.oauth2.AppIdentityCredential;
 
 public class VideoService {
 	
@@ -151,7 +160,5 @@ public class VideoService {
 		System.out.println(title+" content type created");
 		return true;
 	}
-	
-	
 	
 }
