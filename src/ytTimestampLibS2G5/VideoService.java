@@ -54,7 +54,7 @@ public class VideoService {
     		VideoDetails vd=youtube_binfo.getYouTubeVideoDetails(videoID);
     		String durationTime=vd.getDuration();
     		String videoTitle = vd.getTitle();
-    		Date uploadDate = new Date(vd.getpublishedDate().getValue());
+    		Date uploadDate = new Date(vd.getPublishedDate().getValue());
     		int videoContentID = Integer.valueOf(vd.getContentType());
     		String contentName =vd.getContentName();
 			

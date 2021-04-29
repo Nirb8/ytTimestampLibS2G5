@@ -68,27 +68,8 @@ public class Main {
 				case "add video":
 					System.out.println("Enter YouTube VideoID");
 					String videoID = s.nextLine();
-<<<<<<< HEAD
 					videoService.addVideo(videoID);
 			    	break;
-=======
-					DBConnect youtube_binfo = new DBConnect();
-			    	try {
-						VideoDetails vd=youtube_binfo.getYouTubeVideoDetails(videoID);
-						String durationTime=vd.getDuration();
-						String videoTitle = vd.getTitle();
-						Date uploadDate = new Date(vd.getPublishedDate().getValue());
-						int videoContentID = Integer.parseInt(vd.getContentType());
-						String contentName =vd.getContentName();
-						videoService.addVideo(videoID, videoTitle, uploadDate, durationTime, videoContentID,contentName);
-						break;
-						
-						
-					} catch (SQLException | IOException e1) {
-						e1.printStackTrace();
-					}
-					break;
->>>>>>> branch 'main' of https://github.com/Nirb8/ytTimestampLibS2G5.git
 				case "ct":
 				case "create Timestamp":
 					System.out.println("Enter YouTube VideoID");
@@ -98,14 +79,7 @@ public class Main {
 					System.out.println("Enter caption");
 					String caption =s.nextLine();
 					String id =authHandler.getCurrentUser();
-<<<<<<< HEAD
 					timestampService.addTimeStamp(id,caption, timestampTime, timestampVideoID);
-					
-					
-					
-=======
-					timestampService.addTimeStamp(id, caption, timestampTime, timestampVideoID);
->>>>>>> branch 'main' of https://github.com/Nirb8/ytTimestampLibS2G5.git
 				case "h":
                 case "help":
                     System.out.println("\nDisplaying help commands:");
