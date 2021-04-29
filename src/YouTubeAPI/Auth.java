@@ -20,6 +20,7 @@ import java.util.List;
 
 /**
  * Shared class used by every sample. Contains methods for authorizing a user and caching credentials.
+ * //Referenced stack overflow question and modified it 
  */
 public class Auth {
 

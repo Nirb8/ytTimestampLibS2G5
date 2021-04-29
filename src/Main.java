@@ -1,5 +1,6 @@
 import ytTimestampLibS2G5.AuthHandler;
 import ytTimestampLibS2G5.DatabaseConnectionHandler;
+import ytTimestampLibS2G5.TimestampService;
 import ytTimestampLibS2G5.VideoService;
 
 import java.io.File;
@@ -17,32 +18,14 @@ import YouTubeAPI.DBConnect.VideoDetails;
 public class Main {
 
     public static void main(String[] args) {
-        // initialize new class instances here:
-        // such that we can call AuthHandler.login(username, password)
-    	
-    	//testing something
-//    	DBConnect youtube_binfo = new DBConnect();
-//    	try {
-//			youtube_binfo.getYouTubeVideoDetails("sv3TXMSv6Lw");
-//		} catch (SQLException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		} catch (IOException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
-    	
-    	
-    	
 		DatabaseConnectionHandler dbHandler = new DatabaseConnectionHandler(
 				"titan.csse.rose-hulman.edu", "ytTimestampLib_S2G5");
 		AuthHandler authHandler = new AuthHandler(dbHandler);
 		VideoService videoService = new VideoService(dbHandler);
-
+		TimestampService timestampService = new TimestampService(dbHandler);
         // "simple" loop to continually read from console and call a switch statement
 
         Scanner s = new Scanner(System.in);
-
         boolean runStatus = true;
         while (runStatus) {
 
@@ -62,7 +45,7 @@ public class Main {
             		System.out.println("ENTER Password");
             		String password = s.nextLine();
             		authHandler.register(username,password);
-            		
+            		break;
 				case "l":
 				case "login":
 					// prompt for username and password
@@ -72,15 +55,15 @@ public class Main {
             		String loginpassword = s.nextLine();
 					authHandler.login(loginusername, loginpassword);
 					break;		
-					
-				case "ct":
-				case "new content":
-					System.out.println("Enter ContentID (number)");
-					int contentID = Integer.valueOf(s.nextLine());
-					System.out.println("Enter name of content type");
-					String contentTitle = s.nextLine();
-					videoService.createContentType(contentID, contentTitle);
-					break;
+//					
+//				case "ct":
+//				case "new content":
+//					System.out.println("Enter ContentID (number)");
+//					int contentID = Integer.valueOf(s.nextLine());
+//					System.out.println("Enter name of content type");
+//					String contentTitle = s.nextLine();
+//					videoService.createContentType(contentID, contentTitle);
+//					break;
 					
 				case "cv":
 				case "add video":
@@ -94,7 +77,6 @@ public class Main {
 						Date uploadDate = new Date(vd.getpublishedDate().getValue());
 						int videoContentID = Integer.valueOf(vd.getContentType());
 						String contentName =vd.getContentName();
-						//int videoContentID =1;
 						videoService.addVideo(videoID, videoTitle, uploadDate, durationTime, videoContentID,contentName);
 						break;
 						
@@ -104,6 +86,19 @@ public class Main {
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
+			    	break;
+				case "ct":
+				case "create Timestamp":
+					System.out.println("Enter YouTube VideoID");
+					String timestampVideoID = s.nextLine();
+					System.out.println("Enter Time (hh:mm:ss)");
+					String timestampTime = s.nextLine();
+					System.out.println("Enter caption");
+					String caption =s.nextLine();
+					String id =authHandler.getCurrentUser();
+					timestampService.addTimeStamp(id, caption, timestampTime, timestampVideoID);
+					
+					
 					
 				case "h":
                 case "help":

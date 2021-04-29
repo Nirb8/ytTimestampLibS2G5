@@ -38,7 +38,6 @@ import com.google.api.client.googleapis.extensions.appengine.auth.oauth2.AppIden
 public class VideoService {
 	
 	private static final Random RANDOM = new SecureRandom();
-	//private boolean connectionStatus=false;
 	private DatabaseConnectionHandler dbHandler=null;
 	
 	public VideoService(DatabaseConnectionHandler dbHandler) {
@@ -46,14 +45,10 @@ public class VideoService {
 	}
 	
 	public boolean addVideo(String YouTubeID,String title,Date uploadDate, String time, int contentType, String contentName ) {
-		//TODO: Complete this method.
-		//for some reason the time.value of gives out invalid parameter if I try to take it from the console
-		//DateTimeFormatter df = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-		//LocalDate  d1 = LocalDate.parse(uploadDate, df);
+		//DONE: Complete this method.
 		Date date = uploadDate;
 		System.out.println(time);
 		Time duration = Time.valueOf(time);
-		//String videoID = UUID.randomUUID().toString();
 		Connection con=this.dbHandler.getConnection();
 		try {
 			CallableStatement proc =con.prepareCall("{?=call dbo.AddVideo(?,?,?,?)}");
@@ -98,14 +93,14 @@ public class VideoService {
 	}
 
 	public ArrayList<String> getVideos() {
-//		//TODO:
+//		//TODO: Shows a table of videos already added
 		ArrayList<String> timestamps = new ArrayList<String>();
 		
 		return timestamps;
 	}
 	
 	public boolean addVideoGenres(String YouTubeID, int ContentType, String ContentName) {
-		//TODO:
+		//DONE
 		Connection con=this.dbHandler.getConnection();
 		try {
 			CallableStatement proc =con.prepareCall("{?=call dbo.InsertIntoVideoGenres(?,?,?)}");

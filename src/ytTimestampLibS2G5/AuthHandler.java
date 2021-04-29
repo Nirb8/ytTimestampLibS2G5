@@ -27,6 +27,7 @@ public class AuthHandler {
 	
 	private DatabaseConnectionHandler dbHandler=null;
 	private boolean connectionStatus=false;
+	private String currentUserId;
 	
 	public AuthHandler(DatabaseConnectionHandler dbHandler) {
 		this.dbHandler = dbHandler;
@@ -38,12 +39,13 @@ public class AuthHandler {
 	public boolean login(String username, String password) {
 		//DONE: Complete this method.
 		Connection con=this.dbHandler.getConnection();
-		String query ="SELECT PasswordSalt, PasswordHash from \"Users\" WHERE Username=?";
+		String query ="SELECT PasswordSalt, PasswordHash, UserID  from \"Users\" WHERE Username=?";
 		try {
 			PreparedStatement prpstmt = con.prepareStatement(query);
 			prpstmt.setString(1, username);
 			ResultSet rs = prpstmt.executeQuery();
 			rs.next();
+			this.currentUserId=rs.getString("UserID");
 			byte[] salt =rs.getBytes("PasswordSalt");
 			String checkHash = rs.getString("PasswordHash");
 			String hashInput = this.hashPassword(salt, password);
@@ -64,7 +66,6 @@ public class AuthHandler {
 		byte[] rand =this.getNewSalt();
 		String hash =this.hashPassword(rand,password);
 		String uniqueID = UUID.randomUUID().toString();
-		
 		try {
 		CallableStatement proc =con.prepareCall("{?=call dbo.RegisterUser(?,?,?,?)}");
 		proc.setString(2,uniqueID);
@@ -75,6 +76,7 @@ public class AuthHandler {
 		proc.execute();
 		int returnValue = proc.getInt(1);
 		System.out.println(proc.getString(1));
+		this.currentUserId=uniqueID;
 		proc.close();
 		
 		if (returnValue==2) {
@@ -121,5 +123,8 @@ public class AuthHandler {
 		}
 		return getStringFromBytes(hash);
 	}
-
+	
+	public String getCurrentUser() {
+		return this.currentUserId;
+	}
 }

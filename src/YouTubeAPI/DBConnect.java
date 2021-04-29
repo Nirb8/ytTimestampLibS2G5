@@ -8,12 +8,11 @@ import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoCategory;
 import com.google.api.services.youtube.model.VideoCategoryListResponse;
 import com.google.api.services.youtube.model.VideoListResponse;
-
-//import duck.reg.pack.Auth;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.SQLException;
-
+//Referenced https://developers.google.com/youtube/v3/docs
+//Referenced stack overflow question and modified it
 public class DBConnect {
 	private static String apiKey= "AIzaSyAjylRAyzAmIm75bqwGxMe5Nj32CoyNny0"; // you can get it from https://console.cloud.google.com/apis/credentials
 	private YouTube youtube;
@@ -167,7 +166,6 @@ public class DBConnect {
     		return this.contentName;
     	}
     	public String getDuration() {
-    		//System.out.println(this.convertedDuration);
     		return this.convertedDuration;
     	}
     }
