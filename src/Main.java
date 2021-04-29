@@ -6,8 +6,6 @@ import ytTimestampLibS2G5.VideoService;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Scanner;
@@ -23,8 +21,8 @@ public class Main {
 		AuthHandler authHandler = new AuthHandler(dbHandler);
 		VideoService videoService = new VideoService(dbHandler);
 		TimestampService timestampService = new TimestampService(dbHandler);
-        // "simple" loop to continually read from console and call a switch statement
 
+        // "simple" loop to continually read from console and call a switch statement
         Scanner s = new Scanner(System.in);
         boolean runStatus = true;
         while (runStatus) {
@@ -74,19 +72,17 @@ public class Main {
 						VideoDetails vd=youtube_binfo.getYouTubeVideoDetails(videoID);
 						String durationTime=vd.getDuration();
 						String videoTitle = vd.getTitle();
-						Date uploadDate = new Date(vd.getpublishedDate().getValue());
-						int videoContentID = Integer.valueOf(vd.getContentType());
+						Date uploadDate = new Date(vd.getPublishedDate().getValue());
+						int videoContentID = Integer.parseInt(vd.getContentType());
 						String contentName =vd.getContentName();
 						videoService.addVideo(videoID, videoTitle, uploadDate, durationTime, videoContentID,contentName);
 						break;
 						
 						
-					} catch (SQLException e1) {
-						e1.printStackTrace();
-					} catch (IOException e1) {
+					} catch (SQLException | IOException e1) {
 						e1.printStackTrace();
 					}
-			    	break;
+					break;
 				case "ct":
 				case "create Timestamp":
 					System.out.println("Enter YouTube VideoID");
@@ -97,40 +93,39 @@ public class Main {
 					String caption =s.nextLine();
 					String id =authHandler.getCurrentUser();
 					timestampService.addTimeStamp(id, caption, timestampTime, timestampVideoID);
-					
-					
-					
 				case "h":
                 case "help":
-                    System.out.println("\n\nDisplaying help commands:");
+                    System.out.println("\nDisplaying help commands:");
                     File helpFile = new File("help.txt");
-				try {
-					Scanner helpReader = new Scanner(helpFile);
-					while(helpReader.hasNextLine()) {
-						System.out.println(helpReader.nextLine());
+					try {
+						Scanner helpReader = new Scanner(helpFile);
+						while(helpReader.hasNextLine()) {
+							System.out.println(helpReader.nextLine());
+						}
+						helpReader.close();
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
 					}
-					helpReader.close();
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				}
                     break;
-//                case "v":
+//              case "v":
 //                	//temporary demo command
-//				URL test;
-//				try {
-//					test = new URL("https://www.youtube.com/watch?v=MvaMY_92T-c");
-//					System.out.println(test);
-//				} catch (MalformedURLException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//					
+//					URL test;
+//					try {
+//						test = new URL("https://www.youtube.com/watch?v=MvaMY_92T-c");
+//						System.out.println(test);
+//					} catch (MalformedURLException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
 //                	break;
                 case "e":
                 case "x":
+				case "q":
+				case "quit":
                 case "exit":
                     System.out.println("Exiting...");
                     //probably want to close out connection to database and other stuff to end gracefully
+					dbHandler.closeConnection();
                     runStatus = false; // break out of the while loop
                     break;
                 default:
@@ -139,6 +134,5 @@ public class Main {
         }
         
         s.close();
-
     }
 }

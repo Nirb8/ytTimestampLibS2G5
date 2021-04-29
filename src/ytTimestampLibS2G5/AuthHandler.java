@@ -25,15 +25,12 @@ public class AuthHandler {
 	private static final Base64.Encoder enc = Base64.getEncoder();
 	private static final Base64.Decoder dec = Base64.getDecoder();
 	
-	private DatabaseConnectionHandler dbHandler=null;
-	private boolean connectionStatus=false;
+	private final DatabaseConnectionHandler dbHandler;
 	private String currentUserId;
 	
 	public AuthHandler(DatabaseConnectionHandler dbHandler) {
 		this.dbHandler = dbHandler;
-		if (!this.connectionStatus) {
-			this.connectionStatus=this.dbHandler.connect();
-		}
+		this.dbHandler.connect();
 	}
 	
 	public boolean login(String username, String password) {
@@ -53,10 +50,14 @@ public class AuthHandler {
 				System.out.println("Login Successful. Welcome back, " + username + "!");
 				return true;
 			}
-		}catch(Exception e) {
-			e.printStackTrace();
+			else {
+				System.out.println("Login Failed: Incorrect username or password");
+			}
 		}
-		System.out.println("Login Failed");
+		catch(SQLException e) {
+//			e.printStackTrace();
+			System.out.println("Login Failed: User does not exist");
+		}
 		return false;
 	}
 
@@ -114,10 +115,7 @@ public class AuthHandler {
 		try {
 			f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
 			hash = f.generateSecret(spec).getEncoded();
-		} catch (NoSuchAlgorithmException e) {
-			JOptionPane.showMessageDialog(null, "An error occurred during password hashing. See stack trace.");
-			e.printStackTrace();
-		} catch (InvalidKeySpecException e) {
+		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
 			JOptionPane.showMessageDialog(null, "An error occurred during password hashing. See stack trace.");
 			e.printStackTrace();
 		}
