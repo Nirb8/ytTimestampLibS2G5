@@ -14,8 +14,8 @@ import java.sql.SQLException;
 //Referenced https://developers.google.com/youtube/v3/docs
 //Referenced stack overflow question and modified it
 public class DBConnect {
-	private static String apiKey= "AIzaSyAjylRAyzAmIm75bqwGxMe5Nj32CoyNny0"; // you can get it from https://console.cloud.google.com/apis/credentials
-	private YouTube youtube;
+	private static final String apiKey= "AIzaSyAjylRAyzAmIm75bqwGxMe5Nj32CoyNny0"; // you can get it from https://console.cloud.google.com/apis/credentials
+	private final YouTube youtube;
 	public DBConnect() {
 		youtube = new YouTube.Builder(Auth.HTTP_TRANSPORT, Auth.JSON_FACTORY, new HttpRequestInitializer() {
             @Override
@@ -23,6 +23,7 @@ public class DBConnect {
             }
         }).setApplicationName("APP_ID").build();
 	}
+
 	//grabs statistics on video
     public String getyoutubeitemfull_details(String videoID) throws SQLException, IOException{
         try { 
