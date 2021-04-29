@@ -26,6 +26,7 @@ public class TimeConverter {
         Matcher m3 = r3.matcher(youtubetime);
         Matcher m4=r4.matcher(youtubetime);
         if (m.find()) {
+        	System.out.println("pattern1");
             String hh = m.group(1);
             String mm = m.group(2);
             String ss = m.group(3);
@@ -36,6 +37,9 @@ public class TimeConverter {
             if (hh != null) {
                 result = hh + ":" + result;
             }
+            else {
+            	result="00:"+result;
+            }
         }
         else if (m2.find()) {
         	String mm = m2.group(1);
@@ -45,7 +49,7 @@ public class TimeConverter {
             result = String.format("%02d",Integer.parseInt(ss));
 
             if (mm != null) {
-                result = "00:"+mm + ":" + result;
+                result = "00:"+mm + ":" + ss;
             }
         }
         else if (m3.find()) {
