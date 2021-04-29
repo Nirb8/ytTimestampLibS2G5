@@ -12,7 +12,6 @@ public class DatabaseConnectionHandler {
 
 	private final String databaseName;
 	private final String serverName;
-	private boolean connected=false;
 	private static final String username ="burnhar1";
 	private static final String password= "Redthorn50!";
 	public DatabaseConnectionHandler(String serverName, String databaseName) {

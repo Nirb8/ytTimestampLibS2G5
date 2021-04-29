@@ -19,13 +19,12 @@ public class DBConnect {
 	public DBConnect() {
 		youtube = new YouTube.Builder(Auth.HTTP_TRANSPORT, Auth.JSON_FACTORY, new HttpRequestInitializer() {
             @Override
-            public void initialize(HttpRequest request) throws IOException {
-            }
+            public void initialize(HttpRequest request) {}
         }).setApplicationName("APP_ID").build();
 	}
 
 	//grabs statistics on video
-    public String getyoutubeitemfull_details(String videoID) throws SQLException, IOException{
+    public String getyoutubeitemfull_details(String videoID) {
         try { 
             YouTube.Videos.List listVideosRequest = youtube.videos().list("statistics");
             listVideosRequest.setId(videoID); // add list of video IDs here
@@ -85,14 +84,13 @@ public class DBConnect {
         }
         return null;
     }
-    public String getYouTubeVideoDuration(String videoID) throws SQLException, IOException{
+    public String getYouTubeVideoDuration(String videoID) throws IOException{
     	 try{YouTube.Videos.List listVideosRequest = youtube.videos().list("contentDetails");
-    	 listVideosRequest.setId(videoID); // add list of video IDs here
-         listVideosRequest.setKey(apiKey);
-         VideoListResponse listResponse = listVideosRequest.execute();
-         Video video2 = listResponse.getItems().get(0);
-         String videoDuration = video2.getContentDetails().getDuration();//ISO 8601
-         return videoDuration;
+             listVideosRequest.setId(videoID); // add list of video IDs here
+             listVideosRequest.setKey(apiKey);
+             VideoListResponse listResponse = listVideosRequest.execute();
+             Video video2 = listResponse.getItems().get(0);
+             return video2.getContentDetails().getDuration();
     	 }catch (GoogleJsonResponseException e) {
              System.err.println("There was a service error: " + e.getDetails().getCode() + " : "
                  + e.getDetails().getMessage());
@@ -111,8 +109,7 @@ public class DBConnect {
     		listCategoriesRequest.setKey(apiKey);
     		VideoCategoryListResponse listResponse = listCategoriesRequest.execute();
     		VideoCategory category = listResponse.getItems().get(0);
-    		String categoryName = category.getSnippet().getTitle();
-    		return categoryName;
+            return category.getSnippet().getTitle();
     	}
     	catch (GoogleJsonResponseException e) {
             System.err.println("There was a service error: " + e.getDetails().getCode() + " : "
@@ -128,14 +125,14 @@ public class DBConnect {
     
     //return helper class
     public class VideoDetails{
-    	private String id;
-    	private String title;
-    	private DateTime publishedDate;
-    	private String author;
-    	private String contentType;
-    	private String duration;
-    	private String convertedDuration;
-    	private String contentName;
+    	private final String id;
+    	private final String title;
+    	private final DateTime publishedDate;
+    	private final String author;
+    	private final String contentType;
+    	private final String duration;
+    	private final String convertedDuration;
+    	private final String contentName;
     	
     	public VideoDetails(String id, String title, DateTime publishedDate, String author, String contentType, String duration, String contentName ) {
     		this.id=id;
@@ -154,7 +151,7 @@ public class DBConnect {
     	public String getTitle() {
     		return this.title;
     	}
-    	public DateTime getpublishedDate() {
+    	public DateTime getPublishedDate() {
     		return this.publishedDate;
     	}
     	public String getAuthor() {

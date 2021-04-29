@@ -1,4 +1,4 @@
 help (short: h) - Displays this help message.
-exit (short: x,e) - Exits the program.
+exit (short: x, e, q, quit) - Exits the program.
 login (short: l) - Prompts user for username and password, attempts to log into database.
 register (short: r) - Prompts user for username and password, attempts to create a new account with those values.
