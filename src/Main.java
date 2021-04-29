@@ -69,23 +69,7 @@ public class Main {
 				case "add video":
 					System.out.println("Enter YouTube VideoID");
 					String videoID = s.nextLine();
-					DBConnect youtube_binfo = new DBConnect();
-			    	try {
-						VideoDetails vd=youtube_binfo.getYouTubeVideoDetails(videoID);
-						String durationTime=vd.getDuration();
-						String videoTitle = vd.getTitle();
-						Date uploadDate = new Date(vd.getpublishedDate().getValue());
-						int videoContentID = Integer.valueOf(vd.getContentType());
-						String contentName =vd.getContentName();
-						videoService.addVideo(videoID, videoTitle, uploadDate, durationTime, videoContentID,contentName);
-						break;
-						
-						
-					} catch (SQLException e1) {
-						e1.printStackTrace();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
+					videoService.addVideo(videoID);
 			    	break;
 				case "ct":
 				case "create Timestamp":
@@ -96,7 +80,7 @@ public class Main {
 					System.out.println("Enter caption");
 					String caption =s.nextLine();
 					String id =authHandler.getCurrentUser();
-					timestampService.addTimeStamp(id, caption, timestampTime, timestampVideoID);
+					timestampService.addTimeStamp(id,caption, timestampTime, timestampVideoID);
 					
 					
 					

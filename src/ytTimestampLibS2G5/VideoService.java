@@ -1,5 +1,6 @@
 package ytTimestampLibS2G5;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -35,6 +36,9 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.extensions.appengine.auth.oauth2.AppIdentityCredential;
 
+import YouTubeAPI.DBConnect;
+import YouTubeAPI.DBConnect.VideoDetails;
+
 public class VideoService {
 	
 	private static final Random RANDOM = new SecureRandom();
@@ -44,52 +48,66 @@ public class VideoService {
 		this.dbHandler = dbHandler;
 	}
 	
-	public boolean addVideo(String YouTubeID,String title,Date uploadDate, String time, int contentType, String contentName ) {
-		//DONE: Complete this method.
-		Date date = uploadDate;
-		System.out.println(time);
-		Time duration = Time.valueOf(time);
-		Connection con=this.dbHandler.getConnection();
-		try {
-			CallableStatement proc =con.prepareCall("{?=call dbo.AddVideo(?,?,?,?)}");
-			proc.setString(2,YouTubeID);
-			proc.setString(3, title);
-			proc.setTime(4, duration);
-			proc.setDate(5, date);
-			proc.registerOutParameter(1, Types.INTEGER);
-			proc.execute();
-			int returnValue = proc.getInt(1);
-			System.out.println(proc.getString(1));
-			proc.close();
-			if (returnValue==1) {
-				throw new Error("ERROR: VideoID cannot be null");
-			}
-			if (returnValue==2) {
-				throw new Error("ERROR: Video Title cannot be null");
-			}
-			if (returnValue==3) {
-				throw new Error("ERROR: Duration time cannot be null");
-			}if (returnValue==4) {
-				throw new Error("ERROR: Upload Date cannot be null");
-			}
-			if (returnValue==5) {
-				throw new Error("ERROR: Invalid Upload Date");
-			}
-			if (returnValue==6) {
-				throw new Error("ERROR: Video already added");
-			}
-		}catch(Exception e) {
-			e.printStackTrace();
-			return false;
+	public boolean addVideo(String videoID) {
+		DBConnect youtube_binfo = new DBConnect();
+    	try {
+    		VideoDetails vd=youtube_binfo.getYouTubeVideoDetails(videoID);
+    		String durationTime=vd.getDuration();
+    		String videoTitle = vd.getTitle();
+    		Date uploadDate = new Date(vd.getpublishedDate().getValue());
+    		int videoContentID = Integer.valueOf(vd.getContentType());
+    		String contentName =vd.getContentName();
+			
+    		Date date = uploadDate;
+    		System.out.println(durationTime);
+    		Time duration = Time.valueOf(durationTime);
+    		Connection con=this.dbHandler.getConnection();
+    		try {
+    			CallableStatement proc =con.prepareCall("{?=call dbo.AddVideo(?,?,?,?)}");
+    			proc.setString(2,videoID);
+    			proc.setString(3, videoTitle);
+    			proc.setTime(4, duration);
+    			proc.setDate(5, date);
+    			proc.registerOutParameter(1, Types.INTEGER);
+    			proc.execute();
+    			int returnValue = proc.getInt(1);
+    			System.out.println(proc.getString(1));
+    			proc.close();
+    			if (returnValue==1) {
+    				throw new Error("ERROR: VideoID cannot be null");
+    			}
+    			if (returnValue==2) {
+    				throw new Error("ERROR: Video Title cannot be null");
+    			}
+    			if (returnValue==3) {
+    				throw new Error("ERROR: Duration time cannot be null");
+    			}if (returnValue==4) {
+    				throw new Error("ERROR: Upload Date cannot be null");
+    			}
+    			if (returnValue==5) {
+    				throw new Error("ERROR: Invalid Upload Date");
+    			}
+    			if (returnValue==6) {
+    				throw new Error("ERROR: Video already added");
+    			}
+    			//add entry to videoGenres
+    			Boolean result=this.addVideoGenres(videoID, videoContentID, contentName);
+    			if (result) {
+    				System.out.println("Video Added");
+    				
+    			}
+    		}catch(Exception e) {
+    			e.printStackTrace();
+    			return false;
+    		}
+			
+			
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
-		
-		//add entry to videoGenres
-		Boolean result=this.addVideoGenres(YouTubeID, contentType, contentName);
-		if (result) {
-			System.out.println("Video Added");
-			return true;
-		}
-		return false;
+		return true;
 	}
 
 	public ArrayList<String> getVideos() {
