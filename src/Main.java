@@ -7,10 +7,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Scanner;
 
 import YouTubeAPI.DBConnect;
+import YouTubeAPI.DBConnect.VideoDetails;
 
 public class Main {
 
@@ -19,16 +21,16 @@ public class Main {
         // such that we can call AuthHandler.login(username, password)
     	
     	//testing something
-    	DBConnect youtube_binfo = new DBConnect();
-    	try {
-			youtube_binfo.getYouTubeVideoDetails("sv3TXMSv6Lw");
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+//    	DBConnect youtube_binfo = new DBConnect();
+//    	try {
+//			youtube_binfo.getYouTubeVideoDetails("sv3TXMSv6Lw");
+//		} catch (SQLException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		} catch (IOException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
     	
     	
     	
@@ -60,6 +62,7 @@ public class Main {
             		System.out.println("ENTER Password");
             		String password = s.nextLine();
             		authHandler.register(username,password);
+            		
 				case "l":
 				case "login":
 					// prompt for username and password
@@ -68,7 +71,8 @@ public class Main {
             		System.out.println("ENTER Password");
             		String loginpassword = s.nextLine();
 					authHandler.login(loginusername, loginpassword);
-					break;				
+					break;		
+					
 				case "ct":
 				case "new content":
 					System.out.println("Enter ContentID (number)");
@@ -77,24 +81,30 @@ public class Main {
 					String contentTitle = s.nextLine();
 					videoService.createContentType(contentID, contentTitle);
 					break;
+					
 				case "cv":
 				case "add video":
 					System.out.println("Enter YouTube VideoID");
 					String videoID = s.nextLine();
-					System.out.println("Enter video title");
-					String videoTitle = s.nextLine();
-					System.out.println("Enter duration time (hh:mm:ss)");
-					String durationTime = s.nextLine();
-					System.out.println("Enter contentTypeID");
-					int videoContentID = Integer.valueOf(s.nextLine());
-					System.out.println("Enter Upload date (yyyy-MM-dd)");
-					String uploadDate = s.nextLine();
-//					System.out.println("Enter Upload month");
-//					int uploadMonth = Integer.valueOf(s.nextLine());
-//					System.out.println("Enter Upload day");
-//					int uploadDay = Integer.valueOf(s.nextLine());
-					videoService.addVideo(videoID, videoTitle, uploadDate, durationTime, videoContentID);
-					break;
+					DBConnect youtube_binfo = new DBConnect();
+			    	try {
+						VideoDetails vd=youtube_binfo.getYouTubeVideoDetails(videoID);
+						String durationTime=vd.getDuration();
+						String videoTitle = vd.getTitle();
+						Date uploadDate = new Date(vd.getpublishedDate().getValue());
+						int videoContentID = Integer.valueOf(vd.getContentType());
+						String contentName =vd.getContentName();
+						//int videoContentID =1;
+						videoService.addVideo(videoID, videoTitle, uploadDate, durationTime, videoContentID,contentName);
+						break;
+						
+						
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					
 				case "h":
                 case "help":
                     System.out.println("\n\nDisplaying help commands:");

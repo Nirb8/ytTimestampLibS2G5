@@ -5,12 +5,16 @@ import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.Video;
+import com.google.api.services.youtube.model.VideoCategory;
+import com.google.api.services.youtube.model.VideoCategoryListResponse;
 import com.google.api.services.youtube.model.VideoListResponse;
 
 //import duck.reg.pack.Auth;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 public class DBConnect {
 	private static String apiKey= "AIzaSyAjylRAyzAmIm75bqwGxMe5Nj32CoyNny0"; // you can get it from https://console.cloud.google.com/apis/credentials
@@ -62,21 +66,17 @@ public class DBConnect {
             DateTime videoPublished =video.getSnippet().getPublishedAt();//ISL 8601
             String channelId = video.getSnippet().getChannelId();
             String categoryId = video.getSnippet().getCategoryId();
-            YouTube.Videos.List listVideosRequest2 = youtube.videos().list("contentDetails");
-            listVideosRequest2.setId(videoID); // add list of video IDs here
-            listVideosRequest2.setKey(apiKey);
-            VideoListResponse listResponse2 = listVideosRequest2.execute();
-            Video video2 = listResponse2.getItems().get(0);
-            String videoDuration = video2.getContentDetails().getDuration();//ISO 8601
-            
-            System.out.println("videoID: "+videoID);
-            System.out.println("Title: "+videoTitle);
-            System.out.println("Published Date: "+videoPublished);
-            System.out.println("Author ID: "+channelId);
+            String videoDuration =this.getYouTubeVideoDuration(videoID);
+           
+            String categoryName = this.getCategoryName(categoryId);
+            //System.out.println("videoID: "+videoID);
+            //System.out.println("Title: "+videoTitle);
+            //System.out.println("Published Date: "+videoPublished);
+            //System.out.println("Author ID: "+channelId);
             System.out.println("Duration: "+videoDuration);
             System.out.println("Category ID: "+categoryId);
-            
-            return new VideoDetails(videoID,videoTitle, videoPublished,channelId,categoryId,videoDuration);
+            System.out.println("Category Name: "+categoryName);
+            return new VideoDetails(videoID,videoTitle, videoPublished,channelId,categoryId,videoDuration,categoryName);
         } catch (GoogleJsonResponseException e) {
             System.err.println("There was a service error: " + e.getDetails().getCode() + " : "
                 + e.getDetails().getMessage());
@@ -87,6 +87,47 @@ public class DBConnect {
         }
         return null;
     }
+    public String getYouTubeVideoDuration(String videoID) throws SQLException, IOException{
+    	 try{YouTube.Videos.List listVideosRequest = youtube.videos().list("contentDetails");
+    	 listVideosRequest.setId(videoID); // add list of video IDs here
+         listVideosRequest.setKey(apiKey);
+         VideoListResponse listResponse = listVideosRequest.execute();
+         Video video2 = listResponse.getItems().get(0);
+         String videoDuration = video2.getContentDetails().getDuration();//ISO 8601
+         return videoDuration;
+    	 }catch (GoogleJsonResponseException e) {
+             System.err.println("There was a service error: " + e.getDetails().getCode() + " : "
+                 + e.getDetails().getMessage());
+         } catch (IOException e) {
+             System.err.println("There was an IO error: " + e.getCause() + " : " + e.getMessage());
+         } catch (Throwable t) {
+             t.printStackTrace();
+         }
+         return null;
+    }
+    
+    public String getCategoryName(String CategoryID) {
+    	try {
+    		YouTube.VideoCategories.List listCategoriesRequest=youtube.videoCategories().list(("snippet"));
+    		listCategoriesRequest.setId(CategoryID);
+    		listCategoriesRequest.setKey(apiKey);
+    		VideoCategoryListResponse listResponse = listCategoriesRequest.execute();
+    		VideoCategory category = listResponse.getItems().get(0);
+    		String categoryName = category.getSnippet().getTitle();
+    		return categoryName;
+    	}
+    	catch (GoogleJsonResponseException e) {
+            System.err.println("There was a service error: " + e.getDetails().getCode() + " : "
+                + e.getDetails().getMessage());
+        } catch (IOException e) {
+            System.err.println("There was an IO error: " + e.getCause() + " : " + e.getMessage());
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+        return null;
+    }
+    
+    
     //return helper class
     public class VideoDetails{
     	private String id;
@@ -95,14 +136,42 @@ public class DBConnect {
     	private String author;
     	private String contentType;
     	private String duration;
+    	private String convertedDuration;
+    	private String contentName;
     	
-    	public VideoDetails(String id, String title, DateTime publishedDate, String author, String contentType, String duration ) {
+    	public VideoDetails(String id, String title, DateTime publishedDate, String author, String contentType, String duration, String contentName ) {
     		this.id=id;
     		this.title=title;
     		this.duration=duration;
     		this.publishedDate=publishedDate;
     		this.author=author;
     		this.contentType=contentType;
+    		this.convertedDuration=TimeConverter.converttoHHMMSS(this.duration);
+    		this.contentName=contentName;
+    	}
+    	
+    	public String getId() {
+    		return this.id;
+    	}
+    	public String getTitle() {
+    		return this.title;
+    	}
+    	public DateTime getpublishedDate() {
+    		return this.publishedDate;
+    	}
+    	public String getAuthor() {
+    		return this.author;
+    	}
+    	public String getContentType() {
+    		return this.contentType;
+    	}
+    	public String getContentName() {
+    		return this.contentName;
+    	}
+    	public String getDuration() {
+    		//System.out.println(this.convertedDuration);
+    		return this.convertedDuration;
     	}
     }
+   
 }

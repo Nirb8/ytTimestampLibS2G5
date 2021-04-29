@@ -38,20 +38,21 @@ import com.google.api.client.googleapis.extensions.appengine.auth.oauth2.AppIden
 public class VideoService {
 	
 	private static final Random RANDOM = new SecureRandom();
-	private boolean connectionStatus=false;
+	//private boolean connectionStatus=false;
 	private DatabaseConnectionHandler dbHandler=null;
 	
 	public VideoService(DatabaseConnectionHandler dbHandler) {
 		this.dbHandler = dbHandler;
 	}
 	
-	public boolean addVideo(String YouTubeID,String title,String uploadDate, String time, int contentType ) {
+	public boolean addVideo(String YouTubeID,String title,Date uploadDate, String time, int contentType, String contentName ) {
 		//TODO: Complete this method.
 		//for some reason the time.value of gives out invalid parameter if I try to take it from the console
 		//DateTimeFormatter df = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 		//LocalDate  d1 = LocalDate.parse(uploadDate, df);
-		Date date = Date.valueOf(uploadDate);
-		Time duration = Time.valueOf("00:00:01");
+		Date date = uploadDate;
+		System.out.println(time);
+		Time duration = Time.valueOf(time);
 		//String videoID = UUID.randomUUID().toString();
 		Connection con=this.dbHandler.getConnection();
 		try {
@@ -88,7 +89,7 @@ public class VideoService {
 		}
 		
 		//add entry to videoGenres
-		Boolean result=this.addVideoGenres(YouTubeID, contentType);
+		Boolean result=this.addVideoGenres(YouTubeID, contentType, contentName);
 		if (result) {
 			System.out.println("Video Added");
 			return true;
@@ -103,13 +104,14 @@ public class VideoService {
 		return timestamps;
 	}
 	
-	public boolean addVideoGenres(String YouTubeID, int ContentType) {
+	public boolean addVideoGenres(String YouTubeID, int ContentType, String ContentName) {
 		//TODO:
 		Connection con=this.dbHandler.getConnection();
 		try {
-			CallableStatement proc =con.prepareCall("{?=call dbo.InsertIntoVideoGenres(?,?)}");
+			CallableStatement proc =con.prepareCall("{?=call dbo.InsertIntoVideoGenres(?,?,?)}");
 			proc.setString(2, YouTubeID);
 			proc.setInt(3, ContentType);
+			proc.setString(4, ContentName);
 			proc.registerOutParameter(1,Types.INTEGER);
 			proc.execute();
 			int returnValue = proc.getInt(1);
@@ -118,9 +120,9 @@ public class VideoService {
 			if (returnValue==1) {
 				throw new Error("ERROR: Content ID cannot be null");
 			}
-			if (returnValue==2) {
-				throw new Error("ERROR: ContentType value does not exist");
-			}
+//			if (returnValue==2) {
+//				throw new Error("ERROR: ContentType value does not exist");
+//			}
 			if (returnValue==3) {
 				throw new Error("ERROR: VideoID cannot be null");
 			}
