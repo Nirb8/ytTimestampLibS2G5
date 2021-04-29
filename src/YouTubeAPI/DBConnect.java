@@ -12,9 +12,7 @@ import com.google.api.services.youtube.model.VideoListResponse;
 //import duck.reg.pack.Auth;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.sql.Date;
 import java.sql.SQLException;
-import java.util.HashMap;
 
 public class DBConnect {
 	private static String apiKey= "AIzaSyAjylRAyzAmIm75bqwGxMe5Nj32CoyNny0"; // you can get it from https://console.cloud.google.com/apis/credentials
