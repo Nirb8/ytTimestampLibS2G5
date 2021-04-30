@@ -24,33 +24,33 @@ public class DBConnect {
 	}
 
 	//grabs statistics on video
-    public String getyoutubeitemfull_details(String videoID) {
-        try { 
-            YouTube.Videos.List listVideosRequest = youtube.videos().list("statistics");
-            listVideosRequest.setId(videoID); // add list of video IDs here
-            listVideosRequest.setKey(apiKey);
-            VideoListResponse listResponse = listVideosRequest.execute();
-            Video video = listResponse.getItems().get(0);
-
-            BigInteger viewCount = video.getStatistics().getViewCount();
-            BigInteger Likes = video.getStatistics().getLikeCount();
-            BigInteger DisLikes = video.getStatistics().getDislikeCount();
-            BigInteger Comments = video.getStatistics().getCommentCount();
-            System.out.println("[View Count] " + viewCount);
-            System.out.println("[Likes] " + Likes);
-            System.out.println("[Dislikes] " + DisLikes);
-            System.out.println("[Comments] " + Comments);
-
-        } catch (GoogleJsonResponseException e) {
-            System.err.println("There was a service error: " + e.getDetails().getCode() + " : "
-                + e.getDetails().getMessage());
-        } catch (IOException e) {
-            System.err.println("There was an IO error: " + e.getCause() + " : " + e.getMessage());
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
-        return null;
-    }
+//    public String getyoutubeitemfull_details(String videoID) {
+//        try { 
+//            YouTube.Videos.List listVideosRequest = youtube.videos().list("statistics");
+//            listVideosRequest.setId(videoID); // add list of video IDs here
+//            listVideosRequest.setKey(apiKey);
+//            VideoListResponse listResponse = listVideosRequest.execute();
+//            Video video = listResponse.getItems().get(0);
+//
+//            BigInteger viewCount = video.getStatistics().getViewCount();
+//            BigInteger Likes = video.getStatistics().getLikeCount();
+//            BigInteger DisLikes = video.getStatistics().getDislikeCount();
+//            BigInteger Comments = video.getStatistics().getCommentCount();
+//            System.out.println("[View Count] " + viewCount);
+//            System.out.println("[Likes] " + Likes);
+//            System.out.println("[Dislikes] " + DisLikes);
+//            System.out.println("[Comments] " + Comments);
+//
+//        } catch (GoogleJsonResponseException e) {
+//            System.err.println("There was a service error: " + e.getDetails().getCode() + " : "
+//                + e.getDetails().getMessage());
+//        } catch (IOException e) {
+//            System.err.println("There was an IO error: " + e.getCause() + " : " + e.getMessage());
+//        } catch (Throwable t) {
+//            t.printStackTrace();
+//        }
+//        return null;
+//    }
     //returns helper class with video title, publishDate, duration, author, and content type id
     public VideoDetails getYouTubeVideoDetails(String videoID) throws SQLException, IOException{
         try { 
@@ -70,9 +70,9 @@ public class DBConnect {
             //System.out.println("Title: "+videoTitle);
             //System.out.println("Published Date: "+videoPublished);
             //System.out.println("Author ID: "+channelId);
-            System.out.println("Duration: "+videoDuration);
-            System.out.println("Category ID: "+categoryId);
-            System.out.println("Category Name: "+categoryName);
+//            System.out.println("Duration: "+videoDuration);
+//            System.out.println("Category ID: "+categoryId);
+//            System.out.println("Category Name: "+categoryName);
             return new VideoDetails(videoID,videoTitle, videoPublished,channelId,categoryId,videoDuration,categoryName);
         } catch (GoogleJsonResponseException e) {
             System.err.println("There was a service error: " + e.getDetails().getCode() + " : "

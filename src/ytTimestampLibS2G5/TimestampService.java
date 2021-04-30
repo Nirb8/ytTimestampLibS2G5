@@ -10,6 +10,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Types;
 import java.time.LocalDate;
@@ -55,17 +56,39 @@ public class TimestampService {
 			proc.registerOutParameter(1, Types.INTEGER);
 			proc.execute();
 			int returnValue = proc.getInt(1);
-			System.out.println(proc.getString(1));
+			//System.out.println(proc.getString(1));
 			proc.close();
 			//need to improve error codes for addTimestamp
-			
+			if (returnValue ==2) {
+				VideoService videoService= new VideoService(this.dbHandler);
+				boolean x =videoService.addVideo(videoId);
+				if (x) {
+					this.addTimeStamp(Id, caption, videoTime, videoId);
+				}
+			}
+			if (returnValue==1) {
+				throw new Error("ERROR: TimestampID cannot be null");
+			}
+			if (returnValue==3) {
+				throw new Error("ERROR: Time cannot be null");
+			}
+			if (returnValue==5) {
+				throw new Error("ERROR: TimestampID already in use");
+			}
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 		System.out.println("Timestamp Entry Added");
-		return true;
+		boolean result = createTimestampTag(uniqueID,videoId);
+		if (result) {
+			System.out.println("TimestampTag created");
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 
 	public ArrayList<String> getTimestamps() {
@@ -73,6 +96,42 @@ public class TimestampService {
 		ArrayList<String> timestamps = new ArrayList<String>();
 		
 		return timestamps;
+	}
+	
+	public boolean createTimestampTag(String TimestampID, String videoID) {
+		Connection con=this.dbHandler.getConnection();
+		String query="SELECT ContentTypeID FROM dbo.VideoGenres WHERE YTVideoID=?";
+		try {
+			PreparedStatement prpstmt = con.prepareStatement(query);
+			prpstmt.setString(1,videoID);
+			ResultSet rs = prpstmt.executeQuery();
+			rs.next();
+			String contentID = rs.getString("ContentTypeID");
+			
+			CallableStatement proc = con.prepareCall("{?=call dbo.InsertIntoTimestampTags(?,?)}");
+			proc.setString(3,TimestampID);
+			proc.setString(2, contentID);
+			proc.registerOutParameter(1, Types.INTEGER);
+			proc.execute();
+			int returnValue = proc.getInt(1);
+			proc.close();
+			
+			if(returnValue==1) {
+				throw new Error("ERROR: ContentTypeID cannot be null");
+			}
+			if(returnValue==2) {
+				throw new Error("ERROR: ContentType value does not exist");
+			}
+			if(returnValue==3) {
+				throw new Error("ERROR: TimestampID cannot be null");
+			}
+		}	
+		catch(Exception e) {
+		e.printStackTrace();
+		System.out.println("Error");
+		return false;
+		}
+		return true;
 	}
 	
 }

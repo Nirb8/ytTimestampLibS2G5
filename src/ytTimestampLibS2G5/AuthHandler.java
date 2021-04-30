@@ -76,7 +76,7 @@ public class AuthHandler {
 		proc.registerOutParameter(1, Types.INTEGER);
 		proc.execute();
 		int returnValue = proc.getInt(1);
-		System.out.println(proc.getString(1));
+		//System.out.println(proc.getString(1));
 		this.currentUserId=uniqueID;
 		proc.close();
 		

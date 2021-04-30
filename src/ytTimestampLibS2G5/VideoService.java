@@ -71,7 +71,7 @@ public class VideoService {
     			proc.registerOutParameter(1, Types.INTEGER);
     			proc.execute();
     			int returnValue = proc.getInt(1);
-    			System.out.println(proc.getString(1));
+    			//System.out.println(proc.getString(1));
     			proc.close();
     			if (returnValue==1) {
     				throw new Error("ERROR: VideoID cannot be null");
@@ -128,7 +128,7 @@ public class VideoService {
 			proc.registerOutParameter(1,Types.INTEGER);
 			proc.execute();
 			int returnValue = proc.getInt(1);
-			System.out.println(proc.getString(1));
+			//System.out.println(proc.getString(1));
 			proc.close();
 			if (returnValue==1) {
 				throw new Error("ERROR: Content ID cannot be null");

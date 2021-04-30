@@ -26,7 +26,6 @@ public class TimeConverter {
         Matcher m3 = r3.matcher(youtubetime);
         Matcher m4=r4.matcher(youtubetime);
         if (m.find()) {
-        	System.out.println("pattern1");
             String hh = m.group(1);
             String mm = m.group(2);
             String ss = m.group(3);
