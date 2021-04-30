@@ -90,7 +90,7 @@ public class DataImport {
 				String importUserID = "fa71a859-0977-482d-87d1-363a342ba099";
 				for(TagData td : tdList) {
 							
-					timestampService.addTimeStamp(importUserID, td.title, td.time, td.youtubeID);
+					//timestampService.addTimeStamp(importUserID, td.title, td.time, td.youtubeID);
 				}
 				System.out.println("Done!");
 			} else {
