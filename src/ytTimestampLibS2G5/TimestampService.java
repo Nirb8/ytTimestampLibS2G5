@@ -75,20 +75,22 @@ public class TimestampService {
 			if (returnValue==5) {
 				throw new Error("ERROR: TimestampID already in use");
 			}
+			System.out.println("Timestamp Entry Added");
+			
+			if (returnValue==0) {
+				boolean result = createTimestampTag(uniqueID,videoId);
+				if (result) {
+					System.out.println("TimestampTag created");
+					return true;
+				}
+			}
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 			return false;
 		}
-		System.out.println("Timestamp Entry Added");
-		boolean result = createTimestampTag(uniqueID,videoId);
-		if (result) {
-			System.out.println("TimestampTag created");
-			return true;
-		}
-		else {
-			return false;
-		}
+		
+		return false;
 	}
 
 	public ArrayList<String> getTimestamps() {
