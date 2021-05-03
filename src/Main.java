@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import YouTubeAPI.DBConnect;
@@ -63,13 +64,13 @@ public class Main {
 //					String contentTitle = s.nextLine();
 //					videoService.createContentType(contentID, contentTitle);
 //					break;
-					
-				case "cv":
-				case "add video":
-					System.out.println("Enter YouTube VideoID");
-					String videoID = s.nextLine();
-					videoService.addVideo(videoID);
-			    	break;
+//					
+//				case "cv":
+//				case "add video":
+//					System.out.println("Enter YouTube VideoID");
+//					String videoID = s.nextLine();
+//					videoService.addVideo(videoID);
+//			    	break;
 				case "ct":
 				case "create Timestamp":
 					System.out.println("Enter YouTube VideoID");
@@ -80,6 +81,14 @@ public class Main {
 					String caption =s.nextLine();
 					String id =authHandler.getCurrentUser();
 					timestampService.addTimeStamp(id,caption, timestampTime, timestampVideoID);
+					break;
+				case "g":
+				case "get Timestamp":
+					System.out.println("Enter YouTube VideoID if you want to search");
+					String getTimestampVideoID =s.nextLine();
+					ArrayList<ArrayList<String>> results =timestampService.getTimestamps(getTimestampVideoID);
+					timestampService.outputConsoleTables(results);
+					break;
 				case "h":
                 case "help":
                     System.out.println("\nDisplaying help commands:");

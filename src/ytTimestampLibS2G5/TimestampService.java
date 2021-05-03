@@ -27,6 +27,8 @@ import javax.swing.JOptionPane;
 
 import com.google.api.client.util.DateTime;
 
+import SpecialClasses.TableList;
+
 public class TimestampService {
 	
 	private static final Random RANDOM = new SecureRandom();
@@ -93,11 +95,77 @@ public class TimestampService {
 		return false;
 	}
 
-	public ArrayList<String> getTimestamps() {
-//		//TODO:Shows all the timestamps attached to a video
-		ArrayList<String> timestamps = new ArrayList<String>();
+	public ArrayList<ArrayList<String>> getTimestamps(String videoID) {
+		//DONE:Shows all the timestamps attached to a video
+		Connection con = this.dbHandler.getConnection();
+		ArrayList<ArrayList<String>> timestamps = new ArrayList<ArrayList<String>>();
+		String query;
 		
+		//if no input is given
+		if (videoID.isEmpty()) {
+			System.out.println("Basic Search");
+			query ="SELECT * FROM dbo.UserView";
+			try {
+				Statement stmt = con.createStatement();
+				ResultSet rs=stmt.executeQuery(query);
+				while (rs.next()) {
+					String ID = rs.getString(1);
+					String name = rs.getString(2);
+					String des = rs.getString(3);
+					String tTime = rs.getTime(4).toString();
+					String cType = rs.getString(5);
+					String cTime = rs.getDate(6).toString();
+					ArrayList<String> details = new ArrayList<String>();
+					details.add(ID);
+					details.add(name);
+					details.add(des);
+					details.add(tTime);
+					details.add(cType);
+					details.add(cTime);
+					timestamps.add(details);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+			
+		}
+		//if input is given
+		else {
+			System.out.println("Specified Search");
+			query="SELECT * FROM dbo.UserView WHERE [YouTube ID]=?";
+			try {
+				PreparedStatement prpstmt = con.prepareStatement(query);
+				prpstmt.setString(1, videoID);
+				ResultSet rs=prpstmt.executeQuery();
+				while (rs.next()) {
+					String ID = rs.getString(1);
+					String name = rs.getString(2);
+					String des = rs.getString(3);
+					String tTime = rs.getTime(4).toString();
+					String cType = rs.getString(5);
+					String cTime = rs.getDate(6).toString();
+					ArrayList<String> details = new ArrayList<String>();
+					details.add(ID);
+					details.add(name);
+					details.add(des);
+					details.add(tTime);
+					details.add(cType);
+					details.add(cTime);
+					timestamps.add(details);
+				}
+			}catch(Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
 		return timestamps;
+	}
+	//Used specifically for timestamp search output table
+	public void outputConsoleTables(ArrayList<ArrayList<String>> results) {
+		TableList table = new TableList(6,"YouTube ID", "Video Name", "Description", "TimestampTime", "Content Type", "Created Time");
+		results.forEach(element -> table.addRow(element.get(0),element.get(1), element.get(2), element.get(3), element.get(4),element.get(5)));
+		table.print();
 	}
 	
 	public boolean createTimestampTag(String TimestampID, String videoID) {
@@ -134,6 +202,12 @@ public class TimestampService {
 		return false;
 		}
 		return true;
+	}
+	
+	public boolean deleteTimestamp() {
+		//TODO
+		return false;
+		
 	}
 	
 }
