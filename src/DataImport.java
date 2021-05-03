@@ -35,7 +35,7 @@ public class DataImport {
         boolean runStatus = true;
         
 
-		
+		String importFrom = s.nextLine();
 		
 		JSONParser psr = new JSONParser();
 
@@ -43,7 +43,7 @@ public class DataImport {
 
 		ArrayList<TagData> tdList = new ArrayList<TagData>();
 		try {
-			Object obj = psr.parse(new FileReader("input.json"));
+			Object obj = psr.parse(new FileReader(importFrom));
 			
 			JSONArray comments = (JSONArray) obj;
 			
