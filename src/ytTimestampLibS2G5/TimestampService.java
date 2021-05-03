@@ -161,6 +161,7 @@ public class TimestampService {
 		}
 		return timestamps;
 	}
+	
 	//Used specifically for timestamp search output table
 	public void outputConsoleTables(ArrayList<ArrayList<String>> results) {
 		TableList table = new TableList(6,"YouTube ID", "Video Name", "Description", "TimestampTime", "Content Type", "Created Time");
@@ -204,8 +205,12 @@ public class TimestampService {
 		return true;
 	}
 	
-	public boolean deleteTimestamp() {
+	public boolean deleteTimestamp(String Characteristic, String input, String userID) {
 		//TODO
+		Connection con = this.dbHandler.getConnection();
+		String query = "SELECT AuthorID FROM TimeStamps WHERE UserID="+userID+"AND ?=?";
+		
+		//PreparedStatement prpsmt = con.prepareStatement(sql)
 		return false;
 		
 	}
