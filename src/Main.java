@@ -26,16 +26,21 @@ public class Main {
         // "simple" loop to continually read from console and call a switch statement
         Scanner s = new Scanner(System.in);
         boolean runStatus = true;
+        boolean signIn = false;
         while (runStatus) {
-
-        	System.out.print("~ ");
-            String input = s.nextLine();
+        	
+        	
             //expect this switch statement to get CHONKY
 			/*
 			* cases: h/help, e/x/exit/q/quit, l/login, logout, view/view tags, create/create tag, history
 			*/
             //test comment
+            while (!signIn) {
+            	System.out.println("Please sign in: Press r to register or l to login");
+            	System.out.print("~ ");
+                String input = s.nextLine();
             switch (input) {
+            	
             	case "r":
             	case "register":
             		//prompt for registration
@@ -44,7 +49,10 @@ public class Main {
             		String username =s.nextLine();
             		System.out.println("ENTER Password");
             		String password = s.nextLine();
-            		authHandler.register(username,password);
+            		boolean result1 =authHandler.register(username,password);
+            		if (result1) {
+            			signIn=true;
+            		}
             		break;
 				case "l":
 				case "login":
@@ -53,9 +61,25 @@ public class Main {
             		String loginusername =s.nextLine();
             		System.out.println("ENTER Password");
             		String loginpassword = s.nextLine();
-					authHandler.login(loginusername, loginpassword);
-					break;		
-//					
+					boolean result=authHandler.login(loginusername, loginpassword);
+					if (result) {
+            			signIn=true;
+            		}
+					break;
+				 case "e":
+	                case "x":
+					case "q":
+					case "quit":
+	                case "exit":
+	                    System.out.println("Exiting...");
+	                    //probably want to close out connection to database and other stuff to end gracefully
+						dbHandler.closeConnection();
+	                    runStatus = false; // break out of the while loop
+	                    break;
+	                default:
+	                    System.out.println("The command \"" + input + "\" is not recognized. Type h for help, or e for exit.");
+            	}
+            }
 //				case "ct":
 //				case "new content":
 //					System.out.println("Enter ContentID (number)");
@@ -71,6 +95,9 @@ public class Main {
 //					String videoID = s.nextLine();
 //					videoService.addVideo(videoID);
 //			    	break;
+            System.out.print("~ ");
+            String input = s.nextLine();
+            switch(input) {
 				case "ct":
 				case "create Timestamp":
 					System.out.println("Enter YouTube VideoID");
@@ -91,18 +118,19 @@ public class Main {
 					break;
 				case "gm":
 				case "get my Timestamps":
-					String UserID = authHandler.getCurrentUser();
+					String UserID = authHandler.getCurrentUserName();
 					ArrayList<ArrayList<String>> myresults =timestampService.getUsersTimestamps(UserID);
 					timestampService.outputConsoleTables(myresults);
-//				case "d":
-//				case "delete Timestamp":
-//					System.out.println("Enter the timestamp's video ID that you want to delete");
-//					String deleteVideoID =s.nextLine();
+					break;
+				case "d":
+				case "delete Timestamp":
+					System.out.println("Enter the timestamp's video ID that you want to delete");
+					String deleteVideoID =s.nextLine();
 //					System.out.println("Enter the timestamps' video time that you want to delete (hh:mm:ss)");
 //					String deleteVideoTime=s.nextLine();
-//					String userID = authHandler.getCurrentUser();
-//					timestampService.deleteTimestamp(deleteVideoID,deleteVideoTime, userID);
-//					break;
+					String userID = authHandler.getCurrentUser();
+					timestampService.deleteTimestamp(deleteVideoID, userID);
+					break;
 				case "h":
                 case "help":
                     System.out.println("\nDisplaying help commands:");

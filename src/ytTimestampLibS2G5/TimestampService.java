@@ -40,7 +40,7 @@ public class TimestampService {
 	}
 	
 	public boolean addTimeStamp(String Id,String caption, String videoTime, String videoId) {
-		//TODO: Complete this method.
+		//DONE: Complete this method.
 		String current = LocalDate.now().toString();
 		DateTime time = new DateTime(current);
 		Date uploadDate = new Date(time.getValue());
@@ -115,6 +115,7 @@ public class TimestampService {
 					String tTime = rs.getTime(4).toString();
 					String cType = rs.getString(5);
 					String cTime = rs.getDate(6).toString();
+					String UserName = rs.getString(7);
 					ArrayList<String> details = new ArrayList<String>();
 					details.add(ID);
 					details.add(name);
@@ -122,6 +123,7 @@ public class TimestampService {
 					details.add(tTime);
 					details.add(cType);
 					details.add(cTime);
+					details.add(UserName);
 					timestamps.add(details);
 				}
 			} catch (SQLException e) {
@@ -145,6 +147,7 @@ public class TimestampService {
 					String tTime = rs.getTime(4).toString();
 					String cType = rs.getString(5);
 					String cTime = rs.getDate(6).toString();
+					String UserName = rs.getString(7);
 					ArrayList<String> details = new ArrayList<String>();
 					details.add(ID);
 					details.add(name);
@@ -152,6 +155,7 @@ public class TimestampService {
 					details.add(tTime);
 					details.add(cType);
 					details.add(cTime);
+					details.add(UserName);
 					timestamps.add(details);
 				}
 			}catch(Exception e) {
@@ -162,13 +166,14 @@ public class TimestampService {
 		return timestamps;
 	}
 	
-	public ArrayList<ArrayList<String>> getUsersTimestamps(String userID) {
+	public ArrayList<ArrayList<String>> getUsersTimestamps(String userName) {
 		Connection con = this.dbHandler.getConnection();
+		
 		ArrayList<ArrayList<String>> timestamps = new ArrayList<ArrayList<String>>();
-		String query="SELECT * FROM dbo.UserView JOIN Timestamps T on T.YTVideoID =dbo.UserView.[YouTube ID] WHERE AuthorID=?";
+		String query="SELECT * FROM dbo.UserView WHERE Creator=?";
 			try {
 				PreparedStatement stmt = con.prepareStatement(query);
-				stmt.setString(1, userID);
+				stmt.setString(1, userName);
 				ResultSet rs=stmt.executeQuery();
 				while (rs.next()) {
 					String ID = rs.getString(1);
@@ -177,6 +182,7 @@ public class TimestampService {
 					String tTime = rs.getTime(4).toString();
 					String cType = rs.getString(5);
 					String cTime = rs.getDate(6).toString();
+					String UserName = rs.getString(7);
 					ArrayList<String> details = new ArrayList<String>();
 					details.add(ID);
 					details.add(name);
@@ -184,6 +190,7 @@ public class TimestampService {
 					details.add(tTime);
 					details.add(cType);
 					details.add(cTime);
+					details.add(UserName);
 					timestamps.add(details);
 				}
 			} catch (SQLException e) {
@@ -195,8 +202,8 @@ public class TimestampService {
 	
 	//Used specifically for timestamp search output table
 	public void outputConsoleTables(ArrayList<ArrayList<String>> results) {
-		TableList table = new TableList(6,"YouTube ID", "Video Name", "Description", "TimestampTime", "Content Type", "Created Time");
-		results.forEach(element -> table.addRow(element.get(0),element.get(1), element.get(2), element.get(3), element.get(4),element.get(5)));
+		TableList table = new TableList(7,"YouTube ID", "Video Name", "Description", "TimestampTime", "Content Type", "Created Time", "Creator");
+		results.forEach(element -> table.addRow(element.get(0),element.get(1), element.get(2), element.get(3), element.get(4),element.get(5), element.get(6)));
 		table.print();
 	}
 	
@@ -236,36 +243,35 @@ public class TimestampService {
 		return true;
 	}
 	
-	public boolean deleteTimestamp(String videoID, String timestampTime, String userID) {
-		//TODO
-//		Time duration = Time.valueOf(timestampTime);
-//		Connection con = this.dbHandler.getConnection();
-//		//String query = "DELETE FROM Timestamps WHERE AuthorID="+userID+" YTVideoID=? DatePosted=?";
-//		String query = "DELETE FROM Timestamps WHERE TimestampID=?";
-//		//String query2="SELECT * FROM TimeStamps WHERE UserID="+userID+"AND TimestampID=?";
-//		try {
-//			PreparedStatement prpsmt = con.prepareStatement(query);
-//			prpsmt.setString(1, videoID);
-//			//prpsmt.setTime(2,duration);
-//			ResultSet rs=prpsmt.executeQuery();
-////			if (rs.next()) {
-////				
-////				return false;
-////			}
-////			PreparedStatement prpsmt2 = con.prepareStatement(query2);
-////			prpsmt2.setString(1, input);
-////			ResultSet rs2=prpsmt2.executeQuery();
-////			if (!rs2.next()) {
-////				System.out.println();
-////				return true;
-////			}
-//		} catch (SQLException e) {
-//			System.out.println(e.getMessage());
-//			System.out.println("No deletion performed");
-//			e.printStackTrace();
-//			return false;
-//		}
-//		System.out.println("Timestamp Deleted");
+	public boolean deleteTimestamp(String videoID, String userID) {
+		//TODO: Takes VideoID only need to improve specification
+		Connection con = this.dbHandler.getConnection();
+		String query = "DELETE FROM Timestamps WHERE AuthorID=? AND YTVideoID=?";
+		//String query = "DELETE FROM Timestamps WHERE TimestampID=?";
+		String query2="SELECT * FROM TimeStamps WHERE AuthorID=? AND YTVideoID=?";
+		try {
+			PreparedStatement prpsmt = con.prepareStatement(query2);
+			prpsmt.setString(1, userID);
+			prpsmt.setString(2, videoID);
+			ResultSet results =prpsmt.executeQuery();
+			if (results.next()) {
+			PreparedStatement prpsmt2 = con.prepareStatement(query);
+			prpsmt2.setString(1, userID);
+			prpsmt2.setString(2, videoID);
+			prpsmt2.execute();
+			
+			}
+			else {
+				System.out.println("No deletion performed, no timestamp matches parameters");
+				return false;
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+			System.out.println("No deletion performed");
+			e.printStackTrace();
+			return false;
+		}
+		System.out.println("Timestamp Deleted");
 		return true;
 		
 	}

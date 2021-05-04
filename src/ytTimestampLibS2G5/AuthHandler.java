@@ -27,6 +27,7 @@ public class AuthHandler {
 	
 	private final DatabaseConnectionHandler dbHandler;
 	private String currentUserId;
+	private String currentUserName;
 	
 	public AuthHandler(DatabaseConnectionHandler dbHandler) {
 		this.dbHandler = dbHandler;
@@ -43,6 +44,7 @@ public class AuthHandler {
 			ResultSet rs = prpstmt.executeQuery();
 			rs.next();
 			this.currentUserId=rs.getString("UserID");
+			this.currentUserName=username;
 			byte[] salt =rs.getBytes("PasswordSalt");
 			String checkHash = rs.getString("PasswordHash");
 			String hashInput = this.hashPassword(salt, password);
@@ -78,6 +80,7 @@ public class AuthHandler {
 		int returnValue = proc.getInt(1);
 		//System.out.println(proc.getString(1));
 		this.currentUserId=uniqueID;
+		this.currentUserName=username;
 		proc.close();
 		
 		if (returnValue==2) {
@@ -124,5 +127,8 @@ public class AuthHandler {
 	
 	public String getCurrentUser() {
 		return this.currentUserId;
+	}
+	public String getCurrentUserName() {
+		return this.currentUserName;
 	}
 }
