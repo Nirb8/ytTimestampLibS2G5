@@ -205,13 +205,37 @@ public class TimestampService {
 		return true;
 	}
 	
-	public boolean deleteTimestamp(String Characteristic, String input, String userID) {
+	public boolean deleteTimestamp(String videoID, String timestampTime, String userID) {
 		//TODO
+		Time duration = Time.valueOf(timestampTime);
 		Connection con = this.dbHandler.getConnection();
-		String query = "SELECT AuthorID FROM TimeStamps WHERE UserID="+userID+"AND ?=?";
-		
-		//PreparedStatement prpsmt = con.prepareStatement(sql)
-		return false;
+		//String query = "DELETE FROM Timestamps WHERE AuthorID="+userID+" YTVideoID=? DatePosted=?";
+		String query = "DELETE FROM Timestamps WHERE TimestampID=?";
+		//String query2="SELECT * FROM TimeStamps WHERE UserID="+userID+"AND TimestampID=?";
+		try {
+			PreparedStatement prpsmt = con.prepareStatement(query);
+			prpsmt.setString(1, videoID);
+			//prpsmt.setTime(2,duration);
+			ResultSet rs=prpsmt.executeQuery();
+//			if (rs.next()) {
+//				
+//				return false;
+//			}
+//			PreparedStatement prpsmt2 = con.prepareStatement(query2);
+//			prpsmt2.setString(1, input);
+//			ResultSet rs2=prpsmt2.executeQuery();
+//			if (!rs2.next()) {
+//				System.out.println();
+//				return true;
+//			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+			System.out.println("No deletion performed");
+			e.printStackTrace();
+			return false;
+		}
+		System.out.println("Timestamp Deleted");
+		return true;
 		
 	}
 	
