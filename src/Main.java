@@ -76,6 +76,8 @@ public class Main {
 						dbHandler.closeConnection();
 	                    runStatus = false; // break out of the while loop
 	                    break;
+	                case "":
+	                	break;
 	                default:
 	                    System.out.println("The command \"" + input + "\" is not recognized. Type h for help, or e for exit.");
             	}
@@ -98,6 +100,8 @@ public class Main {
             System.out.print("~ ");
             String input = s.nextLine();
             switch(input) {
+            	case "":
+            		break;
 				case "ct":
 				case "create Timestamp":
 					System.out.println("Enter YouTube VideoID");
