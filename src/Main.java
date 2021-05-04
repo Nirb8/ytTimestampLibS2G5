@@ -121,6 +121,11 @@ public class Main {
 					String UserID = authHandler.getCurrentUserName();
 					ArrayList<ArrayList<String>> myresults =timestampService.getUsersTimestamps(UserID);
 					timestampService.outputConsoleTables(myresults);
+					boolean runSelection=true;
+					while (runSelection) {
+						System.out.println("Press s to select a timestamp or e to exit mode");
+						break;
+					}
 					break;
 				case "d":
 				case "delete Timestamp":

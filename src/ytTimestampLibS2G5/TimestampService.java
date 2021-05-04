@@ -108,6 +108,7 @@ public class TimestampService {
 			try {
 				Statement stmt = con.createStatement();
 				ResultSet rs=stmt.executeQuery(query);
+				int count=0;
 				while (rs.next()) {
 					String ID = rs.getString(1);
 					String name = rs.getString(2);
@@ -117,6 +118,8 @@ public class TimestampService {
 					String cTime = rs.getDate(6).toString();
 					String UserName = rs.getString(7);
 					ArrayList<String> details = new ArrayList<String>();
+					count++;
+					details.add(String.valueOf(count));
 					details.add(ID);
 					details.add(name);
 					details.add(des);
@@ -140,6 +143,7 @@ public class TimestampService {
 				PreparedStatement prpstmt = con.prepareStatement(query);
 				prpstmt.setString(1, videoID);
 				ResultSet rs=prpstmt.executeQuery();
+				int count=0;
 				while (rs.next()) {
 					String ID = rs.getString(1);
 					String name = rs.getString(2);
@@ -149,6 +153,8 @@ public class TimestampService {
 					String cTime = rs.getDate(6).toString();
 					String UserName = rs.getString(7);
 					ArrayList<String> details = new ArrayList<String>();
+					count++;
+					details.add(String.valueOf(count));
 					details.add(ID);
 					details.add(name);
 					details.add(des);
@@ -171,6 +177,7 @@ public class TimestampService {
 		
 		ArrayList<ArrayList<String>> timestamps = new ArrayList<ArrayList<String>>();
 		String query="SELECT * FROM dbo.UserView WHERE Creator=?";
+		int count=0;
 			try {
 				PreparedStatement stmt = con.prepareStatement(query);
 				stmt.setString(1, userName);
@@ -184,6 +191,8 @@ public class TimestampService {
 					String cTime = rs.getDate(6).toString();
 					String UserName = rs.getString(7);
 					ArrayList<String> details = new ArrayList<String>();
+					count++;
+					details.add(String.valueOf(count));
 					details.add(ID);
 					details.add(name);
 					details.add(des);
@@ -202,8 +211,8 @@ public class TimestampService {
 	
 	//Used specifically for timestamp search output table
 	public void outputConsoleTables(ArrayList<ArrayList<String>> results) {
-		TableList table = new TableList(7,"YouTube ID", "Video Name", "Description", "TimestampTime", "Content Type", "Created Time", "Creator");
-		results.forEach(element -> table.addRow(element.get(0),element.get(1), element.get(2), element.get(3), element.get(4),element.get(5), element.get(6)));
+		TableList table = new TableList(8,"Entry Number","YouTube ID", "Video Name", "Description", "TimestampTime", "Content Type", "Created Time", "Creator");
+		results.forEach(element -> table.addRow(element.get(0),element.get(1), element.get(2), element.get(3), element.get(4),element.get(5), element.get(6), element.get(7)));
 		table.print();
 	}
 	
