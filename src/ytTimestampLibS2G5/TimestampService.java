@@ -216,6 +216,12 @@ public class TimestampService {
 		table.print();
 	}
 	
+	public void outputSelection(ArrayList<String> result) {
+		TableList table = new TableList(8,"Entry Number","YouTube ID", "Video Name", "Description", "TimestampTime", "Content Type", "Created Time", "Creator");
+		table.addRow(result.get(0),result.get(1), result.get(2), result.get(3), result.get(4),result.get(5), result.get(6), result.get(7));
+		table.print();
+	}
+	
 	public boolean createTimestampTag(String TimestampID, String videoID) {
 		Connection con=this.dbHandler.getConnection();
 		String query="SELECT ContentTypeID FROM dbo.VideoGenres WHERE YTVideoID=?";
@@ -252,26 +258,27 @@ public class TimestampService {
 		return true;
 	}
 	
-	public boolean deleteTimestamp(String videoID, String userID) {
-		//TODO: Takes VideoID only need to improve specification
+	public boolean deleteTimestamp(ArrayList<String> row, String userID) {
+		//TODO: select by row for deletion
 		Connection con = this.dbHandler.getConnection();
-		String query = "DELETE FROM Timestamps WHERE AuthorID=? AND YTVideoID=?";
-		//String query = "DELETE FROM Timestamps WHERE TimestampID=?";
-		String query2="SELECT * FROM TimeStamps WHERE AuthorID=? AND YTVideoID=?";
+		String query = "DELETE FROM Timestamps WHERE AuthorID=? AND YTVideoID=? AND TimestampTitle=?";
+		String query2="SELECT * FROM Timestamps WHERE AuthorID=? AND YTVideoID=? AND TimestampTitle=?";
 		try {
 			PreparedStatement prpsmt = con.prepareStatement(query2);
 			prpsmt.setString(1, userID);
-			prpsmt.setString(2, videoID);
+			prpsmt.setString(2, row.get(1));
+			prpsmt.setString(3,row.get(3));
 			ResultSet results =prpsmt.executeQuery();
 			if (results.next()) {
 			PreparedStatement prpsmt2 = con.prepareStatement(query);
 			prpsmt2.setString(1, userID);
-			prpsmt2.setString(2, videoID);
+			prpsmt2.setString(2, row.get(1));
+			prpsmt2.setString(3,row.get(3));
 			prpsmt2.execute();
 			
 			}
 			else {
-				System.out.println("No deletion performed, no timestamp matches parameters");
+				System.out.println("No deletion performed, no timestamp matches given parameters");
 				return false;
 			}
 		} catch (SQLException e) {

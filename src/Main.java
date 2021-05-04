@@ -127,19 +127,43 @@ public class Main {
 					timestampService.outputConsoleTables(myresults);
 					boolean runSelection=true;
 					while (runSelection) {
-						System.out.println("Press s to select a timestamp or e to exit mode");
+						System.out.println("Press s to select a timestamp or e to exit selection mode");
+						System.out.print("~ ");
+			            String input2 = s.nextLine();
+			            switch(input2) {
+			            case "s":
+			            	System.out.println("Press the entry number that you want to select");
+			            	String num = s.nextLine();
+			            	ArrayList<String> selectedRow=myresults.get(Integer.valueOf(num)-1);
+			            	timestampService.outputSelection(selectedRow);
+			            	System.out.println("Press d to delete selected entry or e to exit");
+			            	String query = s.nextLine();
+			            	switch(query) {
+			            	case "e":
+			            		runSelection=false;
+			            		System.out.println("Exiting selection mode...");
+			            		break;
+			            	case "d":
+			            		String userId=authHandler.getCurrentUser();
+			            		timestampService.deleteTimestamp(selectedRow,userId);
+			            	break;
+			            	}
+			            case "e":
+			            	runSelection=false;
+			            	System.out.println("Exiting selection mode...");
+			            }
 						break;
 					}
 					break;
-				case "d":
-				case "delete Timestamp":
-					System.out.println("Enter the timestamp's video ID that you want to delete");
-					String deleteVideoID =s.nextLine();
-//					System.out.println("Enter the timestamps' video time that you want to delete (hh:mm:ss)");
-//					String deleteVideoTime=s.nextLine();
-					String userID = authHandler.getCurrentUser();
-					timestampService.deleteTimestamp(deleteVideoID, userID);
-					break;
+//				case "d":
+//				case "delete Timestamp":
+//					System.out.println("Enter the timestamp's video ID that you want to delete");
+//					String deleteVideoID =s.nextLine();
+////					System.out.println("Enter the timestamps' video time that you want to delete (hh:mm:ss)");
+////					String deleteVideoTime=s.nextLine();
+//					String userID = authHandler.getCurrentUser();
+//					timestampService.deleteTimestamp(deleteVideoID, userID);
+//					break;
 				case "h":
                 case "help":
                     System.out.println("\nDisplaying help commands:");
