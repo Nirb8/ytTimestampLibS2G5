@@ -162,6 +162,37 @@ public class TimestampService {
 		return timestamps;
 	}
 	
+	public ArrayList<ArrayList<String>> getUsersTimestamps(String userID) {
+		Connection con = this.dbHandler.getConnection();
+		ArrayList<ArrayList<String>> timestamps = new ArrayList<ArrayList<String>>();
+		String query="SELECT * FROM dbo.UserView JOIN Timestamps T on T.YTVideoID =dbo.UserView.[YouTube ID] WHERE AuthorID=?";
+			try {
+				PreparedStatement stmt = con.prepareStatement(query);
+				stmt.setString(1, userID);
+				ResultSet rs=stmt.executeQuery();
+				while (rs.next()) {
+					String ID = rs.getString(1);
+					String name = rs.getString(2);
+					String des = rs.getString(3);
+					String tTime = rs.getTime(4).toString();
+					String cType = rs.getString(5);
+					String cTime = rs.getDate(6).toString();
+					ArrayList<String> details = new ArrayList<String>();
+					details.add(ID);
+					details.add(name);
+					details.add(des);
+					details.add(tTime);
+					details.add(cType);
+					details.add(cTime);
+					timestamps.add(details);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+			return timestamps;	
+	}
+	
 	//Used specifically for timestamp search output table
 	public void outputConsoleTables(ArrayList<ArrayList<String>> results) {
 		TableList table = new TableList(6,"YouTube ID", "Video Name", "Description", "TimestampTime", "Content Type", "Created Time");

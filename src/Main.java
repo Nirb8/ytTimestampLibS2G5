@@ -89,15 +89,20 @@ public class Main {
 					ArrayList<ArrayList<String>> results =timestampService.getTimestamps(getTimestampVideoID);
 					timestampService.outputConsoleTables(results);
 					break;
-				case "d":
-				case "delete Timestamp":
-					System.out.println("Enter the timestamp's video ID that you want to delete");
-					String deleteVideoID =s.nextLine();
-					System.out.println("Enter the timestamps' video time that you want to delete (hh:mm:ss)");
-					String deleteVideoTime=s.nextLine();
-					String userID = authHandler.getCurrentUser();
-					timestampService.deleteTimestamp(deleteVideoID,deleteVideoTime, userID);
-					break;
+				case "gm":
+				case "get my Timestamps":
+					String UserID = authHandler.getCurrentUser();
+					ArrayList<ArrayList<String>> myresults =timestampService.getUsersTimestamps(UserID);
+					timestampService.outputConsoleTables(myresults);
+//				case "d":
+//				case "delete Timestamp":
+//					System.out.println("Enter the timestamp's video ID that you want to delete");
+//					String deleteVideoID =s.nextLine();
+//					System.out.println("Enter the timestamps' video time that you want to delete (hh:mm:ss)");
+//					String deleteVideoTime=s.nextLine();
+//					String userID = authHandler.getCurrentUser();
+//					timestampService.deleteTimestamp(deleteVideoID,deleteVideoTime, userID);
+//					break;
 				case "h":
                 case "help":
                     System.out.println("\nDisplaying help commands:");
