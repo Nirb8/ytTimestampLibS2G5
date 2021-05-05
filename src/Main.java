@@ -75,7 +75,8 @@ public class Main {
 	                    //probably want to close out connection to database and other stuff to end gracefully
 						dbHandler.closeConnection();
 	                    runStatus = false; // break out of the while loop
-	                    break;
+	                    s.close();
+	                    return;
 	                case "":
 	                	break;
 	                default:
