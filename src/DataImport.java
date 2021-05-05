@@ -34,7 +34,7 @@ public class DataImport {
         Scanner s = new Scanner(System.in);
         boolean runStatus = true;
         
-
+        System.out.println(".json file to import:");
 		String importFrom = s.nextLine();
 		
 		JSONParser psr = new JSONParser();
