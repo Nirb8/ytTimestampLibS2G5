@@ -118,13 +118,13 @@ public class Main {
 				case "get Timestamp":
 					System.out.println("Enter YouTube VideoID if you want to search");
 					String getTimestampVideoID =s.nextLine();
-					ArrayList<ArrayList<String>> results =timestampService.getTimestamps(getTimestampVideoID);
+					ArrayList<ArrayList<String>> results =timestampService.getTimestamps(getTimestampVideoID, authHandler.getCurrentUser());
 					timestampService.outputConsoleTables(results);
 					break;
 				case "gm":
 				case "get my Timestamps":
-					String UserID = authHandler.getCurrentUserName();
-					ArrayList<ArrayList<String>> myresults =timestampService.getUsersTimestamps(UserID);
+					String username = authHandler.getCurrentUserName();
+					ArrayList<ArrayList<String>> myresults =timestampService.getUsersTimestamps(username, authHandler.getCurrentUser());
 					timestampService.outputConsoleTables(myresults);
 					boolean runSelection=true;
 					while (runSelection) {

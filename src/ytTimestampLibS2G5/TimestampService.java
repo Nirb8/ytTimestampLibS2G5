@@ -95,7 +95,7 @@ public class TimestampService {
 		return false;
 	}
 
-	public ArrayList<ArrayList<String>> getTimestamps(String videoID) {
+	public ArrayList<ArrayList<String>> getTimestamps(String videoID, String accessingUserID) {
 		//DONE:Shows all the timestamps attached to a video
 		Connection con = this.dbHandler.getConnection();
 		ArrayList<ArrayList<String>> timestamps = new ArrayList<ArrayList<String>>();
@@ -117,6 +117,7 @@ public class TimestampService {
 					String cType = rs.getString(5);
 					String cTime = rs.getDate(6).toString();
 					String UserName = rs.getString(7);
+					String tID = rs.getString(8);
 					ArrayList<String> details = new ArrayList<String>();
 					count++;
 					details.add(String.valueOf(count));
@@ -128,6 +129,7 @@ public class TimestampService {
 					details.add(cTime);
 					details.add(UserName);
 					timestamps.add(details);
+					this.addTimestampToUserHistory(accessingUserID, tID);
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -152,6 +154,7 @@ public class TimestampService {
 					String cType = rs.getString(5);
 					String cTime = rs.getDate(6).toString();
 					String UserName = rs.getString(7);
+					String tID = rs.getString(8);
 					ArrayList<String> details = new ArrayList<String>();
 					count++;
 					details.add(String.valueOf(count));
@@ -163,6 +166,8 @@ public class TimestampService {
 					details.add(cTime);
 					details.add(UserName);
 					timestamps.add(details);
+					
+					
 				}
 			}catch(Exception e) {
 				e.printStackTrace();
@@ -172,7 +177,7 @@ public class TimestampService {
 		return timestamps;
 	}
 	
-	public ArrayList<ArrayList<String>> getUsersTimestamps(String userName) {
+	public ArrayList<ArrayList<String>> getUsersTimestamps(String userName, String accessingUserID) {
 		Connection con = this.dbHandler.getConnection();
 		
 		ArrayList<ArrayList<String>> timestamps = new ArrayList<ArrayList<String>>();
@@ -190,6 +195,7 @@ public class TimestampService {
 					String cType = rs.getString(5);
 					String cTime = rs.getDate(6).toString();
 					String UserName = rs.getString(7);
+					String tID = rs.getString(8);
 					ArrayList<String> details = new ArrayList<String>();
 					count++;
 					details.add(String.valueOf(count));
@@ -201,6 +207,7 @@ public class TimestampService {
 					details.add(cTime);
 					details.add(UserName);
 					timestamps.add(details);
+					this.addTimestampToUserHistory(accessingUserID, tID);
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
