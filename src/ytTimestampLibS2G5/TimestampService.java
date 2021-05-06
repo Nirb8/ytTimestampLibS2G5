@@ -222,7 +222,7 @@ public class TimestampService {
 		table.print();
 	}
 	
-	public boolean createTimestampTag(String TimestampID, String videoID) {
+	public boolean createTimestampTag(String timestampID, String videoID) {
 		Connection con=this.dbHandler.getConnection();
 		String query="SELECT ContentTypeID FROM dbo.VideoGenres WHERE YTVideoID=?";
 		try {
@@ -233,7 +233,7 @@ public class TimestampService {
 			String contentID = rs.getString("ContentTypeID");
 			
 			CallableStatement proc = con.prepareCall("{?=call dbo.InsertIntoTimestampTags(?,?)}");
-			proc.setString(3,TimestampID);
+			proc.setString(3,timestampID);
 			proc.setString(2, contentID);
 			proc.registerOutParameter(1, Types.INTEGER);
 			proc.execute();
@@ -290,6 +290,38 @@ public class TimestampService {
 		System.out.println("Timestamp Deleted");
 		return true;
 		
+	}
+	
+	public int addTimestampToUserHistory(String userID, String timestampID) {
+		CallableStatement cstmt = null;
+		try {
+			cstmt = this.dbHandler.getConnection().prepareCall("{? = call UpdateUserHistory(?, ?)}");
+			
+			cstmt.registerOutParameter(1, Types.INTEGER);
+			if(userID == null || userID.isEmpty()) {
+				//user doesn't know this is being called, so it shouldn't really print any errors
+				//handle history entry not updating in getTimestamps
+				return 1;
+			} else {
+				cstmt.setString(2, userID);
+			}
+			if(timestampID == null || timestampID.isEmpty()) {
+				return 2;
+			} else {
+				cstmt.setString(3, timestampID);
+			}
+			
+			cstmt.execute();
+			
+			int returnValue = cstmt.getInt(1);
+			
+			return returnValue;
+		
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return 0;
 	}
 	
 }
