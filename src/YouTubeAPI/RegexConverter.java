@@ -68,6 +68,9 @@ public class RegexConverter {
     }
 
     public static String convertLinkToYTVideoID(String youtubeLink) {
+        if (youtubeLink.isEmpty()) {
+            return youtubeLink;
+        }
 
         String pattern = new String("^(\\w{11})$");
         String pattern2 = new String("youtube\\.com\\/watch\\?v=(\\w{11})$");
