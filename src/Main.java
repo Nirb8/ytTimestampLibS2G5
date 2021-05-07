@@ -39,49 +39,49 @@ public class Main {
             	System.out.println("Please sign in: Press r to register or l to login");
             	System.out.print("~ ");
                 String input = s.nextLine();
-            switch (input) {
-            	
-            	case "r":
-            	case "register":
-            		//prompt for registration
-            		System.out.println("Adding New User");
-            		System.out.println("ENTER Username");
-            		String username =s.nextLine();
-            		System.out.println("ENTER Password");
-            		String password = s.nextLine();
-            		boolean result1 =authHandler.register(username,password);
-            		if (result1) {
-            			signIn=true;
-            		}
-            		break;
-				case "l":
-				case "login":
-					// prompt for username and password
-					System.out.println("ENTER Username");
-            		String loginusername =s.nextLine();
-            		System.out.println("ENTER Password");
-            		String loginpassword = s.nextLine();
-					boolean result=authHandler.login(loginusername, loginpassword);
-					if (result) {
-            			signIn=true;
-            		}
-					break;
-				 case "e":
-	                case "x":
-					case "q":
-					case "quit":
-	                case "exit":
-	                    System.out.println("Exiting...");
-	                    //probably want to close out connection to database and other stuff to end gracefully
-						dbHandler.closeConnection();
-	                    runStatus = false; // break out of the while loop
-	                    s.close();
-	                    return;
-	                case "":
-	                	break;
-	                default:
-	                    System.out.println("The command \"" + input + "\" is not recognized. Type h for help, or e for exit.");
-            	}
+				switch (input) {
+
+					case "r":
+					case "register":
+						//prompt for registration
+						System.out.println("Adding New User");
+						System.out.println("ENTER Username");
+						String username =s.nextLine();
+						System.out.println("ENTER Password");
+						String password = s.nextLine();
+						boolean result1 =authHandler.register(username,password);
+						if (result1) {
+							signIn=true;
+						}
+						break;
+					case "l":
+					case "login":
+						// prompt for username and password
+						System.out.println("ENTER Username");
+						String loginusername =s.nextLine();
+						System.out.println("ENTER Password");
+						String loginpassword = s.nextLine();
+						boolean result=authHandler.login(loginusername, loginpassword);
+						if (result) {
+							signIn=true;
+						}
+						break;
+					case "e":
+						case "x":
+						case "q":
+						case "quit":
+						case "exit":
+							System.out.println("Exiting...");
+							//probably want to close out connection to database and other stuff to end gracefully
+							dbHandler.closeConnection();
+							runStatus = false; // break out of the while loop
+							s.close();
+							return;
+					case "":
+							break;
+					default:
+							System.out.println("The command \"" + input + "\" is not recognized. Type h for help, or e for exit.");
+				}
             }
 //				case "ct":
 //				case "new content":
@@ -110,50 +110,50 @@ public class Main {
 					System.out.println("Enter Time (hh:mm:ss)");
 					String timestampTime = s.nextLine();
 					System.out.println("Enter caption");
-					String caption =s.nextLine();
-					String id =authHandler.getCurrentUser();
+					String caption = s.nextLine();
+					String id = authHandler.getCurrentUser();
 					timestampService.addTimeStamp(id,caption, timestampTime, timestampVideoID);
 					break;
 				case "g":
 				case "get Timestamp":
 					System.out.println("Enter YouTube VideoID if you want to search");
-					String getTimestampVideoID =s.nextLine();
-					ArrayList<ArrayList<String>> results =timestampService.getTimestamps(getTimestampVideoID, authHandler.getCurrentUser());
+					String getTimestampVideoID = s.nextLine();
+					ArrayList<ArrayList<String>> results = timestampService.getTimestamps(getTimestampVideoID, authHandler.getCurrentUser());
 					timestampService.outputConsoleTables(results);
 					break;
 				case "gm":
 				case "get my Timestamps":
 					String username = authHandler.getCurrentUserName();
-					ArrayList<ArrayList<String>> myresults =timestampService.getUsersTimestamps(username, authHandler.getCurrentUser());
-					timestampService.outputConsoleTables(myresults);
+					ArrayList<ArrayList<String>> myResults = timestampService.getUsersTimestamps(username, authHandler.getCurrentUser());
+					timestampService.outputConsoleTables(myResults);
 					boolean runSelection=true;
 					while (runSelection) {
 						System.out.println("Press s to select a timestamp or e to exit selection mode");
 						System.out.print("~ ");
 			            String input2 = s.nextLine();
 			            switch(input2) {
-			            case "s":
-			            	System.out.println("Press the entry number that you want to select");
-			            	String num = s.nextLine();
-			            	ArrayList<String> selectedRow=myresults.get(Integer.valueOf(num)-1);
-			            	timestampService.outputSelection(selectedRow);
-			            	System.out.println("Press d to delete selected entry or e to exit");
-			            	String query = s.nextLine();
-			            	switch(query) {
-			            	case "e":
-			            		runSelection=false;
-			            		System.out.println("Exiting selection mode...");
-			            		break;
-			            	case "d":
-			            		String userId=authHandler.getCurrentUser();
-			            		timestampService.deleteTimestamp(selectedRow,userId);
-			            	break;
-			            	}
-			            case "e":
-			            	runSelection=false;
-			            	System.out.println("Exiting selection mode...");
+							case "s":
+								System.out.println("Press the entry number that you want to select");
+								String num = s.nextLine();
+								ArrayList<String> selectedRow = myResults.get(Integer.parseInt(num)-1);
+								timestampService.outputSelection(selectedRow);
+								System.out.println("Press d to delete selected entry or e to exit");
+								String query = s.nextLine();
+								switch(query) {
+									case "e":
+										runSelection=false;
+										System.out.println("Exiting selection mode...");
+										break;
+									case "d":
+										String userId=authHandler.getCurrentUser();
+										timestampService.deleteTimestamp(selectedRow,userId);
+									break;
+								}
+							case "e":
+								runSelection=false;
+								System.out.println("Exiting selection mode...");
 			            }
-						break;
+//						break;
 					}
 					break;
 //				case "d":
@@ -162,8 +162,7 @@ public class Main {
 //					String deleteVideoID =s.nextLine();
 ////					System.out.println("Enter the timestamps' video time that you want to delete (hh:mm:ss)");
 ////					String deleteVideoTime=s.nextLine();
-//					String userID = authHandler.getCurrentUser();
-//					timestampService.deleteTimestamp(deleteVideoID, userID);
+//					timestampService.deleteVideoTimestamps(deleteVideoID);
 //					break;
 				case "h":
                 case "help":

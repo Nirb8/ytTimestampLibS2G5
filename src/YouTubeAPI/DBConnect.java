@@ -59,11 +59,11 @@ public class DBConnect {
             listVideosRequest.setKey(apiKey);
             VideoListResponse listResponse = listVideosRequest.execute();
             Video video = listResponse.getItems().get(0);
-            String videoTitle=video.getSnippet().getTitle();
-            DateTime videoPublished =video.getSnippet().getPublishedAt();//ISL 8601
+            String videoTitle = video.getSnippet().getTitle();
+            DateTime videoPublished = video.getSnippet().getPublishedAt();//ISL 8601
             String channelId = video.getSnippet().getChannelId();
             String categoryId = video.getSnippet().getCategoryId();
-            String videoDuration =this.getYouTubeVideoDuration(videoID);
+            String videoDuration = this.getYouTubeVideoDuration(videoID);
            
             String categoryName = this.getCategoryName(categoryId);
             //System.out.println("videoID: "+videoID);

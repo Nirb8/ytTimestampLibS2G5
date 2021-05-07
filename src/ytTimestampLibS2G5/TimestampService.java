@@ -264,7 +264,7 @@ public class TimestampService {
 		}
 		return true;
 	}
-	
+
 	public boolean deleteTimestamp(ArrayList<String> row, String userID) {
 		//TODO: select by row for deletion
 		Connection con = this.dbHandler.getConnection();
@@ -297,6 +297,34 @@ public class TimestampService {
 		System.out.println("Timestamp Deleted");
 		return true;
 		
+	}
+
+	public boolean deleteVideoTimestamps(String videoID) {
+		//TODO: select by row for deletion
+		Connection con = this.dbHandler.getConnection();
+		String query = "DELETE FROM Timestamps WHERE YTVideoID=?";
+		String query2="SELECT * FROM Timestamps WHERE YTVideoID=?";
+		try {
+			PreparedStatement prpsmt = con.prepareStatement(query2);
+			prpsmt.setString(1, videoID);
+			ResultSet results =prpsmt.executeQuery();
+			if (results.next()) {
+				PreparedStatement prpsmt2 = con.prepareStatement(query);
+				prpsmt2.setString(1, videoID);
+				prpsmt2.execute();
+			}
+			else {
+				System.out.println("No deletion performed, no timestamp matches given parameters");
+				return false;
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+			System.out.println("No deletion performed");
+			e.printStackTrace();
+			return false;
+		}
+		System.out.println("Timestamps Deleted");
+		return true;
 	}
 	
 	public int addTimestampToUserHistory(String userID, String timestampID) {

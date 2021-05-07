@@ -1,5 +1,6 @@
 package SpecialClasses;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.regex.Pattern;
 
@@ -50,9 +51,7 @@ public class TableList {
 		this.spacing = 1;
 		this.aligns = new EnumAlignment[columns];
 		this.comparator = null;
-		for (int i = 0; i < aligns.length; i++) {
-			aligns[i] = EnumAlignment.LEFT;
-		}
+		Arrays.fill(aligns, EnumAlignment.LEFT);
 	}
 
 	private void updateSizes(String[] elements) {
@@ -153,7 +152,7 @@ public class TableList {
 		}
 		System.out.println(line.toString());
 
-		// print vertical seperator
+		// print vertical separator
 		line = null;
 		for (int i = 0; i < rows; i++) {
 			if (line != null) {
