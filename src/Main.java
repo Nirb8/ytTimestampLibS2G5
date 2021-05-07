@@ -1,3 +1,4 @@
+import YouTubeAPI.RegexConverter;
 import ytTimestampLibS2G5.AuthHandler;
 import ytTimestampLibS2G5.DatabaseConnectionHandler;
 import ytTimestampLibS2G5.TimestampService;
@@ -94,7 +95,7 @@ public class Main {
 //				case "cv":
 //				case "add video":
 //					System.out.println("Enter YouTube VideoID");
-//					String videoID = s.nextLine();
+//					String videoID = RegexConverter.convertLinkToYTVideoID(s.nextLine());
 //					videoService.addVideo(videoID);
 //			    	break;
             System.out.print("~ ");
@@ -116,7 +117,7 @@ public class Main {
 				case "g":
 				case "get Timestamp":
 					System.out.println("Enter YouTube VideoID if you want to search");
-					String getTimestampVideoID = s.nextLine();
+					String getTimestampVideoID = RegexConverter.convertLinkToYTVideoID(s.nextLine());
 					ArrayList<ArrayList<String>> results = timestampService.getTimestamps(getTimestampVideoID, authHandler.getCurrentUser());
 					timestampService.outputConsoleTables(results);
 					break;
@@ -164,7 +165,7 @@ public class Main {
 //				case "d":
 //				case "delete Timestamp":
 //					System.out.println("Enter the timestamp's video ID that you want to delete");
-//					String deleteVideoID = s.nextLine();
+//					String deleteVideoID = RegexConverter.convertLinkToYTVideoID(s.nextLine());
 ////					System.out.println("Enter the timestamps' video time that you want to delete (hh:mm:ss)");
 ////					String deleteVideoTime = s.nextLine();
 //					timestampService.deleteVideoTimestamps(deleteVideoID);

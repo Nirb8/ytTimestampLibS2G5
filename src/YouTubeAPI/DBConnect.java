@@ -9,7 +9,6 @@ import com.google.api.services.youtube.model.VideoCategory;
 import com.google.api.services.youtube.model.VideoCategoryListResponse;
 import com.google.api.services.youtube.model.VideoListResponse;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.sql.SQLException;
 //Referenced https://developers.google.com/youtube/v3/docs
 //Referenced stack overflow question and modified it
@@ -141,7 +140,7 @@ public class DBConnect {
     		this.publishedDate=publishedDate;
     		this.author=author;
     		this.contentType=contentType;
-    		this.convertedDuration=TimeConverter.converttoHHMMSS(this.duration);
+    		this.convertedDuration= RegexConverter.convertTimeToHHMMSS(this.duration);
     		this.contentName=contentName;
     	}
     	
