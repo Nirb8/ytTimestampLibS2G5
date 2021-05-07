@@ -32,10 +32,6 @@ public class Main {
         	
         	
             //expect this switch statement to get CHONKY
-			/*
-			* cases: h/help, e/x/exit/q/quit, l/login, logout, view/view tags, create/create tag, history
-			*/
-            //test comment
             while (!signIn) {
             	System.out.println("Please sign in: Press r to register or l to login");
             	System.out.print("~ ");
@@ -106,7 +102,7 @@ public class Main {
 				case "ct":
 				case "create Timestamp":
 					System.out.println("Enter YouTube VideoID");
-					String timestampVideoID = s.nextLine();
+					String timestampVideoID = RegexConverter.convertLinkToYTVideoID(s.nextLine());
 					System.out.println("Enter Time (hh:mm:ss)");
 					String timestampTime = s.nextLine();
 					System.out.println("Enter caption");
