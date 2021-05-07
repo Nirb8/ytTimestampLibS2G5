@@ -33,7 +33,7 @@ public class TimestampService {
 	
 	private static final Random RANDOM = new SecureRandom();
 	
-	private DatabaseConnectionHandler dbHandler=null;
+	private DatabaseConnectionHandler dbHandler;
 	
 	public TimestampService(DatabaseConnectionHandler dbHandler) {
 		this.dbHandler = dbHandler;
@@ -86,19 +86,17 @@ public class TimestampService {
 					return true;
 				}
 			}
-		}
-		catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
-		
 		return false;
 	}
 
 	public ArrayList<ArrayList<String>> getTimestamps(String videoID, String accessingUserID) {
 		//DONE:Shows all the timestamps attached to a video
 		Connection con = this.dbHandler.getConnection();
-		ArrayList<ArrayList<String>> timestamps = new ArrayList<ArrayList<String>>();
+		ArrayList<ArrayList<String>> timestamps = new ArrayList<>();
 		String query;
 		
 		//if no input is given
@@ -118,7 +116,7 @@ public class TimestampService {
 					String cTime = rs.getDate(6).toString();
 					String UserName = rs.getString(7);
 					String tID = rs.getString(8);
-					ArrayList<String> details = new ArrayList<String>();
+					ArrayList<String> details = new ArrayList<>();
 					count++;
 					details.add(String.valueOf(count));
 					details.add(ID);
@@ -135,7 +133,6 @@ public class TimestampService {
 				e.printStackTrace();
 				return null;
 			}
-			
 		}
 		//if input is given
 		else {
@@ -155,7 +152,7 @@ public class TimestampService {
 					String cTime = rs.getDate(6).toString();
 					String UserName = rs.getString(7);
 					String tID = rs.getString(8);
-					ArrayList<String> details = new ArrayList<String>();
+					ArrayList<String> details = new ArrayList<>();
 					count++;
 					details.add(String.valueOf(count));
 					details.add(ID);
@@ -166,21 +163,55 @@ public class TimestampService {
 					details.add(cTime);
 					details.add(UserName);
 					timestamps.add(details);
-					
-					
+					this.addTimestampToUserHistory(accessingUserID, tID);
 				}
-			}catch(Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
 			}
 		}
 		return timestamps;
 	}
+
+	public ArrayList<ArrayList<String>> getUserHistory(String accessingUserID) {
+		//DONE:Shows all the timestamps attached to a video
+		Connection con = this.dbHandler.getConnection();
+		ArrayList<ArrayList<String>> history = new ArrayList<>();
+		String query;
+
+		query="SELECT * FROM dbo.UserHistoryView WHERE [UserID] = ?";
+		try {
+			PreparedStatement prpstmt = con.prepareStatement(query);
+			prpstmt.setString(1, accessingUserID);
+			ResultSet rs=prpstmt.executeQuery();
+			int count=0;
+			while (rs.next()) {
+				String ID = rs.getString(1);
+				String name = rs.getString(2);
+				String des = rs.getString(3);
+				String tTime = rs.getTime(4).toString();
+				String uTime = rs.getTimestamp(5).toString().substring(0, 19);
+				ArrayList<String> details = new ArrayList<>();
+				count++;
+				details.add(String.valueOf(count));
+				details.add(ID);
+				details.add(name);
+				details.add(des);
+				details.add(tTime);
+				details.add(uTime);
+				history.add(details);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		return history;
+	}
 	
 	public ArrayList<ArrayList<String>> getUsersTimestamps(String userName, String accessingUserID) {
 		Connection con = this.dbHandler.getConnection();
 		
-		ArrayList<ArrayList<String>> timestamps = new ArrayList<ArrayList<String>>();
+		ArrayList<ArrayList<String>> timestamps = new ArrayList<>();
 		String query="SELECT * FROM dbo.UserView WHERE Creator=?";
 		int count=0;
 			try {
@@ -196,7 +227,7 @@ public class TimestampService {
 					String cTime = rs.getDate(6).toString();
 					String UserName = rs.getString(7);
 					String tID = rs.getString(8);
-					ArrayList<String> details = new ArrayList<String>();
+					ArrayList<String> details = new ArrayList<>();
 					count++;
 					details.add(String.valueOf(count));
 					details.add(ID);
@@ -218,13 +249,20 @@ public class TimestampService {
 	
 	//Used specifically for timestamp search output table
 	public void outputConsoleTables(ArrayList<ArrayList<String>> results) {
-		TableList table = new TableList(8,"Entry Number","YouTube ID", "Video Name", "Description", "TimestampTime", "Content Type", "Created Time", "Creator");
-		results.forEach(element -> table.addRow(element.get(0),element.get(1), element.get(2), element.get(3), element.get(4),element.get(5), element.get(6), element.get(7)));
+		TableList table = new TableList(8,"Entry Number","YouTube ID", "Video Name", "Description", "Timestamp Time", "Content Type", "Created Time", "Creator");
+		results.forEach(element -> table.addRow(element.get(0), element.get(1), element.get(2), element.get(3), element.get(4), element.get(5), element.get(6), element.get(7)));
+		table.print();
+	}
+
+	//Used specifically for user history output table
+	public void outputHistory(ArrayList<ArrayList<String>> results) {
+		TableList table = new TableList(6,"Entry Number","YouTube ID", "Video Name", "Description", "Timestamp Time", "Time Accessed");
+		results.forEach(element -> table.addRow(element.get(0), element.get(1), element.get(2), element.get(3), element.get(4), element.get(5)));
 		table.print();
 	}
 	
 	public void outputSelection(ArrayList<String> result) {
-		TableList table = new TableList(8,"Entry Number","YouTube ID", "Video Name", "Description", "TimestampTime", "Content Type", "Created Time", "Creator");
+		TableList table = new TableList(8,"Entry Number","YouTube ID", "Video Name", "Description", "Timestamp Time", "Content Type", "Created Time", "Creator");
 		table.addRow(result.get(0),result.get(1), result.get(2), result.get(3), result.get(4),result.get(5), result.get(6), result.get(7));
 		table.print();
 	}
@@ -328,7 +366,7 @@ public class TimestampService {
 	}
 	
 	public int addTimestampToUserHistory(String userID, String timestampID) {
-		CallableStatement cstmt = null;
+		CallableStatement cstmt;
 		try {
 			cstmt = this.dbHandler.getConnection().prepareCall("{? = call UpdateUserHistory(?, ?)}");
 			
@@ -347,10 +385,8 @@ public class TimestampService {
 			}
 			
 			cstmt.execute();
-			
-			int returnValue = cstmt.getInt(1);
-			
-			return returnValue;
+
+			return cstmt.getInt(1);
 		
 		} catch (SQLException e) {
 			e.printStackTrace();

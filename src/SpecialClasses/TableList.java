@@ -22,16 +22,16 @@ public class TableList {
 	private static final String CROSSING_T = "\u252c";
 	private static final String CROSSING_B = "\u253b";
 
-	private String[] descriptions;
-	private ArrayList<String[]> table;
-	private int[] tableSizes;
-	private int rows;
+	private final String[] descriptions;
+	private final ArrayList<String[]> table;
+	private final int[] tableSizes;
+	private final int rows;
 	private int findex;
 	private String filter;
 	private boolean ucode;
 	private Comparator<String[]> comparator;
 	private int spacing;
-	private EnumAlignment aligns[];
+	private final EnumAlignment[] aligns;
 
 	public TableList(String... descriptions) {
 		this(descriptions.length, descriptions);
@@ -70,7 +70,7 @@ public class TableList {
 	}
 
 	public TableList sortBy(int column) {
-		return this.compareWith((o1, o2) -> o1[column].compareTo(o2[column]));
+		return this.compareWith(Comparator.comparing(o -> o[column]));
 	}
 
 	public TableList align(int column, EnumAlignment align) {
@@ -138,9 +138,9 @@ public class TableList {
 					line.append(gc(VERTICAL_TSEP));
 				}
 			}
-			String part = descriptions[i];
+			StringBuilder part = new StringBuilder(descriptions[i]);
 			while (part.length() < tableSizes[i] + spacing) {
-				part += " ";
+				part.append(" ");
 			}
 			for (int j = 0; j < spacing; j++) {
 				line.append(" ");
@@ -161,9 +161,15 @@ public class TableList {
 				line = new StringBuilder();
 				if (ucode) {
 					line.append(CROSSING_L);
+				} else {
+					line.append(gc(BLINE));
 				}
 			}
-			for (int j = 0; j < tableSizes[i] + 2 * spacing; j++) {
+			int correctSeparatorLength = tableSizes[i];
+			if (ucode) {
+				correctSeparatorLength += 2*spacing;
+			}
+			for (int j = 0; j < correctSeparatorLength; j++) {
 				line.append(gc(BLINE));
 			}
 		}
@@ -210,34 +216,34 @@ public class TableList {
 						line.append(gc(VERTICAL_BSEP));
 					}
 				}
-				String part = "";
+				StringBuilder part = new StringBuilder();
 				for (int j = 0; j < spacing; j++) {
-					part += " ";
+					part.append(" ");
 				}
 				if (strings[i] != null) {
 					switch (aligns[i]) {
 					case LEFT:
-						part += strings[i];
+						part.append(strings[i]);
 						break;
 					case RIGHT:
 						for (int j = 0; j < tableSizes[i] - strings[i].length(); j++) {
-							part += " ";
+							part.append(" ");
 						}
-						part += strings[i];
+						part.append(strings[i]);
 						break;
 					case CENTER:
 						for (int j = 0; j < (tableSizes[i] - strings[i].length()) / 2; j++) {
-							part += " ";
+							part.append(" ");
 						}
-						part += strings[i];
+						part.append(strings[i]);
 						break;
 					}
 				}
 				while (part.length() < tableSizes[i] + spacing) {
-					part += " ";
+					part.append(" ");
 				}
 				for (int j = 0; j < spacing; j++) {
-					part += " ";
+					part.append(" ");
 				}
 				line.append(part);
 			}
@@ -271,7 +277,7 @@ public class TableList {
 		return src[ucode ? 1 : 0];
 	}
 
-	public static enum EnumAlignment {
+	public enum EnumAlignment {
 		LEFT, CENTER, RIGHT
 	}
 

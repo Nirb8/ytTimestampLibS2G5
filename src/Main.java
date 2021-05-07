@@ -120,6 +120,11 @@ public class Main {
 					ArrayList<ArrayList<String>> results = timestampService.getTimestamps(getTimestampVideoID, authHandler.getCurrentUser());
 					timestampService.outputConsoleTables(results);
 					break;
+				case "vh":
+				case "view user history":
+					ArrayList<ArrayList<String>> history = timestampService.getUserHistory(authHandler.getCurrentUser());
+					timestampService.outputHistory(history);
+					break;
 				case "gm":
 				case "get my Timestamps":
 					String username = authHandler.getCurrentUserName();
