@@ -46,7 +46,7 @@ public class DataImport {
 			Object obj = psr.parse(new FileReader(importFrom));
 			
 			JSONArray comments = (JSONArray) obj;
-			
+
 			Iterator<JSONObject> iter = comments.iterator();
 
 			while (iter.hasNext()) {
@@ -61,22 +61,17 @@ public class DataImport {
 						//System.out.println(matcher.group(0));
 						//System.out.println(matcher.group(1));
 						String youtubeID = matcher.group(1);
-						
+
 						//System.out.println(matcher.group(2));
 						String time = timeConversionToHHMMSS(matcher.group(2));
-						
+
 						String title = StringEscapeUtils.unescapeHtml4(matcher.group(3));
-						
+
 						TagData td = new TagData(youtubeID, time, title);
 						tdList.add(td);
 						//System.out.println(StringEscapeUtils.unescapeHtml4(matcher.group(3)));
 					}
-
 				}
-				
-				
-				
-				
 			}
 			
 			for(TagData td : tdList) {
@@ -99,45 +94,30 @@ public class DataImport {
 		} catch (IOException | ParseException e) {
 			e.printStackTrace();
 		}
-		
-		
 	}
 
-	
-	
-	
-	
-	
-//	System.out.println(timeConversionToHHMMSS("1h23m45s"));     
-//	System.out.println(timeConversionToHHMMSS("23m45s"));  
-//	System.out.println(timeConversionToHHMMSS("03m45s")); 
-//	System.out.println(timeConversionToHHMMSS("0m45s"));  
-//	System.out.println(timeConversionToHHMMSS("10h23m45s"));  
-	//test code
 	/*
 	 * Converts from XhXXmXXs or XXmXXs or XmXXs to hh:mm:ss
 	 * */
 	public static String timeConversionToHHMMSS(String time) {
 		// TODO: using a string builder would increase performance, but it's optional
 		switch(time.length()) {
-		case 5: 
-			time = "0" + time;
-		case 6:
-			time = "00:" + time;
-			time = time.replace('s',' ');
-			time = time.replace('m', ':');
-			time = time.trim();
-			break;
-		case 8:
-			time = "0" + time;
-		case 9:
-			time = time.replace('s',' ');
-			time = time.replace('m', ':');
-			time = time.replace('h', ':');
-			time = time.trim();
-			break;
-		
-	}
+			case 5:
+			case 8:
+				time = "0" + time;
+			case 6:
+				time = "00:" + time;
+				time = time.replace('s',' ');
+				time = time.replace('m', ':');
+				time = time.trim();
+				break;
+			case 9:
+				time = time.replace('s',' ');
+				time = time.replace('m', ':');
+				time = time.replace('h', ':');
+				time = time.trim();
+				break;
+		}
 		return time;
 	}
 }

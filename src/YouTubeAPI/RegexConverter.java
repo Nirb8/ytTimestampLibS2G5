@@ -72,9 +72,9 @@ public class RegexConverter {
             return youtubeLink;
         }
 
-        String pattern = new String("^(\\w{11})$");
-        String pattern2 = new String("youtube\\.com\\/watch\\?v=(\\w{11})$");
-        String pattern3 = new String("youtu\\.be\\/(\\w{11})$");
+        String pattern = new String("^((?:\\w|-|_){11})$");
+        String pattern2 = new String("youtube\\.com\\/watch\\?v=((?:\\w|-|_){11})$");
+        String pattern3 = new String("youtu\\.be\\/((?:\\w|-|_){11})$");
         Pattern r = Pattern.compile(pattern);
         Pattern r2= Pattern.compile(pattern2);
         Pattern r3=Pattern.compile(pattern3);
