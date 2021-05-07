@@ -46,24 +46,24 @@ public class Main {
 						//prompt for registration
 						System.out.println("Adding New User");
 						System.out.println("ENTER Username");
-						String username =s.nextLine();
+						String username = s.nextLine();
 						System.out.println("ENTER Password");
 						String password = s.nextLine();
-						boolean result1 =authHandler.register(username,password);
+						boolean result1 = authHandler.register(username,password);
 						if (result1) {
-							signIn=true;
+							signIn = true;
 						}
 						break;
 					case "l":
 					case "login":
 						// prompt for username and password
 						System.out.println("ENTER Username");
-						String loginusername =s.nextLine();
+						String loginusername = s.nextLine();
 						System.out.println("ENTER Password");
 						String loginpassword = s.nextLine();
-						boolean result=authHandler.login(loginusername, loginpassword);
+						boolean result = authHandler.login(loginusername, loginpassword);
 						if (result) {
-							signIn=true;
+							signIn = true;
 						}
 						break;
 					case "e":
@@ -74,7 +74,6 @@ public class Main {
 							System.out.println("Exiting...");
 							//probably want to close out connection to database and other stuff to end gracefully
 							dbHandler.closeConnection();
-							runStatus = false; // break out of the while loop
 							s.close();
 							return;
 					case "":
@@ -124,44 +123,45 @@ public class Main {
 				case "gm":
 				case "get my Timestamps":
 					String username = authHandler.getCurrentUserName();
-					ArrayList<ArrayList<String>> myResults = timestampService.getUsersTimestamps(username, authHandler.getCurrentUser());
-					timestampService.outputConsoleTables(myResults);
-					boolean runSelection=true;
+					ArrayList<ArrayList<String>> myresults = timestampService.getUsersTimestamps(username, authHandler.getCurrentUser());
+					timestampService.outputConsoleTables(myresults);
+					boolean runSelection = true;
 					while (runSelection) {
 						System.out.println("Press s to select a timestamp or e to exit selection mode");
 						System.out.print("~ ");
 			            String input2 = s.nextLine();
 			            switch(input2) {
-							case "s":
-								System.out.println("Press the entry number that you want to select");
-								String num = s.nextLine();
-								ArrayList<String> selectedRow = myResults.get(Integer.parseInt(num)-1);
-								timestampService.outputSelection(selectedRow);
-								System.out.println("Press d to delete selected entry or e to exit");
-								String query = s.nextLine();
-								switch(query) {
-									case "e":
-										runSelection=false;
-										System.out.println("Exiting selection mode...");
-										break;
-									case "d":
-										String userId=authHandler.getCurrentUser();
-										timestampService.deleteTimestamp(selectedRow,userId);
+			            case "s":
+			            	System.out.println("Press the entry number that you want to select");
+			            	String num = s.nextLine();
+			            	ArrayList<String> selectedRow = myresults.get(Integer.parseInt(num)-1);
+			            	timestampService.outputSelection(selectedRow);
+			            	System.out.println("Press d to delete selected entry or e to exit");
+			            	String query = s.nextLine();
+			            	switch(query) {
+								case "e":
+									runSelection = false;
+									System.out.println("Exiting selection mode...");
 									break;
-								}
-							case "e":
-								runSelection=false;
-								System.out.println("Exiting selection mode...");
+								case "d":
+									String userId = authHandler.getCurrentUser();
+									timestampService.deleteTimestamp(selectedRow,userId);
+									break;
+			            	}
+			            	break;
+			            case "e":
+			            	runSelection = false;
+			            	System.out.println("Exiting selection mode...");
+			            	break;
 			            }
-//						break;
 					}
 					break;
 //				case "d":
 //				case "delete Timestamp":
 //					System.out.println("Enter the timestamp's video ID that you want to delete");
-//					String deleteVideoID =s.nextLine();
+//					String deleteVideoID = s.nextLine();
 ////					System.out.println("Enter the timestamps' video time that you want to delete (hh:mm:ss)");
-////					String deleteVideoTime=s.nextLine();
+////					String deleteVideoTime = s.nextLine();
 //					timestampService.deleteVideoTimestamps(deleteVideoID);
 //					break;
 				case "h":
@@ -203,7 +203,6 @@ public class Main {
                     System.out.println("The command \"" + input + "\" is not recognized. Type h for help, or e for exit.");
             }
         }
-        
         s.close();
     }
 }
