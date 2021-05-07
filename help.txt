@@ -2,3 +2,6 @@ help (short: h) - Displays this help message.
 exit (short: x, e, q, quit) - Exits the program.
 login (short: l) - Prompts user for username and password, attempts to log into database.
 register (short: r) - Prompts user for username and password, attempts to create a new account with those values.
+create Timestamp (short: ct) - Prompts user for YouTube video ID, time, and timestamp title, then creates a new timestamp.
+get Timestamp (short: g) - Searches for timestamps given video ID, or displays all timestamps if no video ID is given.
+get my Timestamps (short: gm) - Displays the user's timestamps and allows the user to delete them.

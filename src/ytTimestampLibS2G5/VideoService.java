@@ -42,7 +42,7 @@ import YouTubeAPI.DBConnect.VideoDetails;
 public class VideoService {
 	
 	private static final Random RANDOM = new SecureRandom();
-	private DatabaseConnectionHandler dbHandler=null;
+	private DatabaseConnectionHandler dbHandler;
 	
 	public VideoService(DatabaseConnectionHandler dbHandler) {
 		this.dbHandler = dbHandler;
@@ -51,47 +51,46 @@ public class VideoService {
 	public boolean addVideo(String videoID) {
 		DBConnect youtube_binfo = new DBConnect();
     	try {
-    		VideoDetails vd=youtube_binfo.getYouTubeVideoDetails(videoID);
-    		String durationTime=vd.getDuration();
+    		VideoDetails vd = youtube_binfo.getYouTubeVideoDetails(videoID);
+    		String durationTime = vd.getDuration();
     		String videoTitle = vd.getTitle();
     		Date uploadDate = new Date(vd.getPublishedDate().getValue());
-    		int videoContentID = Integer.valueOf(vd.getContentType());
-    		String contentName =vd.getContentName();
-			
-    		Date date = uploadDate;
-    		System.out.println(durationTime);
+    		int videoContentID = Integer.parseInt(vd.getContentType());
+    		String contentName = vd.getContentName();
+
+			System.out.println(durationTime);
     		Time duration = Time.valueOf(durationTime);
-    		Connection con=this.dbHandler.getConnection();
+    		Connection con = this.dbHandler.getConnection();
     		try {
-    			CallableStatement proc =con.prepareCall("{?=call dbo.AddVideo(?,?,?,?)}");
+    			CallableStatement proc = con.prepareCall("{? = call dbo.AddVideo(?,?,?,?)}");
     			proc.setString(2,videoID);
     			proc.setString(3, videoTitle);
     			proc.setTime(4, duration);
-    			proc.setDate(5, date);
+    			proc.setDate(5, uploadDate);
     			proc.registerOutParameter(1, Types.INTEGER);
     			proc.execute();
     			int returnValue = proc.getInt(1);
     			//System.out.println(proc.getString(1));
     			proc.close();
-    			if (returnValue==1) {
+    			if (returnValue == 1) {
     				throw new Error("ERROR: VideoID cannot be null");
     			}
-    			if (returnValue==2) {
+    			if (returnValue == 2) {
     				throw new Error("ERROR: Video Title cannot be null");
     			}
-    			if (returnValue==3) {
+    			if (returnValue == 3) {
     				throw new Error("ERROR: Duration time cannot be null");
-    			}if (returnValue==4) {
+    			}if (returnValue == 4) {
     				throw new Error("ERROR: Upload Date cannot be null");
     			}
-    			if (returnValue==5) {
+    			if (returnValue == 5) {
     				throw new Error("ERROR: Invalid Upload Date");
     			}
-    			if (returnValue==6) {
+    			if (returnValue == 6) {
     				throw new Error("ERROR: Video already added");
     			}
     			//add entry to videoGenres
-    			Boolean result=this.addVideoGenres(videoID, videoContentID, contentName);
+    			boolean result = this.addVideoGenres(videoID, videoContentID, contentName);
     			if (result) {
     				System.out.println("Video Added");
     				
@@ -102,26 +101,24 @@ public class VideoService {
     		}
 			
 			
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			e1.printStackTrace();
+		} catch (SQLException | IOException e) {
+			e.printStackTrace();
 		}
 		return true;
 	}
 
 	public ArrayList<String> getVideos() {
 //		//TODO: Shows a table of videos already added
-		ArrayList<String> timestamps = new ArrayList<String>();
-		
+		ArrayList<String> timestamps = new ArrayList<>();
+
 		return timestamps;
 	}
 	
 	public boolean addVideoGenres(String YouTubeID, int ContentType, String ContentName) {
 		//DONE
-		Connection con=this.dbHandler.getConnection();
+		Connection con = this.dbHandler.getConnection();
 		try {
-			CallableStatement proc =con.prepareCall("{?=call dbo.InsertIntoVideoGenres(?,?,?)}");
+			CallableStatement proc = con.prepareCall("{? = call dbo.InsertIntoVideoGenres(?,?,?)}");
 			proc.setString(2, YouTubeID);
 			proc.setInt(3, ContentType);
 			proc.setString(4, ContentName);
@@ -130,13 +127,13 @@ public class VideoService {
 			int returnValue = proc.getInt(1);
 			//System.out.println(proc.getString(1));
 			proc.close();
-			if (returnValue==1) {
+			if (returnValue == 1) {
 				throw new Error("ERROR: Content ID cannot be null");
 			}
-//			if (returnValue==2) {
+//			if (returnValue == 2) {
 //				throw new Error("ERROR: ContentType value does not exist");
 //			}
-			if (returnValue==3) {
+			if (returnValue == 3) {
 				throw new Error("ERROR: VideoID cannot be null");
 			}
 			
@@ -150,9 +147,9 @@ public class VideoService {
 	
 	public boolean createContentType(int ContentTypeID, String title) {
 		//DONE: Creates a new contentType may want a better solution for IDs
-		Connection con=this.dbHandler.getConnection();
+		Connection con = this.dbHandler.getConnection();
 		try {
-			CallableStatement proc =con.prepareCall("{?=call dbo.AddContentType(?,?,?)}");
+			CallableStatement proc = con.prepareCall("{? = call dbo.AddContentType(?,?,?)}");
 			proc.setInt(2, ContentTypeID);
 			proc.setString(3, title);
 			proc.setString(4,null);
@@ -162,10 +159,10 @@ public class VideoService {
 			System.out.println(proc.getString(1));
 			proc.close();
 			
-			if (returnValue==1) {
+			if (returnValue == 1) {
 				throw new Error("ERROR: ContentTypeID cannot be null");
 			}
-			if (returnValue==2) {
+			if (returnValue == 2) {
 				throw new Error("ERROR: ContentTypeTitle cannot be null");
 			}
 		}catch(Exception e) {
