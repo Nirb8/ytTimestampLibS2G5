@@ -21,6 +21,11 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.UUID;
 
+import java.awt.datatransfer.StringSelection;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+
+
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.swing.JOptionPane;
@@ -165,6 +170,25 @@ public class TimestampService {
 					timestamps.add(details);
 					this.addTimestampToUserHistory(accessingUserID, tID);
 				}
+				//test code
+				
+				String exportString = "";
+				
+				exportString += "https://www.youtube.com/watch?v=" + videoID + "\n";
+				
+				for(ArrayList<String> d:timestamps) {
+					if(d.isEmpty()) {
+						continue;
+					}
+					String des = d.get(3);
+					String tTime = d.get(4);
+				exportString += tTime + " " + des + "\n";
+				}
+				
+				StringSelection stringSelection = new StringSelection(exportString);
+				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+				clipboard.setContents(stringSelection, null);
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
