@@ -102,11 +102,11 @@ public class TimestampService {
 		//if no input is given
 		if (videoID.isEmpty()) {
 			System.out.println("Basic Search");
-			query ="SELECT * FROM dbo.UserView";
+			query ="SELECT * FROM [dbo].[GetAllTimestamps]()";
 			try {
 				Statement stmt = con.createStatement();
 				ResultSet rs=stmt.executeQuery(query);
-				int count=0;
+				int count=0; 
 				while (rs.next()) {
 					String ID = rs.getString(1);
 					String name = rs.getString(2);
