@@ -64,6 +64,7 @@ public class RegexConverter {
         else {
             result = "00:00:00";
         }
+        System.out.println("Found time: " + result);
         return result;
     }
 
@@ -75,6 +76,11 @@ public class RegexConverter {
         String pattern = new String("^((?:\\w|-|_){11})$");
         String pattern2 = new String("youtube\\.com\\/watch\\?v=((?:\\w|-|_){11})$");
         String pattern3 = new String("youtu\\.be\\/((?:\\w|-|_){11})$");
+//        String pattern = "(.{11})";
+//        String pattern2 = "youtube[.]com\\/watch\\?v=(.{11})";
+//        String pattern3 = "youtu[.]be\\/(.{11})"; 
+        
+        
         Pattern r = Pattern.compile(pattern);
         Pattern r2= Pattern.compile(pattern2);
         Pattern r3=Pattern.compile(pattern3);
@@ -96,6 +102,7 @@ public class RegexConverter {
         else {
             throw new IllegalArgumentException("This is not a youtube link or video ID.");
         }
+        System.out.println("found ID: " + result);
         return result;
     }
 }
