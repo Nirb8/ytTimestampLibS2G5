@@ -107,12 +107,36 @@ public class Main {
 					break;
 				case "g":
 				case "get Timestamp":
-					System.out.println("Enter YouTube VideoID if you want to search");
-					//String getTimestampVideoID = RegexConverter.convertLinkToYTVideoID(s.nextLine());
-					String getTimestampVideoID = s.nextLine();
-					ArrayList<ArrayList<String>> results = timestampService.getTimestamps(getTimestampVideoID, authHandler.getCurrentUser());
-					timestampService.outputConsoleTables(results);
-					break;
+					System.out.println("Press V to search by video ID or C to search by content type");
+					String input3 = s.nextLine();
+					switch(input3) {
+					case "v":
+						System.out.println("Enter YouTube VideoID if you want to search");
+						//String getTimestampVideoID = RegexConverter.convertLinkToYTVideoID(s.nextLine());
+						String getTimestampVideoID = s.nextLine();
+						ArrayList<ArrayList<String>> results;
+						if (!getTimestampVideoID.isEmpty()) {
+							results= timestampService.searchTimestampsByVideo(getTimestampVideoID, authHandler.getCurrentUser());
+						}
+						else {
+							results = timestampService.getTimestamps(authHandler.getCurrentUser());
+						}
+						timestampService.outputConsoleTables(results);
+						break;
+					case "c":
+						System.out.println("Enter YouTube Content Type if you want to search");
+						String getContentTypeID = s.nextLine();
+						ArrayList<ArrayList<String>> results2;
+						if (!getContentTypeID.isEmpty()) {
+							results2= timestampService.searchTimestampsByType(getContentTypeID, authHandler.getCurrentUser());
+						}
+						else {
+							results2=timestampService.getTimestamps(authHandler.getCurrentUser());
+						}
+						timestampService.outputConsoleTables(results2);
+						break;
+					}
+					
 				case "vh":
 				case "view user history":
 					ArrayList<ArrayList<String>> history = timestampService.getUserHistory(authHandler.getCurrentUser());
