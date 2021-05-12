@@ -9,6 +9,8 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import YouTubeAPI.RegexConverter;
+
 public class Main {
 	//test
     public static void main(String[] args) {
@@ -96,8 +98,8 @@ public class Main {
 				case "ct":
 				case "create Timestamp":
 					System.out.println("Enter YouTube VideoID");
-					//String timestampVideoID = RegexConverter.convertLinkToYTVideoID(s.nextLine());
-					String timestampVideoID = s.nextLine();
+					String timestampVideoID = RegexConverter.convertLinkToYTVideoID(s.nextLine());
+					//String timestampVideoID = s.nextLine();
 					System.out.println("Enter Time (hh:mm:ss)");
 					String timestampTime = s.nextLine();
 					System.out.println("Enter caption");
@@ -112,8 +114,8 @@ public class Main {
 					switch(input3) {
 					case "v":
 						System.out.println("Enter YouTube VideoID if you want to search");
-						//String getTimestampVideoID = RegexConverter.convertLinkToYTVideoID(s.nextLine());
-						String getTimestampVideoID = s.nextLine();
+						String getTimestampVideoID = RegexConverter.convertLinkToYTVideoID(s.nextLine());
+						//String getTimestampVideoID = s.nextLine();
 						ArrayList<ArrayList<String>> results;
 						if (!getTimestampVideoID.isEmpty()) {
 							results= timestampService.searchTimestampsByVideo(getTimestampVideoID, authHandler.getCurrentUser());
@@ -145,10 +147,10 @@ public class Main {
 				case "gm":
 				case "get my Timestamps":
 					String username = authHandler.getCurrentUserName();
-					ArrayList<ArrayList<String>> myresults = timestampService.getUsersTimestamps(username, authHandler.getCurrentUser());
-					timestampService.outputConsoleTables(myresults);
 					boolean runSelection = true;
 					while (runSelection) {
+						ArrayList<ArrayList<String>> myresults = timestampService.getUsersTimestamps(username, authHandler.getCurrentUser());
+						timestampService.outputConsoleTables(myresults);
 						System.out.println("Press s to select a timestamp or e to exit selection mode");
 						System.out.print("~ ");
 			            String input2 = s.nextLine();
@@ -158,15 +160,20 @@ public class Main {
 			            	String num = s.nextLine();
 			            	ArrayList<String> selectedRow = myresults.get(Integer.parseInt(num)-1);
 			            	timestampService.outputSelection(selectedRow);
-			            	System.out.println("Press d to delete selected entry or e to exit");
+			            	System.out.println("Press d to delete, u to update, or e to exit");
 			            	String query = s.nextLine();
+			            	String userId = authHandler.getCurrentUser();
 			            	switch(query) {
 								case "e":
 									runSelection = false;
 									System.out.println("Exiting selection mode...");
 									break;
+								case "u":
+									System.out.println("Enter new description");
+									String newTitle = s.nextLine();
+									timestampService.updateTimestamps(selectedRow, userId, newTitle);
+									break;
 								case "d":
-									String userId = authHandler.getCurrentUser();
 									timestampService.deleteTimestamp(selectedRow,userId);
 									break;
 			            	}

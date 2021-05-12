@@ -44,6 +44,7 @@ public class TimestampService {
 		this.dbHandler = dbHandler;
 	}
 	
+	//adds new timestamps by 
 	public boolean addTimeStamp(String Id,String caption, String videoTime, String videoId) {
 		//DONE: Complete this method.
 		String current = LocalDate.now().toString();
@@ -97,7 +98,8 @@ public class TimestampService {
 		}
 		return false;
 	}
-
+	
+	//search Timestamps by content Type
 	public ArrayList<ArrayList<String>> searchTimestampsByType(String content, String accessingUserID){
 		System.out.println("Specified Search by Content");
 		Connection con = this.dbHandler.getConnection();
@@ -127,6 +129,7 @@ public class TimestampService {
 				details.add(cType);
 				details.add(cTime);
 				details.add(UserName);
+				details.add(tID);
 				timestamps.add(details);
 				this.addTimestampToUserHistory(accessingUserID, tID);
 			}
@@ -136,6 +139,8 @@ public class TimestampService {
 		}
 		return timestamps;
 	}
+	
+	//Basic grab of all timestamps
 	public ArrayList<ArrayList<String>> getTimestamps(String accessingUserID) {
 		//DONE:Shows all the timestamps attached to a video
 		Connection con = this.dbHandler.getConnection();
@@ -168,6 +173,7 @@ public class TimestampService {
 					details.add(cType);
 					details.add(cTime);
 					details.add(UserName);
+					details.add(tID);
 					timestamps.add(details);
 					this.addTimestampToUserHistory(accessingUserID, tID);
 				}
@@ -178,6 +184,7 @@ public class TimestampService {
 			return timestamps;
 	}
 	
+	//search Timestamps by video ID
 	public ArrayList<ArrayList<String>> searchTimestampsByVideo(String videoID, String accessingUserID) {
 		System.out.println("Specified Search");
 		Connection con = this.dbHandler.getConnection();
@@ -207,6 +214,7 @@ public class TimestampService {
 					details.add(cType);
 					details.add(cTime);
 					details.add(UserName);
+					details.add(tID);
 					timestamps.add(details);
 					this.addTimestampToUserHistory(accessingUserID, tID);
 				}
@@ -242,8 +250,8 @@ public class TimestampService {
 		Connection con = this.dbHandler.getConnection();
 		ArrayList<ArrayList<String>> history = new ArrayList<>();
 		String query;
-		//TODO TODO TODO REPLACE EVERYTHING LIKE THIS WITH S T O R E D P R O C S
-		query="SELECT * FROM dbo.UserHistoryView WHERE [UserID] = ? ORDER BY [YTVideoID] asc ,[VideoTime] asc";
+
+		query="SELECT * FROM dbo.UserHistoryView WHERE [UserID] = ? ORDER BY [YouTube ID] asc ,[Timestamp Time] asc";
 		try {
 			PreparedStatement prpstmt = con.prepareStatement(query);
 			prpstmt.setString(1, accessingUserID);
@@ -301,6 +309,7 @@ public class TimestampService {
 					details.add(cType);
 					details.add(cTime);
 					details.add(UserName);
+					details.add(tID);
 					timestamps.add(details);
 					this.addTimestampToUserHistory(accessingUserID, tID);
 				}
@@ -366,7 +375,8 @@ public class TimestampService {
 		}
 		return true;
 	}
-
+	
+	//deletes timestamp by selection row information
 	public boolean deleteTimestamp(ArrayList<String> row, String userID) {
 		//TODO: select by row for deletion
 		Connection con = this.dbHandler.getConnection();
@@ -401,6 +411,7 @@ public class TimestampService {
 		
 	}
 
+	//delete timestamps by videoID
 	public boolean deleteVideoTimestamps(String videoID) {
 		//TODO: select by row for deletion
 		Connection con = this.dbHandler.getConnection();
@@ -459,4 +470,31 @@ public class TimestampService {
 		return 0;
 	}
 	
+	//modifies the content description of the timestamp
+	public boolean updateTimestamps(ArrayList<String> row, String userID, String newTitle ) {
+		//TODO: allow timestamps to be updated need to add userhistory updated
+		Connection con = this.dbHandler.getConnection();
+		try {
+			CallableStatement proc =con.prepareCall("{?=call dbo.updateTimestamp(?,?,?)}");
+			System.out.println(row.get(row.size()-1));
+			proc.setString(2, row.get(row.size()-1));
+			proc.setString(3,newTitle);
+			proc.setString(4, userID);
+			proc.registerOutParameter(1, Types.INTEGER);
+			proc.execute();
+			int returnValue = proc.getInt(1);
+			proc.close();
+			if (returnValue==1) {
+				throw new Error("ERROR: TimestampID cannot be null");
+			}
+			if (returnValue==2) {
+				throw new Error("ERROR: User does not match author");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		System.out.println("Timestamp Entry Updated");
+		return false;
+	}
 }
