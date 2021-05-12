@@ -1,4 +1,4 @@
-import YouTubeAPI.RegexConverter;
+
 import ytTimestampLibS2G5.AuthHandler;
 import ytTimestampLibS2G5.DatabaseConnectionHandler;
 import ytTimestampLibS2G5.TimestampService;
@@ -6,14 +6,8 @@ import ytTimestampLibS2G5.VideoService;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.sql.Date;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
-
-import YouTubeAPI.DBConnect;
-import YouTubeAPI.DBConnect.VideoDetails;
 
 public class Main {
 	//test
@@ -37,7 +31,12 @@ public class Main {
             	System.out.print("~ ");
                 String input = s.nextLine();
 				switch (input) {
-
+				case "cv":
+				case "add video":
+					System.out.println("Enter YouTube VideoID");
+					String videoID = s.nextLine();
+					videoService.addVideo(videoID);
+			    	break;
 					case "r":
 					case "register":
 						//prompt for registration
@@ -88,12 +87,7 @@ public class Main {
 //					videoService.createContentType(contentID, contentTitle);
 //					break;
 //					
-//				case "cv":
-//				case "add video":
-//					System.out.println("Enter YouTube VideoID");
-//					String videoID = RegexConverter.convertLinkToYTVideoID(s.nextLine());
-//					videoService.addVideo(videoID);
-//			    	break;
+				
             System.out.print("~ ");
             String input = s.nextLine();
             switch(input) {
@@ -102,7 +96,8 @@ public class Main {
 				case "ct":
 				case "create Timestamp":
 					System.out.println("Enter YouTube VideoID");
-					String timestampVideoID = RegexConverter.convertLinkToYTVideoID(s.nextLine());
+					//String timestampVideoID = RegexConverter.convertLinkToYTVideoID(s.nextLine());
+					String timestampVideoID = s.nextLine();
 					System.out.println("Enter Time (hh:mm:ss)");
 					String timestampTime = s.nextLine();
 					System.out.println("Enter caption");
@@ -113,7 +108,8 @@ public class Main {
 				case "g":
 				case "get Timestamp":
 					System.out.println("Enter YouTube VideoID if you want to search");
-					String getTimestampVideoID = RegexConverter.convertLinkToYTVideoID(s.nextLine());
+					//String getTimestampVideoID = RegexConverter.convertLinkToYTVideoID(s.nextLine());
+					String getTimestampVideoID = s.nextLine();
 					ArrayList<ArrayList<String>> results = timestampService.getTimestamps(getTimestampVideoID, authHandler.getCurrentUser());
 					timestampService.outputConsoleTables(results);
 					break;

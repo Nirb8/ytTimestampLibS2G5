@@ -49,9 +49,13 @@ public class VideoService {
 	}
 	
 	public boolean addVideo(String videoID) {
+		System.out.println("start");
 		DBConnect youtube_binfo = new DBConnect();
+		System.out.println("end");
     	try {
+    		System.out.println("start2");
     		VideoDetails vd = youtube_binfo.getYouTubeVideoDetails(videoID);
+    		System.out.println("end");
     		String durationTime = vd.getDuration();
     		String videoTitle = vd.getTitle();
     		Date uploadDate = new Date(vd.getPublishedDate().getValue());

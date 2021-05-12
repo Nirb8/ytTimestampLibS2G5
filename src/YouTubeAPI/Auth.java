@@ -1,4 +1,5 @@
 package YouTubeAPI;
+
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.auth.oauth2.StoredCredential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
@@ -20,7 +21,7 @@ import java.util.List;
 
 /**
  * Shared class used by every sample. Contains methods for authorizing a user and caching credentials.
- * //Referenced stack overflow question and modified it 
+ https://github.com/youtube/api-samples/blob/master/java/src/main/java/com/google/api/services/samples/youtube/cmdline/Auth.java
  */
 public class Auth {
 
@@ -53,10 +54,10 @@ public class Auth {
 
         // Checks that the defaults have been replaced (Default = "Enter X here").
         if (clientSecrets.getDetails().getClientId().startsWith("Enter")
-            || clientSecrets.getDetails().getClientSecret().startsWith("Enter ")) {
+                || clientSecrets.getDetails().getClientSecret().startsWith("Enter ")) {
             System.out.println(
-                "Enter Client ID and Secret from https://console.developers.google.com/project/_/apiui/credential "
-                        + "into src/main/resources/client_secrets.json");
+                    "Enter Client ID and Secret from https://console.developers.google.com/project/_/apiui/credential "
+                            + "into src/main/resources/client_secrets.json");
             System.exit(1);
         }
 
@@ -65,8 +66,8 @@ public class Auth {
         DataStore<StoredCredential> datastore = fileDataStoreFactory.getDataStore(credentialDatastore);
 
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-            HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, scopes).setCredentialDataStore(datastore)
-            .build();
+                HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, scopes).setCredentialDataStore(datastore)
+                .build();
 
         // Build the local server and bind it to port 8080
         LocalServerReceiver localReceiver = new LocalServerReceiver.Builder().setPort(8080).build();

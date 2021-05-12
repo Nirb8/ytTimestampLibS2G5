@@ -8,18 +8,30 @@ import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoCategory;
 import com.google.api.services.youtube.model.VideoCategoryListResponse;
 import com.google.api.services.youtube.model.VideoListResponse;
+
+
 import java.io.IOException;
 import java.sql.SQLException;
+
 //Referenced https://developers.google.com/youtube/v3/docs
 //Referenced stack overflow question and modified it
 public class DBConnect {
-	private static final String apiKey= "AIzaSyAjylRAyzAmIm75bqwGxMe5Nj32CoyNny0"; // you can get it from https://console.cloud.google.com/apis/credentials
-	private final YouTube youtube;
+	private static String apiKey= "AIzaSyAjylRAyzAmIm75bqwGxMe5Nj32CoyNny0"; // you can get it from https://console.cloud.google.com/apis/credentials
+	private YouTube youtube;
 	public DBConnect() {
+		System.out.println("startConnecting");
+		
 		youtube = new YouTube.Builder(Auth.HTTP_TRANSPORT, Auth.JSON_FACTORY, new HttpRequestInitializer() {
             @Override
-            public void initialize(HttpRequest request) {}
+            public void initialize(HttpRequest request) throws IOException {
+            }
         }).setApplicationName("APP_ID").build();
+//		youtube = new YouTube.Builder(Auth.HTTP_TRANSPORT, Auth.JSON_FACTORY, new HttpRequestInitializer() {
+//			public void initialize(HttpRequest request) throws IOException {
+//            	
+//            }
+//        }).setApplicationName("youtube-search").build();
+		System.out.println("endConnecting");
 	}
 
 	//grabs statistics on video
@@ -53,6 +65,7 @@ public class DBConnect {
     //returns helper class with video title, publishDate, duration, author, and content type id
     public VideoDetails getYouTubeVideoDetails(String videoID) throws SQLException, IOException{
         try { 
+        	System.out.println("1");
             YouTube.Videos.List listVideosRequest = youtube.videos().list("snippet");
             listVideosRequest.setId(videoID); // add list of video IDs here
             listVideosRequest.setKey(apiKey);
@@ -62,16 +75,17 @@ public class DBConnect {
             DateTime videoPublished = video.getSnippet().getPublishedAt();//ISL 8601
             String channelId = video.getSnippet().getChannelId();
             String categoryId = video.getSnippet().getCategoryId();
+            System.out.println("here");
             String videoDuration = this.getYouTubeVideoDuration(videoID);
            
             String categoryName = this.getCategoryName(categoryId);
-            //System.out.println("videoID: "+videoID);
-            //System.out.println("Title: "+videoTitle);
-            //System.out.println("Published Date: "+videoPublished);
-            //System.out.println("Author ID: "+channelId);
-//            System.out.println("Duration: "+videoDuration);
-//            System.out.println("Category ID: "+categoryId);
-//            System.out.println("Category Name: "+categoryName);
+            System.out.println("videoID: "+videoID);
+            System.out.println("Title: "+videoTitle);
+            System.out.println("Published Date: "+videoPublished);
+            System.out.println("Author ID: "+channelId);
+            System.out.println("Duration: "+videoDuration);
+            System.out.println("Category ID: "+categoryId);
+            System.out.println("Category Name: "+categoryName);
             return new VideoDetails(videoID,videoTitle, videoPublished,channelId,categoryId,videoDuration,categoryName);
         } catch (GoogleJsonResponseException e) {
             System.err.println("There was a service error: " + e.getDetails().getCode() + " : "
