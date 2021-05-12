@@ -149,32 +149,6 @@ public class VideoService {
 		return true;
 	}
 	
-	public boolean createContentType(int ContentTypeID, String title) {
-		//DONE: Creates a new contentType may want a better solution for IDs
-		Connection con = this.dbHandler.getConnection();
-		try {
-			CallableStatement proc = con.prepareCall("{? = call dbo.AddContentType(?,?,?)}");
-			proc.setInt(2, ContentTypeID);
-			proc.setString(3, title);
-			proc.setString(4,null);
-			proc.registerOutParameter(1,Types.INTEGER);
-			proc.execute();
-			int returnValue = proc.getInt(1);
-			System.out.println(proc.getString(1));
-			proc.close();
-			
-			if (returnValue == 1) {
-				throw new Error("ERROR: ContentTypeID cannot be null");
-			}
-			if (returnValue == 2) {
-				throw new Error("ERROR: ContentTypeTitle cannot be null");
-			}
-		}catch(Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-		System.out.println(title+" content type created");
-		return true;
-	}
+	
 	
 }

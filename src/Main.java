@@ -1,5 +1,6 @@
 
 import ytTimestampLibS2G5.AuthHandler;
+import ytTimestampLibS2G5.ContentTypeService;
 import ytTimestampLibS2G5.DatabaseConnectionHandler;
 import ytTimestampLibS2G5.TimestampService;
 import ytTimestampLibS2G5.VideoService;
@@ -19,6 +20,7 @@ public class Main {
 		AuthHandler authHandler = new AuthHandler(dbHandler);
 		VideoService videoService = new VideoService(dbHandler);
 		TimestampService timestampService = new TimestampService(dbHandler);
+		ContentTypeService contentTypeService = new ContentTypeService(dbHandler);
 
         // "simple" loop to continually read from console and call a switch statement
         Scanner s = new Scanner(System.in);
@@ -110,6 +112,7 @@ public class Main {
 				case "g":
 				case "get Timestamp":
 					System.out.println("Press V to search by video ID or C to search by content type");
+					System.out.print("~ ");
 					String input3 = s.nextLine();
 					switch(input3) {
 					case "v":
@@ -126,15 +129,18 @@ public class Main {
 						timestampService.outputConsoleTables(results);
 						break;
 					case "c":
-						System.out.println("Enter YouTube Content Type if you want to search");
-						String getContentTypeID = s.nextLine();
+						ArrayList<ArrayList<String>> contentResults=contentTypeService.getContentTypes();
+						contentTypeService.outputContent(contentResults);
+			            System.out.println("Press the entry number that you want to select");
+			            System.out.print("~ ");
+			            String num = s.nextLine();
+			            ArrayList<String> selectedRow = contentResults.get(Integer.parseInt(num)-1);
+			            
+						//System.out.println("Enter YouTube Content Type if you want to search");
+						String getContentTypeID = selectedRow.get(2);
 						ArrayList<ArrayList<String>> results2;
-						if (!getContentTypeID.isEmpty()) {
-							results2= timestampService.searchTimestampsByType(getContentTypeID, authHandler.getCurrentUser());
-						}
-						else {
-							results2=timestampService.getTimestamps(authHandler.getCurrentUser());
-						}
+						results2= timestampService.searchTimestampsByType(getContentTypeID, authHandler.getCurrentUser());
+						
 						timestampService.outputConsoleTables(results2);
 						break;
 					}
@@ -161,6 +167,7 @@ public class Main {
 			            	ArrayList<String> selectedRow = myresults.get(Integer.parseInt(num)-1);
 			            	timestampService.outputSelection(selectedRow);
 			            	System.out.println("Press d to delete, u to update, or e to exit");
+			            	System.out.print("~ ");
 			            	String query = s.nextLine();
 			            	String userId = authHandler.getCurrentUser();
 			            	switch(query) {
