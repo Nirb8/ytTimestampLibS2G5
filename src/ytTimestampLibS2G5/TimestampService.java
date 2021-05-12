@@ -242,8 +242,8 @@ public class TimestampService {
 		Connection con = this.dbHandler.getConnection();
 		ArrayList<ArrayList<String>> history = new ArrayList<>();
 		String query;
-
-		query="SELECT * FROM dbo.UserHistoryView WHERE [UserID] = ? ORDER BY [YouTube ID] asc ,[Timestamp Time] asc";
+		//TODO TODO TODO REPLACE EVERYTHING LIKE THIS WITH S T O R E D P R O C S
+		query="SELECT * FROM dbo.UserHistoryView WHERE [UserID] = ? ORDER BY [YTVideoID] asc ,[VideoTime] asc";
 		try {
 			PreparedStatement prpstmt = con.prepareStatement(query);
 			prpstmt.setString(1, accessingUserID);
