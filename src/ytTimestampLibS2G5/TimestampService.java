@@ -98,14 +98,51 @@ public class TimestampService {
 		return false;
 	}
 
-	public ArrayList<ArrayList<String>> getTimestamps(String videoID, String accessingUserID) {
+	public ArrayList<ArrayList<String>> searchTimestampsByType(String content, String accessingUserID){
+		System.out.println("Specified Search by Content");
+		Connection con = this.dbHandler.getConnection();
+		ArrayList<ArrayList<String>> timestamps = new ArrayList<>();
+		String query="SELECT * FROM [dbo].[GetAllTimestamps]() WHERE [Content Type]=? ORDER BY [YouTube ID] asc ,[Timestamp Time] asc";
+		try {
+			PreparedStatement prpstmt = con.prepareStatement(query);
+			prpstmt.setString(1, content);
+			ResultSet rs=prpstmt.executeQuery();
+			int count=0;
+			while (rs.next()) {
+				String ID = rs.getString(1);
+				String name = rs.getString(2);
+				String des = rs.getString(3);
+				String tTime = rs.getTime(4).toString();
+				String cType = rs.getString(5);
+				String cTime = rs.getDate(6).toString();
+				String UserName = rs.getString(7);
+				String tID = rs.getString(8);
+				ArrayList<String> details = new ArrayList<>();
+				count++;
+				details.add(String.valueOf(count));
+				details.add(ID);
+				details.add(name);
+				details.add(des);
+				details.add(tTime);
+				details.add(cType);
+				details.add(cTime);
+				details.add(UserName);
+				timestamps.add(details);
+				this.addTimestampToUserHistory(accessingUserID, tID);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return timestamps;
+	}
+	public ArrayList<ArrayList<String>> getTimestamps(String accessingUserID) {
 		//DONE:Shows all the timestamps attached to a video
 		Connection con = this.dbHandler.getConnection();
 		ArrayList<ArrayList<String>> timestamps = new ArrayList<>();
 		String query;
 		
 		//if no input is given
-		if (videoID.isEmpty()) {
 			System.out.println("Basic Search");
 			query ="SELECT * FROM [dbo].[GetAllTimestamps]() ORDER BY [YouTube ID] asc ,[Timestamp Time] asc";
 			try {
@@ -138,11 +175,14 @@ public class TimestampService {
 				e.printStackTrace();
 				return null;
 			}
-		}
-		//if input is given
-		else {
-			System.out.println("Specified Search");
-			query="SELECT * FROM [dbo].[GetAllTimestamps]() WHERE [YouTube ID]=? ORDER BY [YouTube ID] asc ,[Timestamp Time] asc";
+			return timestamps;
+	}
+	
+	public ArrayList<ArrayList<String>> searchTimestampsByVideo(String videoID, String accessingUserID) {
+		System.out.println("Specified Search");
+		Connection con = this.dbHandler.getConnection();
+		ArrayList<ArrayList<String>> timestamps = new ArrayList<>();
+		String query="SELECT * FROM [dbo].[GetAllTimestamps]() WHERE [YouTube ID]=? ORDER BY [YouTube ID] asc ,[Timestamp Time] asc";
 			try {
 				PreparedStatement prpstmt = con.prepareStatement(query);
 				prpstmt.setString(1, videoID);
@@ -193,9 +233,9 @@ public class TimestampService {
 				e.printStackTrace();
 				return null;
 			}
-		}
-		return timestamps;
+			return timestamps;
 	}
+		
 
 	public ArrayList<ArrayList<String>> getUserHistory(String accessingUserID) {
 		//DONE:Shows all the timestamps attached to a video
