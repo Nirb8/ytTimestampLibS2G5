@@ -144,7 +144,24 @@ public class Main {
 						timestampService.outputConsoleTables(results2);
 						break;
 					}
-					
+					break;
+				case "gv":
+				case "get videos":
+					ArrayList<ArrayList<String>> contentResults2=contentTypeService.getContentTypes();
+					contentTypeService.outputContent(contentResults2);
+		            System.out.println("Press the entry number that you want to search or just press enter");
+		            System.out.print("~ ");
+		            String num2 = s.nextLine();
+					//System.out.println("Enter YouTube Content Type if you want to search");
+		            String getContentTypeID2;
+		            if (!num2.isEmpty()) {
+		            ArrayList<String> selectedRow = contentResults2.get(Integer.parseInt(num2)-1);
+		            getContentTypeID2= selectedRow.get(1);
+		            }else {
+		            	getContentTypeID2=null;
+		            }
+		            videoService.getVideos(getContentTypeID2);
+					break;
 				case "vh":
 				case "view user history":
 					ArrayList<ArrayList<String>> history = timestampService.getUserHistory(authHandler.getCurrentUser());

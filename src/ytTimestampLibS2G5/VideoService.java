@@ -36,6 +36,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.extensions.appengine.auth.oauth2.AppIdentityCredential;
 
+import SpecialClasses.TableList;
 import YouTubeAPI.DBConnect;
 import YouTubeAPI.DBConnect.VideoDetails;
 
@@ -49,20 +50,16 @@ public class VideoService {
 	}
 	
 	public boolean addVideo(String videoID) {
-		System.out.println("start");
 		DBConnect youtube_binfo = new DBConnect();
-		System.out.println("end");
     	try {
-    		System.out.println("start2");
     		VideoDetails vd = youtube_binfo.getYouTubeVideoDetails(videoID);
-    		System.out.println("end");
     		String durationTime = vd.getDuration();
     		String videoTitle = vd.getTitle();
     		Date uploadDate = new Date(vd.getPublishedDate().getValue());
     		int videoContentID = Integer.parseInt(vd.getContentType());
     		String contentName = vd.getContentName();
 
-			System.out.println(durationTime);
+			//System.out.println(durationTime);
     		Time duration = Time.valueOf(durationTime);
     		Connection con = this.dbHandler.getConnection();
     		try {
@@ -111,11 +108,75 @@ public class VideoService {
 		return true;
 	}
 
-	public ArrayList<String> getVideos() {
+	public void getVideos(String contentTypeID) {
 //		//TODO: Shows a table of videos already added
-		ArrayList<String> timestamps = new ArrayList<>();
-
-		return timestamps;
+		ArrayList<ArrayList<String>> videos = new ArrayList<>();
+		Connection con= this.dbHandler.getConnection();
+		int ID;
+		if (contentTypeID==null) {
+			ID=-1;
+		}
+		else{ID= Integer.valueOf(contentTypeID);}
+		
+		try {
+			String query;
+			if (ID==-1) {
+				query="SELECT * FROM [dbo].[GetVideos]() ";
+			}else {
+				query="SELECT * FROM [dbo].[GetVideos]() WHERE ContentID=? ";
+			}
+			PreparedStatement prpstmt = con.prepareStatement(query);
+			if (ID!=-1) {
+			prpstmt.setInt(1,ID);
+			}
+			ResultSet rs =prpstmt.executeQuery();
+			
+			int count =1;
+			while (rs.next()) {
+				
+					String videoTitle =rs.getString(1);
+					String uploadDate = rs.getDate(2).toString();
+					String duration = rs.getTime(3).toString();
+					ArrayList<String> details = new ArrayList<String>();
+					details.add(String.valueOf(count));
+					details.add(videoTitle);
+					details.add(uploadDate);
+					details.add(duration);
+					if (ID==-1) {
+					String content = rs.getString(4);
+					details.add(content);
+					}
+					count++;
+					if (!videos.contains(details)) {
+					videos.add(details);
+					//System.out.println(details);
+					}
+					
+			}
+			if (ID==-1) {
+				this.outputVideosWithContent(videos);
+			}
+			else {
+				this.outputVideos(videos);
+			}
+			rs.close();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void outputVideosWithContent(ArrayList<ArrayList<String>> results) {
+		TableList table = new TableList(5,"Entry Number","Video Name", "Upload Date","Duration", "Content Type Name");
+		results.forEach(element -> table.addRow(element.get(0), element.get(1), element.get(2), element.get(3), element.get(4)));
+	
+		table.print();
+	}
+	public void outputVideos(ArrayList<ArrayList<String>> results) {
+		TableList table = new TableList(4,"Entry Number","Video Name", "Upload Date","Duration");
+		for (ArrayList<String>element:results) {
+			table.addRow(element.get(0), element.get(1), element.get(2), element.get(3));
+		}
+		table.print();
 	}
 	
 	public boolean addVideoGenres(String YouTubeID, int ContentType, String ContentName) {

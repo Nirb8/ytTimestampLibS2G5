@@ -65,7 +65,7 @@ public class DBConnect {
     //returns helper class with video title, publishDate, duration, author, and content type id
     public VideoDetails getYouTubeVideoDetails(String videoID) throws SQLException, IOException{
         try { 
-        	System.out.println("1");
+        	//System.out.println("1");
             YouTube.Videos.List listVideosRequest = youtube.videos().list("snippet");
             listVideosRequest.setId(videoID); // add list of video IDs here
             listVideosRequest.setKey(apiKey);
@@ -75,17 +75,17 @@ public class DBConnect {
             DateTime videoPublished = video.getSnippet().getPublishedAt();//ISL 8601
             String channelId = video.getSnippet().getChannelId();
             String categoryId = video.getSnippet().getCategoryId();
-            System.out.println("here");
+            //System.out.println("here");
             String videoDuration = this.getYouTubeVideoDuration(videoID);
            
             String categoryName = this.getCategoryName(categoryId);
-            System.out.println("videoID: "+videoID);
-            System.out.println("Title: "+videoTitle);
-            System.out.println("Published Date: "+videoPublished);
-            System.out.println("Author ID: "+channelId);
-            System.out.println("Duration: "+videoDuration);
-            System.out.println("Category ID: "+categoryId);
-            System.out.println("Category Name: "+categoryName);
+//            System.out.println("videoID: "+videoID);
+//            System.out.println("Title: "+videoTitle);
+//            System.out.println("Published Date: "+videoPublished);
+//            System.out.println("Author ID: "+channelId);
+//            System.out.println("Duration: "+videoDuration);
+//            System.out.println("Category ID: "+categoryId);
+//            System.out.println("Category Name: "+categoryName);
             return new VideoDetails(videoID,videoTitle, videoPublished,channelId,categoryId,videoDuration,categoryName);
         } catch (GoogleJsonResponseException e) {
             System.err.println("There was a service error: " + e.getDetails().getCode() + " : "
