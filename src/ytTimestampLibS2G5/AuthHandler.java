@@ -6,10 +6,13 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Random;
 import java.util.Scanner;
@@ -18,6 +21,8 @@ import java.util.UUID;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.swing.JOptionPane;
+
+import SpecialClasses.TableList;
 
 public class AuthHandler {
 	
@@ -28,6 +33,7 @@ public class AuthHandler {
 	private final DatabaseConnectionHandler dbHandler;
 	private String currentUserId;
 	private String currentUserName;
+	private String favoriteContent;
 	
 	public AuthHandler(DatabaseConnectionHandler dbHandler) {
 		this.dbHandler = dbHandler;
@@ -131,4 +137,59 @@ public class AuthHandler {
 	public String getCurrentUserName() {
 		return this.currentUserName;
 	}
+	public String getFavoriteContent() {
+		return this.favoriteContent;
+	}
+	
+	public void showUserProfile() {
+		Connection con = this.dbHandler.getConnection();
+		String query="SELECT * FROM dbo.GetProfile() WHERE UserName=?";
+		try {
+			PreparedStatement prpstmt = con.prepareStatement(query);
+			prpstmt.setString(1, this.currentUserName);
+			ResultSet rs =prpstmt.executeQuery();
+			TableList table = new TableList(4, "User ID","Username","Date of Birth","Favorite Content Type");
+			while (rs.next()){
+			String ID =rs.getString(1);
+			String Username=rs.getString(2);
+			String DOB=null;
+			if (rs.getDate(3)!=null) {
+				DOB=rs.getDate(3).toString();
+			}
+			String FContent=null;
+			if (rs.getString(4)!=null) {
+				FContent = rs.getString(4);
+			}
+			table.addRow(ID,Username,DOB,FContent);
+			}
+			table.print();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}	
+	}
+	
+	public boolean updateDOB(String DOB) {
+		Date date =Date.valueOf(DOB);
+		Connection con = this.dbHandler.getConnection();
+		try {
+			CallableStatement proc =con.prepareCall("{?=call dbo.ChangeDOB(?,?)}");
+			proc.setString(2,this.currentUserId);
+			proc.setDate(3, date);
+			proc.registerOutParameter(1, Types.INTEGER);
+			proc.execute();
+			int returnValue = proc.getInt(1);
+			if (returnValue ==2) {
+				throw new Error("Error:Invalid DOB");
+			}
+			if (returnValue==0) {
+				System.out.println("Updated DOB");
+			}
+			proc.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}	
+		return true;
+	}
+	
 }

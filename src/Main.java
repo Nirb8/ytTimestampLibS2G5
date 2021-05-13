@@ -217,6 +217,21 @@ public class Main {
 ////					String deleteVideoTime = s.nextLine();
 //					timestampService.deleteVideoTimestamps(deleteVideoID);
 //					break;
+					
+				case "p":
+				case "profile":
+					authHandler.showUserProfile();
+					System.out.println("Press d to change DOB");
+					System.out.print("~ ");
+	            	String query2 = s.nextLine();
+	            	switch(query2) {
+	            	case "d":
+	            		System.out.println("Type DOB in YYYY-MM-DD");
+	            		String date = s.nextLine();
+	            		authHandler.updateDOB(date);
+	            		break;
+	            	}
+					break;
 				case "h":
                 case "help":
                     System.out.println("\nDisplaying help commands:");
