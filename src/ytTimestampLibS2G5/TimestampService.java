@@ -64,7 +64,6 @@ public class TimestampService {
 			proc.registerOutParameter(1, Types.INTEGER);
 			proc.execute();
 			int returnValue = proc.getInt(1);
-			//System.out.println(proc.getString(1));
 			proc.close();
 			//need to improve error codes for addTimestamp
 			if (returnValue ==2) {
@@ -333,13 +332,13 @@ public class TimestampService {
 		results.forEach(element -> table.addRow(element.get(0), element.get(1), element.get(2), element.get(3), element.get(4), element.get(5)));
 		table.print();
 	}
-	
+	//Used for outputting select row for manipulation
 	public void outputSelection(ArrayList<String> result) {
 		TableList table = new TableList(8,"Entry Number","YouTube ID", "Video Name", "Description", "Timestamp Time", "Content Type", "Created Time", "Creator");
 		table.addRow(result.get(0),result.get(1), result.get(2), result.get(3), result.get(4),result.get(5), result.get(6), result.get(7));
 		table.print();
 	}
-	
+	//creates a timestampTag in the table used when creating a timestamp
 	public boolean createTimestampTag(String timestampID, String videoID) {
 		Connection con=this.dbHandler.getConnection();
 		String query="SELECT ContentTypeID FROM dbo.VideoGenres WHERE YTVideoID=?";
@@ -378,7 +377,7 @@ public class TimestampService {
 	
 	//deletes timestamp by selection row information
 	public boolean deleteTimestamp(ArrayList<String> row, String userID) {
-		//TODO: select by row for deletion
+		//DONE: select by row for deletion
 		Connection con = this.dbHandler.getConnection();
 		String query = "DELETE FROM Timestamps WHERE AuthorID=? AND YTVideoID=? AND TimestampTitle=?";
 		String query2="SELECT * FROM Timestamps WHERE AuthorID=? AND YTVideoID=? AND TimestampTitle=?";
@@ -411,9 +410,9 @@ public class TimestampService {
 		
 	}
 
-	//delete timestamps by videoID
+	//delete timestamps by videoID another option CURRENTLY NOT IN USE
 	public boolean deleteVideoTimestamps(String videoID) {
-		//TODO: select by row for deletion
+		//DONE: select by row for deletion
 		Connection con = this.dbHandler.getConnection();
 		String query = "DELETE FROM Timestamps WHERE YTVideoID=?";
 		String query2="SELECT * FROM Timestamps WHERE YTVideoID=?";
@@ -472,7 +471,7 @@ public class TimestampService {
 	
 	//modifies the content description of the timestamp
 	public boolean updateTimestamps(ArrayList<String> row, String userID, String newTitle ) {
-		//TODO: allow timestamps to be updated need to add userhistory updated
+		//DONE: allow timestamps to be updated need to add userhistory updated
 		Connection con = this.dbHandler.getConnection();
 		try {
 			CallableStatement proc =con.prepareCall("{?=call dbo.updateTimestamp(?,?,?)}");

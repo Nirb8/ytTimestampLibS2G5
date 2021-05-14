@@ -235,7 +235,7 @@ public class Main {
 				case "p":
 				case "profile":
 					authHandler.showUserProfile();
-					System.out.println("Press d to change DOB");
+					System.out.println("Press d to change DOB or f to change FavoriteContentType");
 					System.out.print("~ ");
 	            	String query2 = s.nextLine();
 	            	switch(query2) {
@@ -244,7 +244,17 @@ public class Main {
 	            		String date = s.nextLine();
 	            		authHandler.updateDOB(date);
 	            		break;
+	            	case "f":
+	            		ArrayList<ArrayList<String>> contentResults3=contentTypeService.getContentTypes();
+						contentTypeService.outputContent(contentResults3);
+			            System.out.println("Press the entry number that you want to search or just press enter");
+			            System.out.print("~ ");
+			            String num3 = s.nextLine();
+			            String contentId = contentResults3.get(Integer.valueOf(num3)-1).get(1);
+			            authHandler.updateFavoriteContentType(contentId);
+			            break;
 	            	}
+					
 					break;
 				case "h":
                 case "help":

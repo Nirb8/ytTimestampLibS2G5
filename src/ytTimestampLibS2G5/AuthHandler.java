@@ -63,14 +63,13 @@ public class AuthHandler {
 			}
 		}
 		catch(SQLException e) {
-//			e.printStackTrace();
 			System.out.println("Login Failed: User does not exist");
 		}
 		return false;
 	}
 
 	public boolean register(String username, String password) {
-//		//DONE: Task 6 WORKS!!!!
+		//DONE:
 		Connection con = this.dbHandler.getConnection();
 		byte[] rand =this.getNewSalt();
 		String hash =this.hashPassword(rand,password);
@@ -84,7 +83,6 @@ public class AuthHandler {
 		proc.registerOutParameter(1, Types.INTEGER);
 		proc.execute();
 		int returnValue = proc.getInt(1);
-		//System.out.println(proc.getString(1));
 		this.currentUserId=uniqueID;
 		this.currentUserName=username;
 		proc.close();
@@ -140,7 +138,7 @@ public class AuthHandler {
 	public String getFavoriteContent() {
 		return this.favoriteContent;
 	}
-	
+	//Shows infor on the user
 	public void showUserProfile() {
 		Connection con = this.dbHandler.getConnection();
 		String query="SELECT * FROM dbo.GetProfile() WHERE UserName=?";
@@ -167,7 +165,7 @@ public class AuthHandler {
 			e.printStackTrace();
 		}	
 	}
-	
+	//allows for the DOB to be updated by user
 	public boolean updateDOB(String DOB) {
 		Date date =Date.valueOf(DOB);
 		Connection con = this.dbHandler.getConnection();
@@ -191,5 +189,28 @@ public class AuthHandler {
 		}	
 		return true;
 	}
-	
+	//allows for the favoriteContentType to be updated by user
+	public boolean updateFavoriteContentType(String ID) {
+		int id = Integer.valueOf(ID);
+		Connection con = this.dbHandler.getConnection();
+		try {
+			CallableStatement proc = con.prepareCall("{?=call dbo.UpdateFavContentType(?,?)}");
+			proc.setString(2, this.currentUserId);
+			proc.setInt(3, id);
+			proc.registerOutParameter(1, Types.INTEGER);
+			proc.execute();
+			int returnValue = proc.getInt(1);
+			if (returnValue ==2) {
+				throw new Error("Error:Invalid Content ID");
+			}
+			if (returnValue==0) {
+				System.out.println("Updated Favorite Content Type");
+			}
+			proc.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}	
+		return true;
+	}
 }

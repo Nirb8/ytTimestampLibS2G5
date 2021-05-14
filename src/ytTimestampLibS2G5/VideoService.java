@@ -48,7 +48,7 @@ public class VideoService {
 	public VideoService(DatabaseConnectionHandler dbHandler) {
 		this.dbHandler = dbHandler;
 	}
-	
+	//adds a video to the table
 	public boolean addVideo(String videoID) {
 		DBConnect youtube_binfo = new DBConnect();
     	try {
@@ -58,8 +58,6 @@ public class VideoService {
     		Date uploadDate = new Date(vd.getPublishedDate().getValue());
     		int videoContentID = Integer.parseInt(vd.getContentType());
     		String contentName = vd.getContentName();
-
-			//System.out.println(durationTime);
     		Time duration = Time.valueOf(durationTime);
     		Connection con = this.dbHandler.getConnection();
     		try {
@@ -71,7 +69,6 @@ public class VideoService {
     			proc.registerOutParameter(1, Types.INTEGER);
     			proc.execute();
     			int returnValue = proc.getInt(1);
-    			//System.out.println(proc.getString(1));
     			proc.close();
     			if (returnValue == 1) {
     				throw new Error("ERROR: VideoID cannot be null");
@@ -107,9 +104,9 @@ public class VideoService {
 		}
 		return true;
 	}
-
+	//returns an output of all the videos in the database
 	public void getVideos(String contentTypeID) {
-//		//TODO: Shows a table of videos already added
+		//DONE: Shows a table of videos already added
 		ArrayList<ArrayList<String>> videos = new ArrayList<>();
 		Connection con= this.dbHandler.getConnection();
 		int ID;
@@ -149,7 +146,6 @@ public class VideoService {
 					count++;
 					if (!videos.contains(details)) {
 					videos.add(details);
-					//System.out.println(details);
 					}
 					
 			}
@@ -164,13 +160,14 @@ public class VideoService {
 			e.printStackTrace();
 		}
 	}
-	
+	//ouput the videos if no content is selected for the search
 	public void outputVideosWithContent(ArrayList<ArrayList<String>> results) {
 		TableList table = new TableList(5,"Entry Number","Video Name", "Upload Date","Duration", "Content Type Name");
 		results.forEach(element -> table.addRow(element.get(0), element.get(1), element.get(2), element.get(3), element.get(4)));
 	
 		table.print();
 	}
+	//output the videos if content is selected
 	public void outputVideos(ArrayList<ArrayList<String>> results) {
 		TableList table = new TableList(4,"Entry Number","Video Name", "Upload Date","Duration");
 		for (ArrayList<String>element:results) {
@@ -178,7 +175,7 @@ public class VideoService {
 		}
 		table.print();
 	}
-	
+	//adds a video to the videoGenres table
 	public boolean addVideoGenres(String YouTubeID, int ContentType, String ContentName) {
 		//DONE
 		Connection con = this.dbHandler.getConnection();
@@ -190,7 +187,6 @@ public class VideoService {
 			proc.registerOutParameter(1,Types.INTEGER);
 			proc.execute();
 			int returnValue = proc.getInt(1);
-			//System.out.println(proc.getString(1));
 			proc.close();
 			if (returnValue == 1) {
 				throw new Error("ERROR: Content ID cannot be null");
