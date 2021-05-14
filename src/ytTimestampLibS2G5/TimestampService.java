@@ -1,38 +1,17 @@
 package ytTimestampLibS2G5;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Time;
-import java.sql.Types;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Random;
-import java.util.Scanner;
-import java.util.UUID;
-
-import java.awt.datatransfer.StringSelection;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-
-
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import javax.swing.JOptionPane;
-
+import SpecialClasses.TableList;
 import com.google.api.client.util.DateTime;
 
-import SpecialClasses.TableList;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.security.SecureRandom;
+import java.sql.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.UUID;
 
 public class TimestampService {
 	
@@ -219,9 +198,9 @@ public class TimestampService {
 				}
 				//test code
 				
-				String exportString = "";
+				StringBuilder exportString = new StringBuilder();
 				
-				exportString += "https://www.youtube.com/watch?v=" + videoID + "\n";
+				exportString.append("https://www.youtube.com/watch?v=").append(videoID).append("\n");
 				
 				for(ArrayList<String> d:timestamps) {
 					if(d.isEmpty()) {
@@ -229,10 +208,10 @@ public class TimestampService {
 					}
 					String des = d.get(3);
 					String tTime = d.get(4);
-				exportString += tTime + " " + des + "\n";
+				exportString.append(tTime).append(" ").append(des).append("\n");
 				}
 				
-				StringSelection stringSelection = new StringSelection(exportString);
+				StringSelection stringSelection = new StringSelection(exportString.toString());
 				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 				clipboard.setContents(stringSelection, null);
 				
