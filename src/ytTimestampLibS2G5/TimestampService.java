@@ -473,8 +473,8 @@ public class TimestampService {
 		//DONE: allow timestamps to be updated need to add userhistory updated
 		Connection con = this.dbHandler.getConnection();
 		try {
-			CallableStatement proc =con.prepareCall("{?=call dbo.updateTimestamp(?,?,?)}");
-			System.out.println(row.get(row.size()-1));
+			CallableStatement proc = con.prepareCall("{?=call dbo.updateTimestamp(?,?,?)}");
+//			System.out.println(row.get(row.size()-1));
 			proc.setString(2, row.get(row.size()-1));
 			proc.setString(3,newTitle);
 			proc.setString(4, userID);
