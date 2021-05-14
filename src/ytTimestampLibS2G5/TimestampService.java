@@ -104,7 +104,7 @@ public class TimestampService {
 		System.out.println("Specified Search by Content");
 		Connection con = this.dbHandler.getConnection();
 		ArrayList<ArrayList<String>> timestamps = new ArrayList<>();
-		String query="SELECT * FROM [dbo].[GetAllTimestamps]() WHERE [Content Type]=? ORDER BY [YouTube ID] asc ,[Timestamp Time] asc";
+		String query="select * from [dbo].GetTimestampsByContentType(?) ORDER BY [YouTube ID] asc ,[Timestamp Time] asc"; //can't figure out how to ORDER BY these in the function
 		try {
 			PreparedStatement prpstmt = con.prepareStatement(query);
 			prpstmt.setString(1, content);
@@ -189,7 +189,7 @@ public class TimestampService {
 		System.out.println("Specified Search");
 		Connection con = this.dbHandler.getConnection();
 		ArrayList<ArrayList<String>> timestamps = new ArrayList<>();
-		String query="SELECT * FROM [dbo].[GetAllTimestamps]() WHERE [YouTube ID]=? ORDER BY [YouTube ID] asc ,[Timestamp Time] asc";
+		String query="select * from [dbo].[GetTimestampsByYouTubeID](?)  ORDER BY [YouTube ID] asc ,[Timestamp Time] asc";
 			try {
 				PreparedStatement prpstmt = con.prepareStatement(query);
 				prpstmt.setString(1, videoID);

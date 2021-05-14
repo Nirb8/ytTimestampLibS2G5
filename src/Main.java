@@ -55,7 +55,9 @@ public class Main {
 						}
 						break;
 					case "l":
+					case "L":
 					case "login":
+					case "LOGIN":
 						// prompt for username and password
 						System.out.println("ENTER Username");
 						String loginusername = s.nextLine();
@@ -67,10 +69,16 @@ public class Main {
 						}
 						break;
 					case "e":
-						case "x":
-						case "q":
-						case "quit":
-						case "exit":
+					case "x":
+					case "q":
+					case "quit":
+					case "exit":
+					case "QUIT":
+					case "EXIT":
+					case "E":
+					case "X":
+					case "Q":
+					case "ZZ": //for you vim users out there
 							System.out.println("Exiting...");
 							//probably want to close out connection to database and other stuff to end gracefully
 							dbHandler.closeConnection();
@@ -98,6 +106,7 @@ public class Main {
             	case "":
             		break;
 				case "ct":
+				case "CT":
 				case "create Timestamp":
 					System.out.println("Enter YouTube VideoID");
 					String timestampVideoID = RegexConverter.convertLinkToYTVideoID(s.nextLine());
@@ -110,12 +119,14 @@ public class Main {
 					timestampService.addTimeStamp(id,caption, timestampTime, timestampVideoID);
 					break;
 				case "g":
+				case "G":
 				case "get Timestamp":
-					System.out.println("Press V to search by video ID or C to search by content type");
+					System.out.println("Press v to search by video ID, c to search by content type, or any other key to cancel");
 					System.out.print("~ ");
 					String input3 = s.nextLine();
 					switch(input3) {
 					case "v":
+					case "V":
 						System.out.println("Enter YouTube VideoID if you want to search");
 						String getTimestampVideoID = RegexConverter.convertLinkToYTVideoID(s.nextLine());
 						//String getTimestampVideoID = s.nextLine();
@@ -142,6 +153,9 @@ public class Main {
 						results2= timestampService.searchTimestampsByType(getContentTypeID, authHandler.getCurrentUser());
 						
 						timestampService.outputConsoleTables(results2);
+						break;
+					default:
+						System.out.println("Cancelling search...");
 						break;
 					}
 					break;
