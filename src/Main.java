@@ -128,7 +128,13 @@ public class Main {
 					case "v":
 					case "V":
 						System.out.println("Enter YouTube VideoID if you want to search");
-						String getTimestampVideoID = RegexConverter.convertLinkToYTVideoID(s.nextLine());
+						String getTimestampVideoID;
+						try {
+							getTimestampVideoID = RegexConverter.convertLinkToYTVideoID(s.nextLine());
+						} catch(IllegalArgumentException e) {
+							System.out.println(e.getMessage());
+							break;
+						}
 						//String getTimestampVideoID = s.nextLine();
 						ArrayList<ArrayList<String>> results;
 						if (!getTimestampVideoID.isEmpty()) {
@@ -145,10 +151,16 @@ public class Main {
 			            System.out.println("Press the entry number that you want to select");
 			            System.out.print("~ ");
 			            String num = s.nextLine();
-			            ArrayList<String> selectedRow = contentResults.get(Integer.parseInt(num)-1);
-			            
-						//System.out.println("Enter YouTube Content Type if you want to search");
-						String getContentTypeID = selectedRow.get(2);
+			            ArrayList<String> selectedRow;
+						String getContentTypeID;
+			            try {
+							selectedRow = contentResults.get(Integer.parseInt(num)-1);
+							getContentTypeID = selectedRow.get(2);
+						} catch (NumberFormatException | IndexOutOfBoundsException e) {
+							System.out.println("This is not a valid number.");
+							break;
+						}
+
 						ArrayList<ArrayList<String>> results2;
 						results2= timestampService.searchTimestampsByType(getContentTypeID, authHandler.getCurrentUser());
 						
@@ -171,7 +183,7 @@ public class Main {
 		            if (!num2.isEmpty()) {
 		            ArrayList<String> selectedRow = contentResults2.get(Integer.parseInt(num2)-1);
 		            getContentTypeID2= selectedRow.get(1);
-		            }else {
+		            } else {
 		            	getContentTypeID2=null;
 		            }
 		            videoService.getVideos(getContentTypeID2);
@@ -250,7 +262,7 @@ public class Main {
 			            System.out.println("Press the entry number that you want to search or just press enter");
 			            System.out.print("~ ");
 			            String num3 = s.nextLine();
-			            String contentId = contentResults3.get(Integer.valueOf(num3)-1).get(1);
+			            String contentId = contentResults3.get(Integer.parseInt(num3)-1).get(1);
 			            authHandler.updateFavoriteContentType(contentId);
 			            break;
 	            	}

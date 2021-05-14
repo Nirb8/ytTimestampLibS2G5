@@ -148,7 +148,7 @@ public class TimestampService {
 		
 		//if no input is given
 			System.out.println("Basic Search");
-			query ="SELECT * FROM [dbo].[GetAllTimestamps]() ORDER BY [YouTube ID] asc ,[Timestamp Time] asc";
+			query ="SELECT * FROM [dbo].[GetAllTimestamps]() ORDER BY [YouTube ID] asc, [Timestamp Time] asc";
 			try {
 				Statement stmt = con.createStatement();
 				ResultSet rs=stmt.executeQuery(query);
@@ -188,7 +188,7 @@ public class TimestampService {
 		System.out.println("Specified Search");
 		Connection con = this.dbHandler.getConnection();
 		ArrayList<ArrayList<String>> timestamps = new ArrayList<>();
-		String query="select * from [dbo].[GetTimestampsByYouTubeID](?)  ORDER BY [YouTube ID] asc ,[Timestamp Time] asc";
+		String query="select * from [dbo].[GetTimestampsByYouTubeID](?)  ORDER BY [YouTube ID] asc, [Timestamp Time] asc";
 			try {
 				PreparedStatement prpstmt = con.prepareStatement(query);
 				prpstmt.setString(1, videoID);
@@ -249,8 +249,7 @@ public class TimestampService {
 		Connection con = this.dbHandler.getConnection();
 		ArrayList<ArrayList<String>> history = new ArrayList<>();
 		String query;
-
-		query="SELECT * FROM dbo.UserHistoryView WHERE [UserID] = ? ORDER BY [YouTube ID] asc ,[Timestamp Time] asc";
+		query="SELECT * FROM [dbo].GetUserHistory(?) ORDER BY [YouTube ID] asc, [Timestamp Time] asc";
 		try {
 			PreparedStatement prpstmt = con.prepareStatement(query);
 			prpstmt.setString(1, accessingUserID);

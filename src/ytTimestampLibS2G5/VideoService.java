@@ -1,44 +1,14 @@
 package ytTimestampLibS2G5;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Time;
-import java.sql.Types;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.Random;
-import java.util.Scanner;
-import java.util.UUID;
-
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import javax.swing.JOptionPane;
-
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.extensions.appengine.http.UrlFetchTransport;
-import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
-import com.google.api.client.googleapis.extensions.appengine.auth.oauth2.AppIdentityCredential;
-
 import SpecialClasses.TableList;
 import YouTubeAPI.DBConnect;
 import YouTubeAPI.DBConnect.VideoDetails;
+
+import java.io.IOException;
+import java.security.SecureRandom;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class VideoService {
 	
@@ -113,7 +83,7 @@ public class VideoService {
 		if (contentTypeID==null) {
 			ID=-1;
 		}
-		else{ID= Integer.valueOf(contentTypeID);}
+		else{ID= Integer.parseInt(contentTypeID);}
 		
 		try {
 			String query;
@@ -134,7 +104,7 @@ public class VideoService {
 					String videoTitle =rs.getString(1);
 					String uploadDate = rs.getDate(2).toString();
 					String duration = rs.getTime(3).toString();
-					ArrayList<String> details = new ArrayList<String>();
+					ArrayList<String> details = new ArrayList<>();
 					details.add(String.valueOf(count));
 					details.add(videoTitle);
 					details.add(uploadDate);
