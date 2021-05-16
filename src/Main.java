@@ -90,15 +90,6 @@ public class Main {
 							System.out.println("The command \"" + input + "\" is not recognized. Type h for help, or e for exit.");
 				}
             }
-//				case "ct":
-//				case "new content":
-//					System.out.println("Enter ContentID (number)");
-//					int contentID = Integer.valueOf(s.nextLine());
-//					System.out.println("Enter name of content type");
-//					String contentTitle = s.nextLine();
-//					videoService.createContentType(contentID, contentTitle);
-//					break;
-//					
 				
             System.out.print("~ ");
             String input = s.nextLine();
@@ -148,14 +139,19 @@ public class Main {
 					case "c":
 						ArrayList<ArrayList<String>> contentResults=contentTypeService.getContentTypes();
 						contentTypeService.outputContent(contentResults);
-			            System.out.println("Press the entry number that you want to select");
+			            System.out.println("Press the entry number that you want to select or press enter for default search");
 			            System.out.print("~ ");
 			            String num = s.nextLine();
+			            
 			            ArrayList<String> selectedRow;
 						String getContentTypeID;
 			            try {
+			            	if (!num.isEmpty()) {
 							selectedRow = contentResults.get(Integer.parseInt(num)-1);
-							getContentTypeID = selectedRow.get(2);
+							getContentTypeID= selectedRow.get(1);
+			            	}else {
+							getContentTypeID= authHandler.getFavoriteContent();
+			            	}
 						} catch (NumberFormatException | IndexOutOfBoundsException e) {
 							System.out.println("This is not a valid number.");
 							break;

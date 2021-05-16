@@ -43,7 +43,7 @@ public class AuthHandler {
 	public boolean login(String username, String password) {
 		//DONE: Complete this method.
 		Connection con=this.dbHandler.getConnection();
-		String query ="SELECT PasswordSalt, PasswordHash, UserID  from \"Users\" WHERE Username=?";
+		String query ="SELECT PasswordSalt, PasswordHash, UserID, FavoriteContentType  from \"Users\" WHERE Username=?";
 		try {
 			PreparedStatement prpstmt = con.prepareStatement(query);
 			prpstmt.setString(1, username);
@@ -53,6 +53,7 @@ public class AuthHandler {
 			this.currentUserName=username;
 			byte[] salt =rs.getBytes("PasswordSalt");
 			String checkHash = rs.getString("PasswordHash");
+			this.favoriteContent = rs.getString("FavoriteContentType");
 			String hashInput = this.hashPassword(salt, password);
 			if (hashInput.equals(checkHash)) {
 				System.out.println("Login Successful. Welcome back, " + username + "!");
@@ -85,6 +86,7 @@ public class AuthHandler {
 		int returnValue = proc.getInt(1);
 		this.currentUserId=uniqueID;
 		this.currentUserName=username;
+		this.favoriteContent=null;
 		proc.close();
 		
 		if (returnValue==2) {

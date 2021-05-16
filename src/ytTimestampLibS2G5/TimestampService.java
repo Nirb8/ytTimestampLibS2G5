@@ -85,7 +85,7 @@ public class TimestampService {
 		String query="select * from [dbo].GetTimestampsByContentType(?) ORDER BY [YouTube ID] asc ,[Timestamp Time] asc"; //can't figure out how to ORDER BY these in the function
 		try {
 			PreparedStatement prpstmt = con.prepareStatement(query);
-			prpstmt.setString(1, content);
+			prpstmt.setInt(1, Integer.valueOf(content));
 			ResultSet rs=prpstmt.executeQuery();
 			int count=0;
 			while (rs.next()) {
