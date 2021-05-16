@@ -243,7 +243,10 @@ public class Main {
 				case "p":
 				case "profile":
 					authHandler.showUserProfile();
-					System.out.println("Press d to change DOB or f to change FavoriteContentType");
+					System.out.println("Press d to change DOB");
+					System.out.println("Press f to change FavoriteContentType");
+					System.out.println("Press u to change Username");
+					System.out.println("Press p to change Password");
 					System.out.print("~ ");
 	            	String query2 = s.nextLine();
 	            	switch(query2) {
@@ -261,6 +264,49 @@ public class Main {
 			            String contentId = contentResults3.get(Integer.parseInt(num3)-1).get(1);
 			            authHandler.updateFavoriteContentType(contentId);
 			            break;
+	            	case "u":
+	            		System.out.println("Input new username");
+	            		System.out.print("~ ");
+	            		String newUsername = s.nextLine();
+	            		authHandler.updateUsername(newUsername);
+	            		break;
+	            	case "p":
+	            		boolean vState = false;
+	            		boolean exit = false;
+	            		while (!vState) {
+	            		System.out.println("Enter Old Password or press enter to exit");
+	            		System.out.print("~ ");
+	            		String oldPassword = s.nextLine();
+	            		if (oldPassword.isEmpty()) {
+	            			exit=true;
+	            			break;
+	            		}
+	            		boolean verification = authHandler.validatePassword(oldPassword);
+	            		if (verification) {
+	            			vState=true;
+	            		}
+	            		}
+	            		if (exit) {
+	            			break;
+	            		}
+	            		boolean pState = false;
+	            		while (!pState) {
+	            		System.out.println("Enter new password or press enter to exit");
+	            		System.out.print("~ ");
+	            		String newPassword = s.nextLine();
+	            		if (newPassword.isEmpty()) {
+	            			break;
+	            		}
+	            		System.out.println("Enter new password again");
+	            		System.out.print("~ ");
+	            		String newPassword2=s.nextLine();
+	            		if (newPassword.equals(newPassword2)) {
+	            			authHandler.updatePassword(newPassword);
+	            			break;
+	            		}else {
+	            		System.out.println("New Passwords do not match");}
+	            		}
+	            		break;
 	            	}
 					
 					break;

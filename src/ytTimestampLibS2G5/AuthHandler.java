@@ -23,6 +23,7 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.swing.JOptionPane;
 
 import SpecialClasses.TableList;
+import javafx.animation.KeyValue.Type;
 
 public class AuthHandler {
 	
@@ -194,6 +195,7 @@ public class AuthHandler {
 	//allows for the favoriteContentType to be updated by user
 	public boolean updateFavoriteContentType(String ID) {
 		int id = Integer.valueOf(ID);
+		
 		Connection con = this.dbHandler.getConnection();
 		try {
 			CallableStatement proc = con.prepareCall("{?=call dbo.UpdateFavContentType(?,?)}");
@@ -207,6 +209,7 @@ public class AuthHandler {
 			}
 			if (returnValue==0) {
 				System.out.println("Updated Favorite Content Type");
+				this.favoriteContent=ID;
 			}
 			proc.close();
 		}catch (SQLException e) {
@@ -214,5 +217,96 @@ public class AuthHandler {
 			return false;
 		}	
 		return true;
+	}
+	//allows for the Username to be updated by the user
+	public boolean updateUsername(String newUsername) {
+		Connection con=this.dbHandler.getConnection();
+		try {
+			CallableStatement proc = con.prepareCall("{?=call dbo.UpdateUsername(?,?)}");
+			proc.setString(2, this.currentUserId);
+			proc.setString(3, newUsername);
+			proc.registerOutParameter(1, Types.INTEGER);
+			proc.execute();
+			int returnValue = proc.getInt(1);
+			if (returnValue ==1) {
+				throw new Error("Error: UserID cannot be null");
+			}
+			if (returnValue ==2) {
+				throw new Error("Error: Username cannot be null");
+			}
+			if (returnValue ==3) {
+				throw new Error("Error: Username already exists");
+			}
+			if (returnValue==4) {
+				throw new Error("Error: User does not exist");
+			}
+			if (returnValue==0) {
+				System.out.println("Updated Username");
+				this.currentUserName=newUsername;
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	//allows for a user's password to be updated
+	public boolean updatePassword(String newPassword) {
+		Connection con = this.dbHandler.getConnection();
+		byte[] rand =this.getNewSalt();
+		String hash =this.hashPassword(rand,newPassword);
+		try {
+			CallableStatement proc = con.prepareCall("{?=call dbo.ChangePassword(?,?,?)}");
+			proc.setString(2, this.currentUserId);
+			proc.setBytes(3, rand);
+			proc.setString(4, hash);
+			proc.registerOutParameter(1, Types.INTEGER);
+			proc.execute();
+			int returnValue = proc.getInt(1);
+			if (returnValue==1) {
+				throw new Error("UserID cannot be null");
+			}
+			if (returnValue==2) {
+				throw new Error("User does not exist");
+			}
+			if (returnValue==3) {
+				throw new Error("Password cannot be null");
+			}
+			if (returnValue==4) {
+				throw new Error("Password Salt cannot be null");
+			}
+			if (returnValue ==0) {
+				System.out.println("Password updated");
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	//checks to seee if input is a valid password for a user
+	public boolean validatePassword(String input) {
+		Connection con=this.dbHandler.getConnection();
+		String query ="SELECT PasswordSalt, PasswordHash, UserID from \"Users\" WHERE Username=?";
+		try {
+			PreparedStatement prpstmt = con.prepareStatement(query);
+			prpstmt.setString(1, this.currentUserName);
+			ResultSet rs = prpstmt.executeQuery();
+			rs.next();
+			byte[] salt =rs.getBytes("PasswordSalt");
+			String checkHash = rs.getString("PasswordHash");
+			String hashInput = this.hashPassword(salt, input);
+			if (hashInput.equals(checkHash)) {
+				return true;
+			}
+			else {
+				System.out.println("Incorrect Password");
+				return false;
+			}
+		}
+		catch(SQLException e) {
+			System.out.println("Login Failed: User does not exist");
+		}
+		return false;
 	}
 }
