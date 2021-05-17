@@ -109,6 +109,11 @@ public class Main {
 					String id = authHandler.getCurrentUser();
 					timestampService.addTimeStamp(id,caption, timestampTime, timestampVideoID);
 					break;
+				case "f":
+					System.out.println("Favorite Timestamp Search");
+					ArrayList<ArrayList<String>>result =timestampService.getTimestamps(authHandler.getCurrentUser(), "favorite");
+					timestampService.outputConsoleTables(result);
+					break;
 				case "g":
 				case "G":
 				case "get Timestamp":
@@ -132,9 +137,34 @@ public class Main {
 							results= timestampService.searchTimestampsByVideo(getTimestampVideoID, authHandler.getCurrentUser());
 						}
 						else {
-							results = timestampService.getTimestamps(authHandler.getCurrentUser());
+							results = timestampService.getTimestamps(authHandler.getCurrentUser(),"");
 						}
 						timestampService.outputConsoleTables(results);
+						//single row selection
+						System.out.println("Press s to select a timestamp or e to exit selection mode");
+						System.out.print("~ ");
+			            String input5 = s.nextLine();
+			            switch(input5) {
+			            case "s":
+			            	System.out.println("Press the entry number that you want to select");
+			            	String num3 = s.nextLine();
+			            	ArrayList<String> selectedRow2 = results.get(Integer.parseInt(num3)-1);
+			            	timestampService.outputSelection(selectedRow2);
+			            	System.out.println("Press f to favorite or e to exit");
+			            	System.out.print("~ ");
+			            	String query = s.nextLine();
+			            	switch(query) {
+			            	case "f":
+			            		timestampService.favoriteTimestamp(authHandler.getCurrentUser(), selectedRow2.get(6),selectedRow2.get(1), selectedRow2.get(3), selectedRow2.get(4));
+			            		break;
+			            	case "e":
+			            		System.out.println("Exiting...");
+			            		break;
+			            	}
+			            case "e":
+			            	System.out.println("Exiting...");
+			            	break;
+			            }
 						break;
 					case "c":
 						ArrayList<ArrayList<String>> contentResults=contentTypeService.getContentTypes();
@@ -161,11 +191,37 @@ public class Main {
 						results2= timestampService.searchTimestampsByType(getContentTypeID, authHandler.getCurrentUser());
 						
 						timestampService.outputConsoleTables(results2);
+						//single row selection
+						System.out.println("Press s to select a timestamp or e to exit selection mode");
+						System.out.print("~ ");
+			            String input2 = s.nextLine();
+			            switch(input2) {
+			            case "s":
+			            	System.out.println("Press the entry number that you want to select");
+			            	String num3 = s.nextLine();
+			            	ArrayList<String> selectedRow2 = results2.get(Integer.parseInt(num3)-1);
+			            	timestampService.outputSelection(selectedRow2);
+			            	System.out.println("Press f to favorite or e to exit");
+			            	System.out.print("~ ");
+			            	String query = s.nextLine();
+			            	switch(query) {
+			            	case "f":
+			            		timestampService.favoriteTimestamp(authHandler.getCurrentUser(), selectedRow2.get(6),selectedRow2.get(1), selectedRow2.get(3), selectedRow2.get(4));
+			            		break;
+			            	case "e":
+			            		System.out.println("Exiting...");
+			            		break;
+			            	}
+			            case "e":
+			            	System.out.println("Exiting...");
+			            	break;
+			            }
 						break;
 					default:
 						System.out.println("Cancelling search...");
 						break;
 					}
+					
 					break;
 				case "gv":
 				case "get videos":

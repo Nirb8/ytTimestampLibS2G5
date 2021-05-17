@@ -119,15 +119,23 @@ public class TimestampService {
 	}
 	
 	//Basic grab of all timestamps
-	public ArrayList<ArrayList<String>> getTimestamps(String accessingUserID) {
+	public ArrayList<ArrayList<String>> getTimestamps(String accessingUserID, String type) {
 		//DONE:Shows all the timestamps attached to a video
 		Connection con = this.dbHandler.getConnection();
 		ArrayList<ArrayList<String>> timestamps = new ArrayList<>();
 		String query;
 		
-		//if no input is given
-			System.out.println("Basic Search");
+		
+			//grab the favorite timestamps
+			if (type.equals("favorite")) {
+				query ="SELECT * FROM [dbo].[GetFavorite]() ORDER BY [YouTube ID] asc, [Timestamp Time] asc";
+			}
+			//grab basic entries
+			else {
+				//if no input is given
+				System.out.println("Basic Search");
 			query ="SELECT * FROM [dbo].[GetAllTimestamps]() ORDER BY [YouTube ID] asc, [Timestamp Time] asc";
+			}
 			try {
 				Statement stmt = con.createStatement();
 				ResultSet rs=stmt.executeQuery(query);
@@ -474,4 +482,37 @@ public class TimestampService {
 		System.out.println("Timestamp Entry Updated");
 		return false;
 	}
+	
+	//adds a timestamp to the favorite table
+	public boolean favoriteTimestamp(String UserID, String date, String videoID, String title, String time) {
+		//DONE: add timestamps to favorite table
+		Connection con = this.dbHandler.getConnection();
+		try {
+			CallableStatement proc=con.prepareCall("{?=call dbo.AddFavorite(?,?,?,?,?)}");
+			proc.setString(2,UserID);
+			proc.setDate(3, Date.valueOf(date));
+			proc.setString(4, videoID);
+			proc.setString(5, title);
+			proc.setTime(6, Time.valueOf(time));
+			proc.registerOutParameter(1, Types.INTEGER);
+			proc.execute();
+			int returnValue = proc.getInt(1);
+			proc.close();
+			if (returnValue==1) {
+				throw new Error("ERROR: User cannot be null");
+			}
+			if (returnValue==2) {
+				throw new Error("ERROR: Invalid inputs");
+			}
+			if (returnValue==0) {
+				System.out.println("Favorite Timestamp Added");
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	
 }
