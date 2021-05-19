@@ -111,7 +111,7 @@ public class Main {
 					break;
 				case "f":
 					System.out.println("Favorite Timestamp Search");
-					ArrayList<ArrayList<String>>result =timestampService.getTimestamps(authHandler.getCurrentUser(), "favorite");
+					ArrayList<ArrayList<String>>result =timestampService.getFavoriteTimestamps(authHandler.getCurrentUser());
 					timestampService.outputConsoleTables(result);
 					break;
 				case "g":
@@ -137,11 +137,11 @@ public class Main {
 							results= timestampService.searchTimestampsByVideo(getTimestampVideoID, authHandler.getCurrentUser());
 						}
 						else {
-							results = timestampService.getTimestamps(authHandler.getCurrentUser(),"");
+							results = timestampService.getTimestamps(authHandler.getCurrentUser());
 						}
 						timestampService.outputConsoleTables(results);
 						//single row selection
-						System.out.println("Press s to select a timestamp or e to exit selection mode");
+						System.out.println("Press s to select a timestamp or any other key to exit selection mode");
 						System.out.print("~ ");
 			            String input5 = s.nextLine();
 			            switch(input5) {
@@ -150,7 +150,7 @@ public class Main {
 			            	String num3 = s.nextLine();
 			            	ArrayList<String> selectedRow2 = results.get(Integer.parseInt(num3)-1);
 			            	timestampService.outputSelection(selectedRow2);
-			            	System.out.println("Press f to favorite or e to exit");
+			            	System.out.println("Press f to favorite or any other key to exit");
 			            	System.out.print("~ ");
 			            	String query = s.nextLine();
 			            	switch(query) {
@@ -158,11 +158,13 @@ public class Main {
 			            		timestampService.favoriteTimestamp(authHandler.getCurrentUser(), selectedRow2.get(6),selectedRow2.get(1), selectedRow2.get(3), selectedRow2.get(4));
 			            		break;
 			            	case "e":
-			            		System.out.println("Exiting...");
+			            	default:
+			            		System.out.println("Exiting Selection Mode...");
 			            		break;
 			            	}
 			            case "e":
-			            	System.out.println("Exiting...");
+			            default:
+			            	System.out.println("Exiting Selection Mode...");
 			            	break;
 			            }
 						break;
@@ -227,7 +229,7 @@ public class Main {
 				case "get videos":
 					ArrayList<ArrayList<String>> contentResults2=contentTypeService.getContentTypes();
 					contentTypeService.outputContent(contentResults2);
-		            System.out.println("Press the entry number that you want to search or just press enter");
+		            System.out.println("Press the entry number that you want to search or press enter for basic search");
 		            System.out.print("~ ");
 		            String num2 = s.nextLine();
 					//System.out.println("Enter YouTube Content Type if you want to search");

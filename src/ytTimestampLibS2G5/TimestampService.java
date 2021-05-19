@@ -1,6 +1,8 @@
 package ytTimestampLibS2G5;
 
 import SpecialClasses.TableList;
+import javafx.animation.KeyValue.Type;
+
 import com.google.api.client.util.DateTime;
 
 import java.awt.Toolkit;
@@ -119,36 +121,33 @@ public class TimestampService {
 	}
 	
 	//Basic grab of all timestamps
-	public ArrayList<ArrayList<String>> getTimestamps(String accessingUserID, String type) {
+	public ArrayList<ArrayList<String>> getTimestamps(String accessingUserID) {
 		//DONE:Shows all the timestamps attached to a video
 		Connection con = this.dbHandler.getConnection();
 		ArrayList<ArrayList<String>> timestamps = new ArrayList<>();
-		String query;
 		
-		
-			//grab the favorite timestamps
-			if (type.equals("favorite")) {
-				query ="SELECT * FROM [dbo].[GetFavorite]() ORDER BY [YouTube ID] asc, [Timestamp Time] asc";
-			}
-			//grab basic entries
-			else {
-				//if no input is given
 				System.out.println("Basic Search");
-			query ="SELECT * FROM [dbo].[GetAllTimestamps]() ORDER BY [YouTube ID] asc, [Timestamp Time] asc";
-			}
+				//query ="SELECT * FROM [dbo].[GetAllTimestamps]() ORDER BY [YouTube ID] asc, [Timestamp Time] asc";
+				
+			
 			try {
-				Statement stmt = con.createStatement();
-				ResultSet rs=stmt.executeQuery(query);
+				//Statement stmt = con.createStatement();
+				//ResultSet rs=stmt.executeQuery(query);
+				CallableStatement cstmt = con.prepareCall("{? = call GetAllTimestamps()}");
+				cstmt.registerOutParameter(1, Types.INTEGER);
+				
+				ResultSet rs = cstmt.executeQuery();
+				
 				int count=0; 
 				while (rs.next()) {
-					String ID = rs.getString(1);
-					String name = rs.getString(2);
-					String des = rs.getString(3);
-					String tTime = rs.getTime(4).toString();
-					String cType = rs.getString(5);
-					String cTime = rs.getDate(6).toString();
-					String UserName = rs.getString(7);
-					String tID = rs.getString(8);
+					String ID = rs.getString("YouTube ID");
+					String name = rs.getString("Video Name");
+					String des = rs.getString("Description");
+					String tTime = rs.getTime("Timestamp Time").toString();
+					String cType = rs.getString("Content Type");
+					String cTime = rs.getDate("Created Time").toString();
+					String UserName = rs.getString("Creator");
+					String tID = rs.getString("TimestampID");
 					ArrayList<String> details = new ArrayList<>();
 					count++;
 					details.add(String.valueOf(count));
@@ -230,6 +229,53 @@ public class TimestampService {
 			return timestamps;
 	}
 		
+	public ArrayList<ArrayList<String>> getFavoriteTimestamps(String accessingUserID){
+		Connection con = this.dbHandler.getConnection();
+		
+		ArrayList<ArrayList<String>> timestamps = new ArrayList<>();
+		
+		try {
+			CallableStatement cstmt = con.prepareCall("{? = call GetFavoriteTimestamps(?)}");
+			
+			cstmt.registerOutParameter(1, Types.INTEGER);
+			
+			cstmt.setString(2, accessingUserID);
+			
+			ResultSet rs = cstmt.executeQuery();
+			
+			int count=0; 
+			while (rs.next()) {
+				String ID = rs.getString("YouTube ID");
+				String name = rs.getString("Video Name");
+				String des = rs.getString("Description");
+				String tTime = rs.getTime("Timestamp Time").toString();
+				String cType = rs.getString("Content Type");
+				String cTime = rs.getDate("Created Time").toString();
+				String UserName = rs.getString("Creator");
+				String tID = rs.getString("TimestampID");
+				ArrayList<String> details = new ArrayList<>();
+				count++;
+				details.add(String.valueOf(count));
+				details.add(ID);
+				details.add(name);
+				details.add(des);
+				details.add(tTime);
+				details.add(cType);
+				details.add(cTime);
+				details.add(UserName);
+				details.add(tID);
+				timestamps.add(details);
+				
+				this.addTimestampToUserHistory(accessingUserID, tID);
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return timestamps;
+	}
 
 	public ArrayList<ArrayList<String>> getUserHistory(String accessingUserID) {
 		//DONE:Shows all the timestamps attached to a video
