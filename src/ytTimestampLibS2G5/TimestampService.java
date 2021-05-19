@@ -84,11 +84,19 @@ public class TimestampService {
 		System.out.println("Specified Search by Content");
 		Connection con = this.dbHandler.getConnection();
 		ArrayList<ArrayList<String>> timestamps = new ArrayList<>();
-		String query="select * from [dbo].GetTimestampsByContentType(?) ORDER BY [YouTube ID] asc ,[Timestamp Time] asc"; //can't figure out how to ORDER BY these in the function
+		//String query="select * from [dbo].GetTimestampsByContentType(?) ORDER BY [YouTube ID] asc ,[Timestamp Time] asc"; //can't figure out how to ORDER BY these in the function
 		try {
-			PreparedStatement prpstmt = con.prepareStatement(query);
-			prpstmt.setInt(1, Integer.valueOf(content));
-			ResultSet rs=prpstmt.executeQuery();
+//			PreparedStatement prpstmt = con.prepareStatement(query);
+//			prpstmt.setInt(1, Integer.valueOf(content));
+//			ResultSet rs=prpstmt.executeQuery();
+			CallableStatement cstmt = con.prepareCall("{? = call GetTimestampsByContentType(?)}");
+			
+			cstmt.registerOutParameter(1, Types.INTEGER);
+			
+			cstmt.setInt(2, Integer.valueOf(content));
+			
+			ResultSet rs = cstmt.executeQuery();
+			
 			int count=0;
 			while (rs.next()) {
 				String ID = rs.getString(1);
@@ -159,7 +167,7 @@ public class TimestampService {
 					details.add(cTime);
 					details.add(UserName);
 					details.add(tID);
-					System.out.println("Adding entry: " + details.toString() + " to results.");
+					//System.out.println("Adding entry: " + details.toString() + " to results.");
 					timestamps.add(details);
 					this.addTimestampToUserHistory(accessingUserID, tID);
 				}
