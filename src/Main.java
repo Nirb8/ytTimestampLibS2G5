@@ -134,7 +134,7 @@ public class Main {
 						//String getTimestampVideoID = s.nextLine();
 						ArrayList<ArrayList<String>> results;
 						if (!getTimestampVideoID.isEmpty()) {
-							results= timestampService.searchTimestampsByVideo(getTimestampVideoID, authHandler.getCurrentUser());
+							results= timestampService.getTimestampsByVideoID(getTimestampVideoID, authHandler.getCurrentUser());
 						}
 						else {
 							results = timestampService.getTimestamps(authHandler.getCurrentUser());

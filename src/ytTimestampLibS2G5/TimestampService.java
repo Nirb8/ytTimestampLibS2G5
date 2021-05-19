@@ -162,6 +162,7 @@ public class TimestampService {
 					timestamps.add(details);
 					this.addTimestampToUserHistory(accessingUserID, tID);
 				}
+				rs.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 				return null;
@@ -170,25 +171,28 @@ public class TimestampService {
 	}
 	
 	//search Timestamps by video ID
-	public ArrayList<ArrayList<String>> searchTimestampsByVideo(String videoID, String accessingUserID) {
+	public ArrayList<ArrayList<String>> getTimestampsByVideoID(String videoID, String accessingUserID) {
 		System.out.println("Specified Search");
 		Connection con = this.dbHandler.getConnection();
 		ArrayList<ArrayList<String>> timestamps = new ArrayList<>();
-		String query="select * from [dbo].[GetTimestampsByYouTubeID](?)  ORDER BY [YouTube ID] asc, [Timestamp Time] asc";
 			try {
-				PreparedStatement prpstmt = con.prepareStatement(query);
-				prpstmt.setString(1, videoID);
-				ResultSet rs=prpstmt.executeQuery();
+				CallableStatement cstmt = con.prepareCall("{? = call [dbo].[GetTimestampsByYouTubeID](?)}");
+				cstmt.registerOutParameter(1, Types.INTEGER);
+				cstmt.setString(2, videoID);
+				
+				ResultSet rs= cstmt.executeQuery();
+				
+
 				int count=0;
 				while (rs.next()) {
-					String ID = rs.getString(1);
-					String name = rs.getString(2);
-					String des = rs.getString(3);
-					String tTime = rs.getTime(4).toString();
-					String cType = rs.getString(5);
-					String cTime = rs.getDate(6).toString();
-					String UserName = rs.getString(7);
-					String tID = rs.getString(8);
+					String ID = rs.getString("YouTube ID");
+					String name = rs.getString("Video Name");
+					String des = rs.getString("Description");
+					String tTime = rs.getTime("Timestamp Time").toString();
+					String cType = rs.getString("Content Type");
+					String cTime = rs.getDate("Created Time").toString();
+					String UserName = rs.getString("Creator");
+					String tID = rs.getString("TimestampID");
 					ArrayList<String> details = new ArrayList<>();
 					count++;
 					details.add(String.valueOf(count));
@@ -203,6 +207,7 @@ public class TimestampService {
 					timestamps.add(details);
 					this.addTimestampToUserHistory(accessingUserID, tID);
 				}
+				rs.close();
 				//test code
 				
 				StringBuilder exportString = new StringBuilder();
@@ -268,7 +273,7 @@ public class TimestampService {
 				
 				this.addTimestampToUserHistory(accessingUserID, tID);
 			}
-			
+			rs.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
