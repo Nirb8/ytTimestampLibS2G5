@@ -159,6 +159,7 @@ public class TimestampService {
 					details.add(cTime);
 					details.add(UserName);
 					details.add(tID);
+					System.out.println("Adding entry: " + details.toString() + " to results.");
 					timestamps.add(details);
 					this.addTimestampToUserHistory(accessingUserID, tID);
 				}
