@@ -5,6 +5,7 @@ import ytTimestampLibS2G5.DatabaseConnectionHandler;
 import ytTimestampLibS2G5.TimestampService;
 import ytTimestampLibS2G5.TimestampService.NumberRowsCollection;
 import ytTimestampLibS2G5.VideoService;
+import ytTimestampLibS2G5.VideoService.VideoRowsCollection;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -186,7 +187,41 @@ public class Main {
 		            } else {
 		            	getContentTypeID2=null;
 		            }
-		            videoService.iterateThroughVideos(getContentTypeID2, s);
+		            VideoRowsCollection collection =videoService.iterateThroughVideos(getContentTypeID2, s);
+		    		List<ArrayList<String>> current =collection.getRows();
+		    		int numEnters = collection.getEnters();
+		    		//single row selection
+		    		System.out.println("Press s to select a video or any other key to exit selection mode");
+		    		System.out.print("~ ");
+		            String input5 = s.nextLine();
+		            switch(input5) {
+		            case "s":
+		            	System.out.println("Press the entry number that you want to select");
+		            	String num3 = s.nextLine();
+		            	int div;
+		            	if (numEnters>0) {
+		            		div=20*numEnters;
+		            	}
+		            	else {
+		            		div=1;
+		            	}
+		            	System.out.println(numEnters);
+		            	System.out.println(div);
+		            	ArrayList<String> selectedRow2 = current.get(Integer.parseInt(num3)/div-1);
+		            	videoService.outputVideoSelection(selectedRow2);
+		            	System.out.println("Press t if you want to search for timestamps relating to this video");
+		            	String ans = s.nextLine();
+		            	switch(ans) {
+		            	case "t": //Need to fix
+		            		String VideoName = selectedRow2.get(1);
+		            		String UploadDate = selectedRow2.get(2);
+		            		String Duration = selectedRow2.get(3);
+		            		//ArrayList<ArrayList<String>>results= timestampService.getTimestampsByVideoID(videoService.getVideoID(VideoName, UploadDate, Duration), authHandler.getCurrentUser());
+		            		//timestampService.frontEndSelectionFunction(results, s, authHandler);
+		            	default:
+		            		break;
+		            	}
+		            }
 					break;
 				case "vh":
 				case "view user history":

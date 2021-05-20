@@ -77,6 +77,25 @@ public class VideoService {
 		}
 		return true;
 	}
+	//NEED TO FIX
+	//gets video ID based on videoName, uploadDate, Duration
+	public String getVideoID (String VideoName, String UploadDate, String Duration) {
+		Connection con = this.dbHandler.getConnection();
+		//need to change to a stored procedure
+		String query = "SELECT YTVideoID FROM Videos WHERE VideoTitle=? AND UploadDate=?";
+		try {
+		PreparedStatement prpstmt = con.prepareStatement(query);
+		prpstmt.setString(1, VideoName);
+		//prpstmt.setTime(3,Time.valueOf(Duration));
+		prpstmt.setDate(2,Date.valueOf(UploadDate));
+		ResultSet rs=prpstmt.executeQuery();
+		return rs.getString("YTVideoID");
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+		
+	}
 	//returns an output of all the videos in the database
 	public GetVideoContainer getVideos(String contentTypeID) {
 		//DONE: Shows a table of videos already added
@@ -160,6 +179,11 @@ public class VideoService {
 			table.addRow(element.get(0), element.get(1), element.get(2), element.get(3));
 		}
 		table.print();
+	}
+	//output video selection
+	public void outputVideoSelection(ArrayList<String> result) {
+		TableList table = new TableList(4,"Entry Number","Video Name", "Upload Date","Duration");
+		table.addRow(result.get(0), result.get(1), result.get(2), result.get(3));
 	}
 	//adds a video to the videoGenres table
 	public boolean addVideoGenres(String YouTubeID, int ContentType, String ContentName) {
