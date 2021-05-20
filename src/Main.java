@@ -212,12 +212,9 @@ public class Main {
 		            	System.out.println("Press t if you want to search for timestamps relating to this video");
 		            	String ans = s.nextLine();
 		            	switch(ans) {
-		            	case "t": //Need to fix
-		            		String VideoName = selectedRow2.get(1);
-		            		String UploadDate = selectedRow2.get(2);
-		            		String Duration = selectedRow2.get(3);
-		            		//ArrayList<ArrayList<String>>results= timestampService.getTimestampsByVideoID(videoService.getVideoID(VideoName, UploadDate, Duration), authHandler.getCurrentUser());
-		            		//timestampService.frontEndSelectionFunction(results, s, authHandler);
+		            	case "t":
+		            		ArrayList<ArrayList<String>>results= timestampService.getTimestampsByVideoID(selectedRow2.get(selectedRow2.size()-1), authHandler.getCurrentUser());
+		            		timestampService.frontEndSelectionFunction(results, s, authHandler);
 		            	default:
 		            		break;
 		            	}

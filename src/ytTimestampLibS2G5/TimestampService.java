@@ -650,8 +650,6 @@ public class TimestampService {
         	else {
         		div=1;
         	}
-        	System.out.println(numEnters);
-        	System.out.println(div);
         	ArrayList<String> selectedRow2 = current.get(Integer.parseInt(num3)/div-1);
         	this.outputSelection(selectedRow2);
         	System.out.println("Press f to favorite or any other key to exit");

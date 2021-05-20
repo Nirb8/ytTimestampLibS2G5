@@ -77,25 +77,6 @@ public class VideoService {
 		}
 		return true;
 	}
-	//NEED TO FIX
-	//gets video ID based on videoName, uploadDate, Duration
-	public String getVideoID (String VideoName, String UploadDate, String Duration) {
-		Connection con = this.dbHandler.getConnection();
-		//need to change to a stored procedure
-		String query = "SELECT YTVideoID FROM Videos WHERE VideoTitle=? AND UploadDate=?";
-		try {
-		PreparedStatement prpstmt = con.prepareStatement(query);
-		prpstmt.setString(1, VideoName);
-		//prpstmt.setTime(3,Time.valueOf(Duration));
-		prpstmt.setDate(2,Date.valueOf(UploadDate));
-		ResultSet rs=prpstmt.executeQuery();
-		return rs.getString("YTVideoID");
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-		
-	}
 	//returns an output of all the videos in the database
 	public GetVideoContainer getVideos(String contentTypeID) {
 		//DONE: Shows a table of videos already added
@@ -123,17 +104,20 @@ public class VideoService {
 			int count =1;
 			while (rs.next()) {
 				
-					String videoTitle =rs.getString(1);
-					String uploadDate = rs.getDate(2).toString();
-					String duration = rs.getTime(3).toString();
+					String videoTitle =rs.getString("VideoTitle");
+					String uploadDate = rs.getDate("UploadDate").toString();
+					String duration = rs.getTime("Duration").toString();
+					String id = rs.getString("VideoID");
 					ArrayList<String> details = new ArrayList<>();
 					details.add(String.valueOf(count));
 					details.add(videoTitle);
 					details.add(uploadDate);
 					details.add(duration);
+					details.add(id);
 					if (ID==-1) {
-					String content = rs.getString(4);
+					String content = rs.getString("ContentTypeTitle");
 					details.add(content);
+					
 					}
 					count++;
 					if (!videos.contains(details)) {
@@ -167,16 +151,16 @@ public class VideoService {
 	}
 	//ouput the videos if no content is selected for the search
 	public void outputVideosWithContent(List<ArrayList<String>> results) {
-		TableList table = new TableList(5,"Entry Number","Video Name", "Upload Date","Duration", "Content Type Name");
-		results.forEach(element -> table.addRow(element.get(0), element.get(1), element.get(2), element.get(3), element.get(4)));
+		TableList table = new TableList(6,"Entry Number","Video Name", "Upload Date","Duration", "Content Type Name", "Video ID");
+		results.forEach(element -> table.addRow(element.get(0), element.get(1), element.get(2), element.get(3), element.get(5),element.get(4)));
 	
 		table.print();
 	}
 	//output the videos if content is selected
 	public void outputVideos(List<ArrayList<String>> results) {
-		TableList table = new TableList(4,"Entry Number","Video Name", "Upload Date","Duration");
+		TableList table = new TableList(5,"Entry Number","Video Name", "Upload Date","Duration","Video ID");
 		for (ArrayList<String>element:results) {
-			table.addRow(element.get(0), element.get(1), element.get(2), element.get(3));
+			table.addRow(element.get(0), element.get(1), element.get(2), element.get(3), element.get(4));
 		}
 		table.print();
 	}
