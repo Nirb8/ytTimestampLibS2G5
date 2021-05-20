@@ -3,11 +3,13 @@ import ytTimestampLibS2G5.AuthHandler;
 import ytTimestampLibS2G5.ContentTypeService;
 import ytTimestampLibS2G5.DatabaseConnectionHandler;
 import ytTimestampLibS2G5.TimestampService;
+import ytTimestampLibS2G5.TimestampService.NumberRowsCollection;
 import ytTimestampLibS2G5.VideoService;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import YouTubeAPI.RegexConverter;
@@ -139,7 +141,10 @@ public class Main {
 						else {
 							results = timestampService.getTimestamps(authHandler.getCurrentUser());
 						}
-						timestampService.outputConsoleTables(results);
+						
+						NumberRowsCollection collection =timestampService.iterateThroughTimestamps(results,s);
+						List<ArrayList<String>> current =collection.getRows();
+						int numEnters = collection.getEnters();
 						//single row selection
 						System.out.println("Press s to select a timestamp or any other key to exit selection mode");
 						System.out.print("~ ");
@@ -148,7 +153,16 @@ public class Main {
 			            case "s":
 			            	System.out.println("Press the entry number that you want to select");
 			            	String num3 = s.nextLine();
-			            	ArrayList<String> selectedRow2 = results.get(Integer.parseInt(num3)-1);
+			            	int div;
+			            	if (numEnters>0) {
+			            		div=20*numEnters;
+			            	}
+			            	else {
+			            		div=1;
+			            	}
+			            	System.out.println(numEnters);
+			            	System.out.println(div);
+			            	ArrayList<String> selectedRow2 = current.get(Integer.parseInt(num3)/div-1);
 			            	timestampService.outputSelection(selectedRow2);
 			            	System.out.println("Press f to favorite or any other key to exit");
 			            	System.out.print("~ ");
@@ -166,7 +180,9 @@ public class Main {
 			            default:
 			            	System.out.println("Exiting Selection Mode...");
 			            	break;
+			            
 			            }
+					
 						break;
 					case "c":
 						ArrayList<ArrayList<String>> contentResults=contentTypeService.getContentTypes();
@@ -192,7 +208,10 @@ public class Main {
 						ArrayList<ArrayList<String>> results2;
 						results2= timestampService.searchTimestampsByType(getContentTypeID, authHandler.getCurrentUser());
 						
-						timestampService.outputConsoleTables(results2);
+						NumberRowsCollection collection2 =timestampService.iterateThroughTimestamps(results2,s);
+						List<ArrayList<String>> current2 =collection2.getRows();
+						int numEnters2 = collection2.getEnters();
+						
 						//single row selection
 						System.out.println("Press s to select a timestamp or e to exit selection mode");
 						System.out.print("~ ");
@@ -201,7 +220,11 @@ public class Main {
 			            case "s":
 			            	System.out.println("Press the entry number that you want to select");
 			            	String num3 = s.nextLine();
-			            	ArrayList<String> selectedRow2 = results2.get(Integer.parseInt(num3)-1);
+			            	int div=1;
+			            	if (numEnters2>0) {
+			            		div=20*numEnters2;
+			            	}
+			            	ArrayList<String> selectedRow2 = current2.get(Integer.parseInt(num3)/div-1);
 			            	timestampService.outputSelection(selectedRow2);
 			            	System.out.println("Press f to favorite or e to exit");
 			            	System.out.print("~ ");
@@ -218,6 +241,8 @@ public class Main {
 			            	System.out.println("Exiting...");
 			            	break;
 			            }
+			            
+					
 						break;
 					default:
 						System.out.println("Cancelling search...");

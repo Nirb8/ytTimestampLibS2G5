@@ -12,7 +12,9 @@ import java.security.SecureRandom;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.UUID;
 
 public class TimestampService {
@@ -366,7 +368,8 @@ public class TimestampService {
 	}
 	
 	//Used specifically for timestamp search output table
-	public void outputConsoleTables(ArrayList<ArrayList<String>> results) {
+	public void outputConsoleTables(List<ArrayList<String>> results) {
+		
 		TableList table = new TableList(8,"Entry Number","YouTube ID", "Video Name", "Description", "Timestamp Time", "Content Type", "Created Time", "Creator");
 		results.forEach(element -> table.addRow(element.get(0), element.get(1), element.get(2), element.get(3), element.get(4), element.get(5), element.get(6), element.get(7)));
 		table.print();
@@ -573,6 +576,52 @@ public class TimestampService {
 		}
 		return true;
 	}
-	
-	
+	//outputs timestamps 20 rows at a time
+	public NumberRowsCollection iterateThroughTimestamps(ArrayList<ArrayList<String>> results, Scanner s) {
+		boolean state=false;
+		int numEnters=0;
+		List<ArrayList<String>> current=null;
+		while (!state) {
+			
+			if (results.size()<20) {
+				state=true;
+				current = results;
+			}
+			else {
+				current=results.subList(0, 20);
+				results = new ArrayList<ArrayList<String>>(results.subList(20, results.size()));
+			}
+		this.outputConsoleTables(current);
+		if (!state) {
+			System.out.println("Press enter to continue searching or press any key to stop: "+results.size()+" entries not shown");
+			String search = s.nextLine();
+			if (!search.isEmpty()) {
+				return new NumberRowsCollection(current,numEnters);
+			}
+			numEnters++;
+		}
+		
+		}
+		return new NumberRowsCollection(current,numEnters);
+	}
+	//helper class for iterateThroughTimestamps
+	public class NumberRowsCollection{
+		List<ArrayList<String>> rows;
+		int numEnters;
+		
+		public NumberRowsCollection(List<ArrayList<String>> rows, int numEnters) {
+			this.rows=rows;
+			this.numEnters=numEnters;
+		}
+		
+		public List<ArrayList<String>>getRows() {
+			return this.rows;
+		}
+		
+		public int getEnters() {
+			return this.numEnters;
+		}
+		
+		
+	}
 }
