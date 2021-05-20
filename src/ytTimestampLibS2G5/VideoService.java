@@ -3,12 +3,15 @@ package ytTimestampLibS2G5;
 import SpecialClasses.TableList;
 import YouTubeAPI.DBConnect;
 import YouTubeAPI.DBConnect.VideoDetails;
+import ytTimestampLibS2G5.TimestampService.NumberRowsCollection;
 
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 
 public class VideoService {
 	
@@ -75,7 +78,7 @@ public class VideoService {
 		return true;
 	}
 	//returns an output of all the videos in the database
-	public void getVideos(String contentTypeID) {
+	public GetVideoContainer getVideos(String contentTypeID) {
 		//DONE: Shows a table of videos already added
 		ArrayList<ArrayList<String>> videos = new ArrayList<>();
 		Connection con= this.dbHandler.getConnection();
@@ -119,26 +122,39 @@ public class VideoService {
 					}
 					
 			}
-			if (ID==-1) {
-				this.outputVideosWithContent(videos);
-			}
-			else {
-				this.outputVideos(videos);
-			}
 			rs.close();
+			return new GetVideoContainer(ID, videos);
+//			
+			
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
+		return null;
+	}
+	//helper class for getVideos
+	public class GetVideoContainer{
+		int ID;
+		ArrayList<ArrayList<String>> videos;
+		public GetVideoContainer(int ID, ArrayList<ArrayList<String>> videos) {
+			this.ID=ID;
+			this.videos=videos;
+		}
+		public ArrayList<ArrayList<String>> getV(){
+			return this.videos;
+		}
+		public int getID() {
+			return this.ID;
+		}
 	}
 	//ouput the videos if no content is selected for the search
-	public void outputVideosWithContent(ArrayList<ArrayList<String>> results) {
+	public void outputVideosWithContent(List<ArrayList<String>> results) {
 		TableList table = new TableList(5,"Entry Number","Video Name", "Upload Date","Duration", "Content Type Name");
 		results.forEach(element -> table.addRow(element.get(0), element.get(1), element.get(2), element.get(3), element.get(4)));
 	
 		table.print();
 	}
 	//output the videos if content is selected
-	public void outputVideos(ArrayList<ArrayList<String>> results) {
+	public void outputVideos(List<ArrayList<String>> results) {
 		TableList table = new TableList(4,"Entry Number","Video Name", "Upload Date","Duration");
 		for (ArrayList<String>element:results) {
 			table.addRow(element.get(0), element.get(1), element.get(2), element.get(3));
@@ -176,6 +192,61 @@ public class VideoService {
 		return true;
 	}
 	
+	public VideoRowsCollection iterateThroughVideos(String contentTypeID, Scanner s) {
+		GetVideoContainer vc =this.getVideos(contentTypeID);
+		ArrayList<ArrayList<String>> results = vc.getV();
+		int ID=vc.getID();
+		boolean state=false;
+		int numEnters=0;
+		List<ArrayList<String>> current=null;
+		while (!state) {
+			
+			if (results.size()<20) {
+				state=true;
+				current = results;
+			}
+			else {
+				current=results.subList(0, 20);
+				results = new ArrayList<ArrayList<String>>(results.subList(20, results.size()));
+			}
+			if (ID==-1) {
+				this.outputVideosWithContent(current);
+			}
+			else {
+				this.outputVideos(current);
+			}
+		if (!state) {
+			System.out.println("Press enter to continue searching or press any key to stop: "+results.size()+" entries not shown");
+			String search = s.nextLine();
+			if (!search.isEmpty()) {
+				return new VideoRowsCollection(current,numEnters);
+			}
+			numEnters++;
+		}
+		
+		}
+		return new VideoRowsCollection(current,numEnters);
+	}
+	//helper class for iterateThroughTimestamps
+	public class VideoRowsCollection{
+		List<ArrayList<String>> rows;
+		int numEnters;
+		
+		public VideoRowsCollection(List<ArrayList<String>> rows, int numEnters) {
+			this.rows=rows;
+			this.numEnters=numEnters;
+		}
+		
+		public List<ArrayList<String>>getRows() {
+			return this.rows;
+		}
+		
+		public int getEnters() {
+			return this.numEnters;
+		}
+		
+		
+	}
 	
 	
 }

@@ -103,7 +103,6 @@ public class Main {
 				case "create Timestamp":
 					System.out.println("Enter YouTube VideoID");
 					String timestampVideoID = RegexConverter.convertLinkToYTVideoID(s.nextLine());
-					//String timestampVideoID = s.nextLine();
 					System.out.println("Enter Time (hh:mm:ss)");
 					String timestampTime = s.nextLine();
 					System.out.println("Enter caption");
@@ -133,7 +132,6 @@ public class Main {
 							System.out.println(e.getMessage());
 							break;
 						}
-						//String getTimestampVideoID = s.nextLine();
 						ArrayList<ArrayList<String>> results;
 						if (!getTimestampVideoID.isEmpty()) {
 							results= timestampService.getTimestampsByVideoID(getTimestampVideoID, authHandler.getCurrentUser());
@@ -142,46 +140,7 @@ public class Main {
 							results = timestampService.getTimestamps(authHandler.getCurrentUser());
 						}
 						
-						NumberRowsCollection collection =timestampService.iterateThroughTimestamps(results,s);
-						List<ArrayList<String>> current =collection.getRows();
-						int numEnters = collection.getEnters();
-						//single row selection
-						System.out.println("Press s to select a timestamp or any other key to exit selection mode");
-						System.out.print("~ ");
-			            String input5 = s.nextLine();
-			            switch(input5) {
-			            case "s":
-			            	System.out.println("Press the entry number that you want to select");
-			            	String num3 = s.nextLine();
-			            	int div;
-			            	if (numEnters>0) {
-			            		div=20*numEnters;
-			            	}
-			            	else {
-			            		div=1;
-			            	}
-			            	System.out.println(numEnters);
-			            	System.out.println(div);
-			            	ArrayList<String> selectedRow2 = current.get(Integer.parseInt(num3)/div-1);
-			            	timestampService.outputSelection(selectedRow2);
-			            	System.out.println("Press f to favorite or any other key to exit");
-			            	System.out.print("~ ");
-			            	String query = s.nextLine();
-			            	switch(query) {
-			            	case "f":
-			            		timestampService.favoriteTimestamp(authHandler.getCurrentUser(), selectedRow2.get(6),selectedRow2.get(1), selectedRow2.get(3), selectedRow2.get(4));
-			            		break;
-			            	case "e":
-			            	default:
-			            		System.out.println("Exiting Selection Mode...");
-			            		break;
-			            	}
-			            case "e":
-			            default:
-			            	System.out.println("Exiting Selection Mode...");
-			            	break;
-			            
-			            }
+						timestampService.frontEndSelectionFunction(results, s, authHandler);
 					
 						break;
 					case "c":
@@ -204,45 +163,8 @@ public class Main {
 							System.out.println("This is not a valid number.");
 							break;
 						}
-
-						ArrayList<ArrayList<String>> results2;
-						results2= timestampService.searchTimestampsByType(getContentTypeID, authHandler.getCurrentUser());
-						
-						NumberRowsCollection collection2 =timestampService.iterateThroughTimestamps(results2,s);
-						List<ArrayList<String>> current2 =collection2.getRows();
-						int numEnters2 = collection2.getEnters();
-						
-						//single row selection
-						System.out.println("Press s to select a timestamp or e to exit selection mode");
-						System.out.print("~ ");
-			            String input2 = s.nextLine();
-			            switch(input2) {
-			            case "s":
-			            	System.out.println("Press the entry number that you want to select");
-			            	String num3 = s.nextLine();
-			            	int div=1;
-			            	if (numEnters2>0) {
-			            		div=20*numEnters2;
-			            	}
-			            	ArrayList<String> selectedRow2 = current2.get(Integer.parseInt(num3)/div-1);
-			            	timestampService.outputSelection(selectedRow2);
-			            	System.out.println("Press f to favorite or e to exit");
-			            	System.out.print("~ ");
-			            	String query = s.nextLine();
-			            	switch(query) {
-			            	case "f":
-			            		timestampService.favoriteTimestamp(authHandler.getCurrentUser(), selectedRow2.get(6),selectedRow2.get(1), selectedRow2.get(3), selectedRow2.get(4));
-			            		break;
-			            	case "e":
-			            		System.out.println("Exiting...");
-			            		break;
-			            	}
-			            case "e":
-			            	System.out.println("Exiting...");
-			            	break;
-			            }
-			            
-					
+						ArrayList<ArrayList<String>> results2= timestampService.searchTimestampsByType(getContentTypeID, authHandler.getCurrentUser());
+						timestampService.frontEndSelectionFunction(results2, s, authHandler);
 						break;
 					default:
 						System.out.println("Cancelling search...");
@@ -257,7 +179,6 @@ public class Main {
 		            System.out.println("Press the entry number that you want to search or press enter for basic search");
 		            System.out.print("~ ");
 		            String num2 = s.nextLine();
-					//System.out.println("Enter YouTube Content Type if you want to search");
 		            String getContentTypeID2;
 		            if (!num2.isEmpty()) {
 		            ArrayList<String> selectedRow = contentResults2.get(Integer.parseInt(num2)-1);
@@ -265,133 +186,20 @@ public class Main {
 		            } else {
 		            	getContentTypeID2=null;
 		            }
-		            videoService.getVideos(getContentTypeID2);
+		            videoService.iterateThroughVideos(getContentTypeID2, s);
 					break;
 				case "vh":
 				case "view user history":
 					ArrayList<ArrayList<String>> history = timestampService.getUserHistory(authHandler.getCurrentUser());
-					timestampService.outputHistory(history);
+					timestampService.iterateThroughHistory(history, s);
 					break;
 				case "gm":
 				case "get my Timestamps":
-					String username = authHandler.getCurrentUserName();
-					boolean runSelection = true;
-					while (runSelection) {
-						ArrayList<ArrayList<String>> myresults = timestampService.getUsersTimestamps(username, authHandler.getCurrentUser());
-						timestampService.outputConsoleTables(myresults);
-						System.out.println("Press s to select a timestamp or e to exit selection mode");
-						System.out.print("~ ");
-			            String input2 = s.nextLine();
-			            switch(input2) {
-			            case "s":
-			            	System.out.println("Press the entry number that you want to select");
-			            	String num = s.nextLine();
-			            	ArrayList<String> selectedRow = myresults.get(Integer.parseInt(num)-1);
-			            	timestampService.outputSelection(selectedRow);
-			            	System.out.println("Press d to delete, u to update, or e to exit");
-			            	System.out.print("~ ");
-			            	String query = s.nextLine();
-			            	String userId = authHandler.getCurrentUser();
-			            	switch(query) {
-								case "e":
-									runSelection = false;
-									System.out.println("Exiting selection mode...");
-									break;
-								case "u":
-									System.out.println("Enter new description");
-									String newTitle = s.nextLine();
-									timestampService.updateTimestamps(selectedRow, userId, newTitle);
-									break;
-								case "d":
-									timestampService.deleteTimestamp(selectedRow,userId);
-									break;
-			            	}
-			            	break;
-			            case "e":
-			            	runSelection = false;
-			            	System.out.println("Exiting selection mode...");
-			            	break;
-			            }
-					}
+					timestampService.frontEndGetMyTimestamps(authHandler, s);
 					break;
-//				case "d":
-//				case "delete Timestamp":
-//					System.out.println("Enter the timestamp's video ID that you want to delete");
-//					String deleteVideoID = RegexConverter.convertLinkToYTVideoID(s.nextLine());
-////					System.out.println("Enter the timestamps' video time that you want to delete (hh:mm:ss)");
-////					String deleteVideoTime = s.nextLine();
-//					timestampService.deleteVideoTimestamps(deleteVideoID);
-//					break;
-					
 				case "p":
 				case "profile":
-					authHandler.showUserProfile();
-					System.out.println("Press d to change DOB");
-					System.out.println("Press f to change FavoriteContentType");
-					System.out.println("Press u to change Username");
-					System.out.println("Press p to change Password");
-					System.out.print("~ ");
-	            	String query2 = s.nextLine();
-	            	switch(query2) {
-	            	case "d":
-	            		System.out.println("Type DOB in YYYY-MM-DD");
-	            		String date = s.nextLine();
-	            		authHandler.updateDOB(date);
-	            		break;
-	            	case "f":
-	            		ArrayList<ArrayList<String>> contentResults3=contentTypeService.getContentTypes();
-						contentTypeService.outputContent(contentResults3);
-			            System.out.println("Press the entry number that you want to search or just press enter");
-			            System.out.print("~ ");
-			            String num3 = s.nextLine();
-			            String contentId = contentResults3.get(Integer.parseInt(num3)-1).get(1);
-			            authHandler.updateFavoriteContentType(contentId);
-			            break;
-	            	case "u":
-	            		System.out.println("Input new username");
-	            		System.out.print("~ ");
-	            		String newUsername = s.nextLine();
-	            		authHandler.updateUsername(newUsername);
-	            		break;
-	            	case "p":
-	            		boolean vState = false;
-	            		boolean exit = false;
-	            		while (!vState) {
-	            		System.out.println("Enter Old Password or press enter to exit");
-	            		System.out.print("~ ");
-	            		String oldPassword = s.nextLine();
-	            		if (oldPassword.isEmpty()) {
-	            			exit=true;
-	            			break;
-	            		}
-	            		boolean verification = authHandler.validatePassword(oldPassword);
-	            		if (verification) {
-	            			vState=true;
-	            		}
-	            		}
-	            		if (exit) {
-	            			break;
-	            		}
-	            		boolean pState = false;
-	            		while (!pState) {
-	            		System.out.println("Enter new password or press enter to exit");
-	            		System.out.print("~ ");
-	            		String newPassword = s.nextLine();
-	            		if (newPassword.isEmpty()) {
-	            			break;
-	            		}
-	            		System.out.println("Enter new password again");
-	            		System.out.print("~ ");
-	            		String newPassword2=s.nextLine();
-	            		if (newPassword.equals(newPassword2)) {
-	            			authHandler.updatePassword(newPassword);
-	            			break;
-	            		}else {
-	            		System.out.println("New Passwords do not match");}
-	            		}
-	            		break;
-	            	}
-					
+					authHandler.frontEndProfile(s, contentTypeService);
 					break;
 				case "h":
                 case "help":

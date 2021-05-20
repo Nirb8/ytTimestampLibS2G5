@@ -309,4 +309,74 @@ public class AuthHandler {
 		}
 		return false;
 	}
+	//Used in Main to grab profile
+	public void frontEndProfile(Scanner s, ContentTypeService contentTypeService) {
+		this.showUserProfile();
+		System.out.println("Press d to change DOB");
+		System.out.println("Press f to change FavoriteContentType");
+		System.out.println("Press u to change Username");
+		System.out.println("Press p to change Password");
+		System.out.print("~ ");
+    	String query2 = s.nextLine();
+    	switch(query2) {
+    	case "d":
+    		System.out.println("Type DOB in YYYY-MM-DD");
+    		String date = s.nextLine();
+    		this.updateDOB(date);
+    		break;
+    	case "f":
+    		ArrayList<ArrayList<String>> contentResults3=contentTypeService.getContentTypes();
+			contentTypeService.outputContent(contentResults3);
+            System.out.println("Press the entry number that you want to search or just press enter");
+            System.out.print("~ ");
+            String num3 = s.nextLine();
+            String contentId = contentResults3.get(Integer.parseInt(num3)-1).get(1);
+            this.updateFavoriteContentType(contentId);
+            break;
+    	case "u":
+    		System.out.println("Input new username");
+    		System.out.print("~ ");
+    		String newUsername = s.nextLine();
+    		this.updateUsername(newUsername);
+    		break;
+    	case "p":
+    		boolean vState = false;
+    		boolean exit = false;
+    		while (!vState) {
+    		System.out.println("Enter Old Password or press enter to exit");
+    		System.out.print("~ ");
+    		String oldPassword = s.nextLine();
+    		if (oldPassword.isEmpty()) {
+    			exit=true;
+    			break;
+    		}
+    		boolean verification = this.validatePassword(oldPassword);
+    		if (verification) {
+    			vState=true;
+    		}
+    		}
+    		if (exit) {
+    			break;
+    		}
+    		boolean pState = false;
+    		while (!pState) {
+    		System.out.println("Enter new password or press enter to exit");
+    		System.out.print("~ ");
+    		String newPassword = s.nextLine();
+    		if (newPassword.isEmpty()) {
+    			break;
+    		}
+    		System.out.println("Enter new password again");
+    		System.out.print("~ ");
+    		String newPassword2=s.nextLine();
+    		if (newPassword.equals(newPassword2)) {
+    			this.updatePassword(newPassword);
+    			break;
+    		}else {
+    		System.out.println("New Passwords do not match");}
+    		}
+    		break;
+    	}
+		
+	}
 }

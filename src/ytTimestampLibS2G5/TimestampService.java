@@ -2,6 +2,7 @@ package ytTimestampLibS2G5;
 
 import SpecialClasses.TableList;
 import javafx.animation.KeyValue.Type;
+import ytTimestampLibS2G5.TimestampService.NumberRowsCollection;
 
 import com.google.api.client.util.DateTime;
 
@@ -326,7 +327,7 @@ public class TimestampService {
 		}
 		return history;
 	}
-	
+	//pulls timestamps from the database
 	public ArrayList<ArrayList<String>> getUsersTimestamps(String userName, String accessingUserID) {
 		Connection con = this.dbHandler.getConnection();
 		
@@ -376,7 +377,7 @@ public class TimestampService {
 	}
 
 	//Used specifically for user history output table
-	public void outputHistory(ArrayList<ArrayList<String>> results) {
+	public void outputHistory(List<ArrayList<String>> results) {
 		TableList table = new TableList(6,"Entry Number","YouTube ID", "Video Name", "Description", "Timestamp Time", "Time Accessed");
 		results.forEach(element -> table.addRow(element.get(0), element.get(1), element.get(2), element.get(3), element.get(4), element.get(5)));
 		table.print();
@@ -624,4 +625,124 @@ public class TimestampService {
 		
 		
 	}
+	//User input function for main for basic search
+	public void frontEndSelectionFunction(ArrayList<ArrayList<String>> results, Scanner s, AuthHandler authHandler) {
+		NumberRowsCollection collection =this.iterateThroughTimestamps(results,s);
+		List<ArrayList<String>> current =collection.getRows();
+		int numEnters = collection.getEnters();
+		//single row selection
+		System.out.println("Press s to select a timestamp or any other key to exit selection mode");
+		System.out.print("~ ");
+        String input5 = s.nextLine();
+        switch(input5) {
+        case "s":
+        	System.out.println("Press the entry number that you want to select");
+        	String num3 = s.nextLine();
+        	int div;
+        	if (numEnters>0) {
+        		div=20*numEnters;
+        	}
+        	else {
+        		div=1;
+        	}
+        	System.out.println(numEnters);
+        	System.out.println(div);
+        	ArrayList<String> selectedRow2 = current.get(Integer.parseInt(num3)/div-1);
+        	this.outputSelection(selectedRow2);
+        	System.out.println("Press f to favorite or any other key to exit");
+        	System.out.print("~ ");
+        	String query = s.nextLine();
+        	switch(query) {
+        	case "f":
+        		this.favoriteTimestamp(authHandler.getCurrentUser(), selectedRow2.get(6),selectedRow2.get(1), selectedRow2.get(3), selectedRow2.get(4));
+        		break;
+        	case "e":
+        	default:
+        		System.out.println("Exiting Selection Mode...");
+        		break;
+        	}
+        case "e":
+        default:
+        	System.out.println("Exiting Selection Mode...");
+        	break;
+        
+        }
+	}
+	//Used in Main to get user's timestamps
+	public void frontEndGetMyTimestamps(AuthHandler authHandler, Scanner s) {
+		String username = authHandler.getCurrentUserName();
+		boolean runSelection = true;
+		while (runSelection) {
+			ArrayList<ArrayList<String>> myresults = this.getUsersTimestamps(username, authHandler.getCurrentUser());
+			NumberRowsCollection collection =this.iterateThroughTimestamps(myresults,s);
+			List<ArrayList<String>> current =collection.getRows();
+			int numEnters = collection.getEnters();
+			System.out.println("Press s to select a timestamp or e to exit selection mode");
+			System.out.print("~ ");
+            String input2 = s.nextLine();
+            switch(input2) {
+            case "s":
+            	System.out.println("Press the entry number that you want to select");
+            	String num = s.nextLine();
+            	int div;
+            	if (numEnters>0) {
+            		div=20*numEnters;
+            	}
+            	else {
+            		div=1;
+            	}
+            	ArrayList<String> selectedRow = current.get(Integer.parseInt(num)/div-1);
+            	this.outputSelection(selectedRow);
+            	System.out.println("Press d to delete, u to update, or e to exit");
+            	System.out.print("~ ");
+            	String query = s.nextLine();
+            	String userId = authHandler.getCurrentUser();
+            	switch(query) {
+					case "e":
+						runSelection = false;
+						System.out.println("Exiting selection mode...");
+						break;
+					case "u":
+						System.out.println("Enter new description");
+						String newTitle = s.nextLine();
+						this.updateTimestamps(selectedRow, userId, newTitle);
+						break;
+					case "d":
+						this.deleteTimestamp(selectedRow,userId);
+						break;
+            	}
+            	break;
+            case "e":
+            	runSelection = false;
+            	System.out.println("Exiting selection mode...");
+            	break;
+            }
+		}
+	}
+	
+	//outputs history 20 rows at a time
+		public void iterateThroughHistory(ArrayList<ArrayList<String>> results, Scanner s) {
+			boolean state=false;
+			List<ArrayList<String>> current=null;
+			while (!state) {
+				
+				if (results.size()<20) {
+					state=true;
+					current = results;
+				}
+				else {
+					current=results.subList(0, 20);
+					results = new ArrayList<ArrayList<String>>(results.subList(20, results.size()));
+				}
+			this.outputHistory(current);
+			if (!state) {
+				System.out.println("Press enter to continue searching or press any key to stop: "+results.size()+" entries not shown");
+				String search = s.nextLine();
+				if (!search.isEmpty()) {
+					state=true;
+				}
+			}
+			
+			}
+		}
 }
