@@ -298,19 +298,19 @@ public class TimestampService {
 		//DONE:Shows all the timestamps attached to a video
 		Connection con = this.dbHandler.getConnection();
 		ArrayList<ArrayList<String>> history = new ArrayList<>();
-		String query;
-		query="SELECT * FROM [dbo].GetUserHistory(?) ORDER BY [YouTube ID] asc, [Timestamp Time] asc";
 		try {
-			PreparedStatement prpstmt = con.prepareStatement(query);
-			prpstmt.setString(1, accessingUserID);
-			ResultSet rs=prpstmt.executeQuery();
+			CallableStatement cstmt = con.prepareCall("{? = call GetUserHistory(?)}");
+			cstmt.registerOutParameter(1, Types.INTEGER);
+			
+			cstmt.setString(2, accessingUserID);
+			ResultSet rs= cstmt.executeQuery();
 			int count=0;
 			while (rs.next()) {
-				String ID = rs.getString(1);
-				String name = rs.getString(2);
-				String des = rs.getString(3);
-				String tTime = rs.getTime(4).toString();
-				String uTime = rs.getTimestamp(5).toString().substring(0, 19);
+				String ID = rs.getString("YouTube ID");
+				String name = rs.getString("Video Name");
+				String des = rs.getString("Description");
+				String tTime = rs.getTime("Timestamp Time").toString();
+				String uTime = rs.getTimestamp("Time Accessed").toString().substring(0, 19);
 				ArrayList<String> details = new ArrayList<>();
 				count++;
 				details.add(String.valueOf(count));
@@ -332,21 +332,26 @@ public class TimestampService {
 		Connection con = this.dbHandler.getConnection();
 		
 		ArrayList<ArrayList<String>> timestamps = new ArrayList<>();
-		String query="SELECT * FROM dbo.UserView WHERE Creator=?";
+
 		int count=0;
 			try {
-				PreparedStatement stmt = con.prepareStatement(query);
-				stmt.setString(1, userName);
-				ResultSet rs=stmt.executeQuery();
+				CallableStatement cstmt = con.prepareCall("{? = call GetTimestampsCreatedByUser(?)}");
+				
+				cstmt.registerOutParameter(1, Types.INTEGER);
+				
+				cstmt.setString(2, accessingUserID);
+
+				ResultSet rs=cstmt.executeQuery();
 				while (rs.next()) {
-					String ID = rs.getString(1);
-					String name = rs.getString(2);
-					String des = rs.getString(3);
-					String tTime = rs.getTime(4).toString();
-					String cType = rs.getString(5);
-					String cTime = rs.getDate(6).toString();
-					String UserName = rs.getString(7);
-					String tID = rs.getString(8);
+			
+					String ID = rs.getString("YouTube ID");
+					String name = rs.getString("Video Name");
+					String des = rs.getString("Description");
+					String tTime = rs.getTime("Timestamp Time").toString();
+					String cType = rs.getString("Content Type");
+					String cTime = rs.getDate("Created Time").toString();
+					String UserName = rs.getString("Creator");
+					String tID = rs.getString("TimestampID");
 					ArrayList<String> details = new ArrayList<>();
 					count++;
 					details.add(String.valueOf(count));
