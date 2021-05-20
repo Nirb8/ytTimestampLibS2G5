@@ -23,6 +23,12 @@ public class VideoService {
 	}
 	//adds a video to the table
 	public boolean addVideo(String videoID) {
+		if(videoID.length() != 11) {
+			//System.out.println("YouTube video ID must be 11 characters long");
+			return false;
+		}
+		
+		
 		DBConnect youtube_binfo = new DBConnect();
     	try {
     		VideoDetails vd = youtube_binfo.getYouTubeVideoDetails(videoID);

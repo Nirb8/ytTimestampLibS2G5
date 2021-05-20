@@ -82,7 +82,7 @@ public class DataImport {
 			String response = s.nextLine();
 			if(response.equalsIgnoreCase("y")) {
 				System.out.println("Adding to database...");
-				String importUserID = "fa71a859-0977-482d-87d1-363a342ba099";
+				String importUserID = "5fdf787a-fd29-45a6-87d2-7413dace9620";
 				for(TagData td : tdList) {
 							
 					timestampService.addTimeStamp(importUserID, td.title, td.time, td.youtubeID);
@@ -93,6 +93,8 @@ public class DataImport {
 			}
 		} catch (IOException | ParseException e) {
 			e.printStackTrace();
+		} catch (IndexOutOfBoundsException e) {
+			//System.out.println("Timestamp entry failed for some reason");
 		}
 	}
 
@@ -103,7 +105,6 @@ public class DataImport {
 		// TODO: using a string builder would increase performance, but it's optional
 		switch(time.length()) {
 			case 5:
-			case 8:
 				time = "0" + time;
 			case 6:
 				time = "00:" + time;
@@ -111,6 +112,8 @@ public class DataImport {
 				time = time.replace('m', ':');
 				time = time.trim();
 				break;
+			case 8:
+				time = "0" + time;
 			case 9:
 				time = time.replace('s',' ');
 				time = time.replace('m', ':');
