@@ -38,12 +38,12 @@ public class Main {
             	System.out.print("~ ");
                 String input = s.nextLine();
 				switch (input) {
-				case "cv":
-				case "add video":
-					System.out.println("Enter YouTube VideoID");
-					String videoID = s.nextLine();
-					videoService.addVideo(videoID);
-			    	break;
+//				case "cv":
+//				case "add video":
+//					System.out.println("Enter YouTube VideoID");
+//					String videoID = s.nextLine();
+//					videoService.addVideo(videoID);
+//			    	break;
 					case "r":
 					case "register":
 						//prompt for registration
@@ -180,10 +180,13 @@ public class Main {
 		            System.out.println("Press the entry number that you want to search or press enter for basic search");
 		            System.out.print("~ ");
 		            String num2 = s.nextLine();
+		            try {
 		            String getContentTypeID2;
+		            
 		            if (!num2.isEmpty()) {
 		            ArrayList<String> selectedRow = contentResults2.get(Integer.parseInt(num2)-1);
 		            getContentTypeID2= selectedRow.get(1);
+		            	
 		            } else {
 		            	getContentTypeID2=null;
 		            }
@@ -219,7 +222,10 @@ public class Main {
 		            		break;
 		            	}
 		            }
-					break;
+		            }catch(Exception e) {
+	            		System.out.println("ERROR: Invalid Entry Number");
+	            	}
+		            break;
 				case "vh":
 				case "view user history":
 					ArrayList<ArrayList<String>> history = timestampService.getUserHistory(authHandler.getCurrentUser());
