@@ -5,3 +5,7 @@ register (short: r) - Prompts user for username and password, attempts to create
 create Timestamp (short: ct) - Prompts user for YouTube video ID, time, and timestamp title, then creates a new timestamp.
 get Timestamp (short: g) - Searches for timestamps given video ID, or displays all timestamps if no video ID is given.
 get my Timestamps (short: gm) - Displays the user's timestamps and allows the user to delete them.
+get videos (short: gv) - Searches for videos given content type
+view user history (short: vh) - Displays the user's history
+profile (short: p) - Displays the user's personal information
+get favorite (short: f) - Displays the timestamps that the user has favorited

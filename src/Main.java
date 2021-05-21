@@ -111,6 +111,7 @@ public class Main {
 					timestampService.addTimeStamp(id,caption, timestampTime, timestampVideoID);
 					break;
 				case "f":
+				case "get favorite":
 					System.out.println("Favorite Timestamp Search");
 					ArrayList<ArrayList<String>>result =timestampService.getFavoriteTimestamps(authHandler.getCurrentUser());
 					timestampService.outputConsoleTables(result);
