@@ -18,8 +18,7 @@ import YouTubeAPI.RegexConverter;
 public class Main {
 	//test
     public static void main(String[] args) {
-		DatabaseConnectionHandler dbHandler = new DatabaseConnectionHandler(
-				"titan.csse.rose-hulman.edu", "ytTimestampLib_S2G5");
+		DatabaseConnectionHandler dbHandler = new DatabaseConnectionHandler();
 		AuthHandler authHandler = new AuthHandler(dbHandler);
 		VideoService videoService = new VideoService(dbHandler);
 		TimestampService timestampService = new TimestampService(dbHandler);

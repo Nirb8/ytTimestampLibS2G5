@@ -18,6 +18,10 @@ public class DatabaseConnectionHandler {
 		this.serverName = serverName;
 		this.databaseName = databaseName;
 	}
+	public DatabaseConnectionHandler() {
+		this.serverName = "titan.csse.rose-hulman.edu";
+		this.databaseName = "ytTimestampLib_S2G5";
+	}
 
 	public boolean connect() {
 		String fullUrl = SampleURL

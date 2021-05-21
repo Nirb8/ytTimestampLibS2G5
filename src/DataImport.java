@@ -24,8 +24,7 @@ public class DataImport {
 	public static void main(String[] args) {
 		
 		//taken from 
-		DatabaseConnectionHandler dbHandler = new DatabaseConnectionHandler(
-				"titan.csse.rose-hulman.edu", "ytTimestampLib_S2G5");
+		DatabaseConnectionHandler dbHandler = new DatabaseConnectionHandler();
 		AuthHandler authHandler = new AuthHandler(dbHandler);
 		VideoService videoService = new VideoService(dbHandler);
 		TimestampService timestampService = new TimestampService(dbHandler);
