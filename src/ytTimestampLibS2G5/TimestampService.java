@@ -34,6 +34,8 @@ public class TimestampService {
 		String current = LocalDate.now().toString();
 		DateTime time = new DateTime(current);
 		Date uploadDate = new Date(time.getValue());
+		
+		try {
 		Time time2=Time.valueOf(videoTime);
 		String uniqueID = UUID.randomUUID().toString();
 		Connection con=this.dbHandler.getConnection();
@@ -58,17 +60,21 @@ public class TimestampService {
 				}
 			}
 			if (returnValue==1) {
-				throw new Error("ERROR: TimestampID cannot be null");
+				System.out.println("ERROR: VideoID cannot be null");
 			}
 			if (returnValue==3) {
-				throw new Error("ERROR: Time cannot be null");
+				System.out.println("ERROR: Time input is invalid");
+			}
+			if (returnValue==4) {
+				System.out.println("ERROR: Timestamp time greater than duration");
 			}
 			if (returnValue==5) {
 				throw new Error("ERROR: TimestampID already in use");
 			}
-			System.out.println("Timestamp Entry Added");
+			
 			
 			if (returnValue==0) {
+				System.out.println("Timestamp Entry Added");
 				boolean result = createTimestampTag(uniqueID,videoId);
 				if (result) {
 					System.out.println("TimestampTag created");
@@ -76,8 +82,11 @@ public class TimestampService {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 			return false;
+		}
+	}catch (Exception e) {
+			System.out.println("ERROR: Time cannot be null");
 		}
 		return false;
 	}
@@ -125,7 +134,7 @@ public class TimestampService {
 				this.addTimestampToUserHistory(accessingUserID, tID);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 			return null;
 		}
 		return timestamps;
@@ -176,7 +185,7 @@ public class TimestampService {
 				}
 				rs.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				System.out.println(e.getMessage());
 				return null;
 			}
 			return timestamps;
@@ -240,7 +249,7 @@ public class TimestampService {
 				clipboard.setContents(stringSelection, null);
 				
 			} catch (Exception e) {
-				e.printStackTrace();
+				System.out.println(e.getMessage());
 				return null;
 			}
 			return timestamps;
@@ -288,7 +297,8 @@ public class TimestampService {
 			rs.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println(e.getMessage());
+			return null;
 		}
 		
 		return timestamps;
@@ -322,7 +332,7 @@ public class TimestampService {
 				history.add(details);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 			return null;
 		}
 		return history;
@@ -367,7 +377,7 @@ public class TimestampService {
 					this.addTimestampToUserHistory(accessingUserID, tID);
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
+				System.out.println(e.getMessage());
 				return null;
 			}
 			return timestamps;	
@@ -423,8 +433,8 @@ public class TimestampService {
 			}
 		}	
 		catch(Exception e) {
-		e.printStackTrace();
-		System.out.println("Error");
+		System.out.println(e.getMessage());
+		//System.out.println("Error");
 		return false;
 		}
 		return true;
@@ -457,7 +467,7 @@ public class TimestampService {
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 			System.out.println("No deletion performed");
-			e.printStackTrace();
+			//e.printStackTrace();
 			return false;
 		}
 		System.out.println("Timestamp Deleted");
@@ -466,33 +476,33 @@ public class TimestampService {
 	}
 
 	//delete timestamps by videoID another option CURRENTLY NOT IN USE
-	public boolean deleteVideoTimestamps(String videoID) {
-		//DONE: select by row for deletion
-		Connection con = this.dbHandler.getConnection();
-		String query = "DELETE FROM Timestamps WHERE YTVideoID=?";
-		String query2="SELECT * FROM Timestamps WHERE YTVideoID=?";
-		try {
-			PreparedStatement prpsmt = con.prepareStatement(query2);
-			prpsmt.setString(1, videoID);
-			ResultSet results =prpsmt.executeQuery();
-			if (results.next()) {
-				PreparedStatement prpsmt2 = con.prepareStatement(query);
-				prpsmt2.setString(1, videoID);
-				prpsmt2.execute();
-			}
-			else {
-				System.out.println("No deletion performed, no timestamp matches given parameters");
-				return false;
-			}
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-			System.out.println("No deletion performed");
-			e.printStackTrace();
-			return false;
-		}
-		System.out.println("Timestamps Deleted");
-		return true;
-	}
+//	public boolean deleteVideoTimestamps(String videoID) {
+//		//DONE: select by row for deletion
+//		Connection con = this.dbHandler.getConnection();
+//		String query = "DELETE FROM Timestamps WHERE YTVideoID=?";
+//		String query2="SELECT * FROM Timestamps WHERE YTVideoID=?";
+//		try {
+//			PreparedStatement prpsmt = con.prepareStatement(query2);
+//			prpsmt.setString(1, videoID);
+//			ResultSet results =prpsmt.executeQuery();
+//			if (results.next()) {
+//				PreparedStatement prpsmt2 = con.prepareStatement(query);
+//				prpsmt2.setString(1, videoID);
+//				prpsmt2.execute();
+//			}
+//			else {
+//				System.out.println("No deletion performed, no timestamp matches given parameters");
+//				return false;
+//			}
+//		} catch (SQLException e) {
+//			System.out.println(e.getMessage());
+//			System.out.println("No deletion performed");
+//			//e.printStackTrace();
+//			return false;
+//		}
+//		System.out.println("Timestamps Deleted");
+//		return true;
+//	}
 	
 	public int addTimestampToUserHistory(String userID, String timestampID) {
 		CallableStatement cstmt;
@@ -518,7 +528,9 @@ public class TimestampService {
 			return cstmt.getInt(1);
 		
 		} catch (SQLException e) {
+			System.out.println(e.getMessage());
 			e.printStackTrace();
+			
 		}
 		
 		return 0;
@@ -577,7 +589,8 @@ public class TimestampService {
 				System.out.println("Favorite Timestamp Added");
 			}
 		}catch (SQLException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			System.out.println(e.getMessage());
 			return false;
 		}
 		return true;
@@ -650,6 +663,7 @@ public class TimestampService {
         	else {
         		div=1;
         	}
+        	try {
         	ArrayList<String> selectedRow2 = current.get(Integer.parseInt(num3)/div-1);
         	this.outputSelection(selectedRow2);
         	System.out.println("Press f to favorite or any other key to exit");
@@ -664,11 +678,13 @@ public class TimestampService {
         		System.out.println("Exiting Selection Mode...");
         		break;
         	}
+        	}catch(Exception e) {
+        		System.out.println("ERROR: Invalid Entry Number");
+        	}
         case "e":
         default:
         	System.out.println("Exiting Selection Mode...");
         	break;
-        
         }
 	}
 	//Used in Main to get user's timestamps

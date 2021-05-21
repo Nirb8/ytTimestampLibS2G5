@@ -73,7 +73,8 @@ public class VideoService {
     				
     			}
     		}catch(Exception e) {
-    			e.printStackTrace();
+    			System.out.println(e.getMessage());
+    			//e.printStackTrace();
     			return false;
     		}
 			
@@ -136,6 +137,7 @@ public class VideoService {
 //			
 			
 		}catch(Exception e) {
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
 		return null;
@@ -199,6 +201,7 @@ public class VideoService {
 			}
 			
 		}catch(Exception e) {
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 			return false;
 		}

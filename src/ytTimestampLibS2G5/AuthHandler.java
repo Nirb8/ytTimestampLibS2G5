@@ -100,7 +100,8 @@ public class AuthHandler {
 			throw new Error("ERROR: Username already exists.");
 		}
 		}catch(Exception e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
+			//e.printStackTrace();
 			return false;
 		}
 		System.out.println("Registeration completed");
@@ -165,11 +166,13 @@ public class AuthHandler {
 			}
 			table.print();
 		} catch (SQLException e) {
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}	
 	}
 	//allows for the DOB to be updated by user
 	public boolean updateDOB(String DOB) {
+		try {
 		Date date =Date.valueOf(DOB);
 		Connection con = this.dbHandler.getConnection();
 		try {
@@ -187,9 +190,14 @@ public class AuthHandler {
 			}
 			proc.close();
 		}catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
+			//e.printStackTrace();
 			return false;
 		}	
+		
+	}catch(Exception e) {
+		System.out.println("Invalid DOB input");
+	}
 		return true;
 	}
 	//allows for the favoriteContentType to be updated by user
@@ -213,7 +221,8 @@ public class AuthHandler {
 			}
 			proc.close();
 		}catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
+			//e.printStackTrace();
 			return false;
 		}	
 		return true;
@@ -232,10 +241,10 @@ public class AuthHandler {
 				throw new Error("Error: UserID cannot be null");
 			}
 			if (returnValue ==2) {
-				throw new Error("Error: Username cannot be null");
+				System.out.println("Error: Username cannot be null");
 			}
 			if (returnValue ==3) {
-				throw new Error("Error: Username already exists");
+				System.out.println("Error: Username already exists");
 			}
 			if (returnValue==4) {
 				throw new Error("Error: User does not exist");
@@ -245,7 +254,8 @@ public class AuthHandler {
 				this.currentUserName=newUsername;
 			}
 		}catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
+			//e.printStackTrace();
 			return false;
 		}
 		return true;
@@ -278,8 +288,9 @@ public class AuthHandler {
 			if (returnValue ==0) {
 				System.out.println("Password updated");
 			}
-		}catch (SQLException e) {
-			e.printStackTrace();
+		}catch (Exception e) {
+			System.out.println(e.getMessage());
+			//e.printStackTrace();
 			return false;
 		}
 		return true;
@@ -309,7 +320,7 @@ public class AuthHandler {
 		}
 		return false;
 	}
-	//Used in Main to grab profile
+	//Used in Main to grab profile\
 	public void frontEndProfile(Scanner s, ContentTypeService contentTypeService) {
 		this.showUserProfile();
 		System.out.println("Press d to change DOB");
@@ -330,8 +341,12 @@ public class AuthHandler {
             System.out.println("Press the entry number that you want to search or just press enter");
             System.out.print("~ ");
             String num3 = s.nextLine();
+            try {
             String contentId = contentResults3.get(Integer.parseInt(num3)-1).get(1);
             this.updateFavoriteContentType(contentId);
+            }catch(Exception e) {
+            	System.out.println("ERROR: Invalid entry number");
+            }
             break;
     	case "u":
     		System.out.println("Input new username");
