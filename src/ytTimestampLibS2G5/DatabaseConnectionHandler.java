@@ -12,8 +12,8 @@ public class DatabaseConnectionHandler {
 
 	private final String databaseName;
 	private final String serverName;
-	private static final String username ="burnhar1";
-	private static final String password= "Redthorn50!";
+	private static final String username ="chanb";
+	private static final String password= "Sexcalibur8-----";
 	public DatabaseConnectionHandler(String serverName, String databaseName) {
 		this.serverName = serverName;
 		this.databaseName = databaseName;

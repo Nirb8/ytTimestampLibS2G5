@@ -82,7 +82,7 @@ public class DataImport {
 			String response = s.nextLine();
 			if(response.equalsIgnoreCase("y")) {
 				System.out.println("Adding to database...");
-				String importUserID = "5fdf787a-fd29-45a6-87d2-7413dace9620";
+				String importUserID = "fa71a859-0977-482d-87d1-363a342ba099";
 				for(TagData td : tdList) {
 							
 					timestampService.addTimeStamp(importUserID, td.title, td.time, td.youtubeID);
